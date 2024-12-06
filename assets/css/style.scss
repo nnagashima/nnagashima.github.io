@@ -1,5 +1,10 @@
 ---
 ---
+@media (max-width: 768px) {
+  table {
+      width: 100%; /* 画面幅が狭い場合、テーブルを全幅に */
+  }
+}
 
 @import "{{ site.theme }}";
 .page-header{
