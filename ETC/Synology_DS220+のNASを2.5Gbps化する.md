@@ -1,5 +1,6 @@
-[TOPへ戻る](https://actmotech.xyz/)
-[ETC Knowledgeへ戻る](/ETC/top.md)
+[⚫️TOPへ戻る](https://actmotech.xyz/)
+
+[⚫️ETC Knowledgeへ戻る](/ETC/top)
 
 # Synology DS220+のNASを2.5Gbps化する
 
@@ -76,5 +77,6 @@ Synologyにダウンロードしたドライバーをパッケージセンター
 
 ネットワークインターフェースにLAN3が追加されていれば完了です。
 
-[TOPへ戻る](https://actmotech.xyz/)
-[ETC Knowledgeへ戻る](/ETC/top.md)
+[⚫️TOPへ戻る](https://actmotech.xyz/)
+
+[⚫️ETC Knowledgeへ戻る](/ETC/top)
