@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="styles.css">
+<div style="text-align: left;">
 
 ![](/top-image/image.png)
 
@@ -27,3 +27,5 @@
 ### [OS Knosledge](OS/top)
 
 ### [ETC](ETC/top)
+
+</div>
