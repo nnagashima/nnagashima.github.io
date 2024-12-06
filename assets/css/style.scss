@@ -12,14 +12,8 @@
     color: inherit;
 }
 
-.container {
-  display: flex;
-  justify-content: flex-start; /* 子要素を左揃え */
-  align-items: center;        /* 縦方向中央揃え */
-}
-
 table{
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
 }
 
@@ -27,11 +21,11 @@ table tr{
     border-bottom: solid 2px white;
 }
 
-  table tr:last-child{
+table tr:last-child{
     border-bottom: none;
-  }
+}
 
-  table th{
+table th{
     position: relative;
     text-align: left;
     width: 30%;
@@ -39,4 +33,4 @@ table tr{
     color: white;
     text-align: center;
     padding: 10px 0;
-  }
+}
