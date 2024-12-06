@@ -38,3 +38,8 @@ table th{
     color: white;
     padding: 5px 0;
 }
+
+body {
+  transform: scale(0.8); /* ページ全体を80%に縮小 */
+  transform-origin: top left; /* 縮小の起点を左上に設定 */
+}
