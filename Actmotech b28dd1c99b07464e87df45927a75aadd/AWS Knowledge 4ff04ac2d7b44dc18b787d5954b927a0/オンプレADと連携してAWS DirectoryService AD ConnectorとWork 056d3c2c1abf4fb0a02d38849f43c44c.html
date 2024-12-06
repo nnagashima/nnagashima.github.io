@@ -1,0 +1,690 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>オンプレADと連携してAWS DirectoryService AD ConnectorとWorkSpacesを作成</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="056d3c2c-1abf-4fb0-a02d-38849f43c44c" class="page sans"><header><h1 class="page-title">オンプレADと連携してAWS DirectoryService AD ConnectorとWorkSpacesを作成</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="2fa67ae2-d0a9-4dea-b209-1633965a4cf7" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/2022-12-12_18h13_37.png"><img style="width:235px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/2022-12-12_18h13_37.png"/></a></figure><h1 id="0cefbf36-2dff-4150-ae55-fbe66bf4f72a" class="">目次</h1><hr id="bfff7c36-c98d-4bf8-b14c-aff2b570ec73"/><nav id="8485f08d-98d4-46e2-b617-d5cc1e034469" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0cefbf36-2dff-4150-ae55-fbe66bf4f72a">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#cc8eb15d-dcc3-4365-bc8a-edc561005de3">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0b703e3f-927c-449b-b0d4-210c0a838ed6">前提</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f4e31cc3-20c1-4487-a2af-215056938e57">AD Connectorのデプロイ</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1d56fea2-55e2-492f-9dbd-816ee52d9e36">登録したディレクトリの中身確認</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#2fafa093-45e3-49b3-9d8b-866b5bb500f0">WorkSpaces作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5428d358-3987-423b-be0a-07a567ea295b">WorkSpacesがインターネットに出れる方法</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#110d10c3-3442-440a-8d6d-0b2681a2b0a9">WorkSpaces作成後にすること</a></div></nav><h1 id="cc8eb15d-dcc3-4365-bc8a-edc561005de3" class="">はじめに</h1><hr id="0a55cf19-7ea7-48f4-af06-6ec2568c22b5"/><p id="9c88b502-f073-405b-903e-d3f9c9c3517e" class="">自宅にあるADサーバとAWSに用意したWindowsのEC2インスタンスやWorkSpacesを参加させる手段として</p><p id="724bb109-3322-4eae-9f58-9edaf77fe99b" class="">AWSのAD Connectorを利用して、Domain参加させる方法を記載します。</p><p id="5e762d69-5321-4b2e-a796-10535c56fbbd" class="">オンプレミスのAD作成は以下を参考にしてください。</p><figure id="48259630-1972-4601-b93a-daba7ad1b8d2" class="link-to-page"><a href="Onpremiss%20Active%20Directory%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6AWS%20ADConnector%E3%81%A8%E6%8E%A5%E7%B6%9A%204825963019724601b93adaba7ad1b8d2.html">Onpremiss Active Directoryを利用してAWS ADConnectorと接続</a></figure><h1 id="0b703e3f-927c-449b-b0d4-210c0a838ed6" class="">前提</h1><hr id="6b1d759a-9481-499b-b5b1-4261bbb9425f"/><ul id="e8ab7838-887f-4d39-be15-893202b352f6" class="bulleted-list"><li style="list-style-type:disc">オンプレミスにADサーバが用意されている</li></ul><ul id="d600006e-7cb0-4ef9-b0ff-f67dc2eedfc1" class="bulleted-list"><li style="list-style-type:disc">オンプレミス環境とAWS間をSite to Site VPN通信もしくはDX通信が確立している</li></ul><ul id="be143c21-767f-434f-bd63-e64e32faa550" class="bulleted-list"><li style="list-style-type:disc">AD Connectorが接続するため準備が整っている（AD Connectorを作成するためのサブネットをAWS側に作成することも忘れずに用意してください）</li></ul><p id="380a1d96-6414-4353-a13a-534bc2f77f48" class=""><a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/prereq_connector.html#connect_delegate_privileges">https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/prereq_connector.html#connect_delegate_privileges</a></p><ul id="22de1b5b-6fe4-404c-a904-4c57cb728c54" class="bulleted-list"><li style="list-style-type:disc">ADやRouter側でFWで制御している場合にはAD通信に必要なポート解放がされていること<p id="3d802870-770f-45bd-979e-f47ef261b70c" class="">AD Connectorが接続するには、<a href="https://docs.aws.amazon.com/ja_jp/directoryservice/latest/admin-guide/prereq_connector.html">ここのサイト</a>にも記載がありますが以下の通りです。</p><ul id="c77117c9-5bf9-4ec2-b324-24049b3b04f7" class="bulleted-list"><li style="list-style-type:circle">TCP/UDP 53 - DNS</li></ul><ul id="53d1937c-8661-4e75-8024-dcb5e4b8e515" class="bulleted-list"><li style="list-style-type:circle">TCP/UDP 88 - Kerberos 認証</li></ul><ul id="9ee2c410-7c67-45d6-9692-2dbef371d55a" class="bulleted-list"><li style="list-style-type:circle">TCP/UDP 389 - LDAP</li></ul><p id="cff894ef-e124-4993-bb0f-1be68b8deaaf" class="">ですが最終的にWorkSpacesやEC2をドメイン参加させたい場合に必要なのは<a href="https://social.technet.microsoft.com/Forums/ja-JP/f6126a91-6d96-41d2-ab2a-0b75bf03fdd8/12489125131245212531298722265912391203512999212373124281242712?forum=Wcsupportja">ここのサイト</a>にも記載がありますが以下の通りとなりますので、</p><p id="734c70df-bfbc-4001-879f-f002183ac6b9" class="">制限かけたい場合には以下を参考にしてみてください。　※図は引用させて頂いております。</p></li></ul><figure id="e7e158c7-1e5e-4fb6-a0e3-81d6cfd50e81" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled.png"><img style="width:660px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled.png"/></a></figure><h1 id="f4e31cc3-20c1-4487-a2af-215056938e57" class="">AD Connectorのデプロイ</h1><hr id="d5a8eeea-5764-4361-b2f9-afc59b9cb508"/><p id="ff203c4b-dd33-45a4-8ae5-172776cb0264" class="">Directory ServiceからAD Connectorを選択します。</p><figure id="8395d85c-be1c-4845-a397-6758e6ec4372" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%201.png"><img style="width:768px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%201.png"/></a></figure><p id="6c0327ee-6de6-47c3-a595-c676550488d0" class="">ディレクトリのサイズを選択します。</p><p id="b87e0d29-b396-4752-8e2a-4a2dd6a3be9c" class="">ディレクトリは一度作成した後に後からサイズ変更ができないので注意してください。</p><p id="aaca02a2-311d-485e-982d-d60264fee0a3" class="">スモールはAD Connectorのユーザー数を500まで、ラージはユーザー数を5000を推奨としています。</p><p id="077ccd74-2095-4107-a5c8-30fcd1b43236" class="">※調べてみるとサポートケースにリクエストをすることでアップグレードもできる事例があったので、もしかしたらできるかもしれません。</p><figure id="33ca75f6-3ba7-45a4-9cb9-ca37ca80f90c" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%202.png"><img style="width:768px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%202.png"/></a></figure><p id="18b47588-7412-41ec-81c5-5c03d190d91d" class="">次にAD Connectorをデプロイするサブネットを選択します。サブネットはAZ毎に一つずつ選択します。</p><p id="988d6d23-92d7-4a4a-9ac7-47e8e578072a" class="">ここを間違えると再度AD Connectorを再作成、もしくはWorkSpacesまで作成していたらWorkSpacesの再作成になるので要注意です。</p><figure id="8c16c5f6-264b-4ec2-b757-a8d292f5be56" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%203.png"><img style="width:768px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%203.png"/></a></figure><p id="9a239c61-b3a5-46e9-a032-6912ab58b4c0" class="">ADに接続するための情報を登録します。</p><ul id="ac1a6066-63bf-4460-ac0d-c0f649782ed6" class="bulleted-list"><li style="list-style-type:disc">ディレクトリのDNS名にはオンプレミスで作成したADのドメイン名</li></ul><ul id="8c562b49-7b9d-421a-8264-e00e52c5935f" class="bulleted-list"><li style="list-style-type:disc">ディレクトリのNetBIOS名はオンプレミスで作成したADのNetBIOS名</li></ul><ul id="9539dd72-b362-40ce-be38-15c31456ba50" class="bulleted-list"><li style="list-style-type:disc">DNS IPアドレスはオンプレミスで作成したADのIPアドレス</li></ul><ul id="903c5b24-d60d-4255-bdd0-ebcee4d146d4" class="bulleted-list"><li style="list-style-type:disc">サービスアカウントのユーザー名とパスワードはAD ConnectorがADに接続するためのユーザー情報</li></ul><p id="6a1a987c-bb72-4b9c-af09-2f311f52f42f" class="">※接続に利用するユーザーは管理者権限をつけないとドメイン参加できる回数に制限がかかってしまい、ドメイン参加できなくなるので注意してください。</p><p id="22e275bd-427b-4167-a9df-0e02c536881d" class=""><a href="https://repost.aws/ja/knowledge-center/workspaces-domain-join-error">https://repost.aws/ja/knowledge-center/workspaces-domain-join-error</a></p><figure id="e73ddeb4-1eee-4902-9e68-0edf00d1546c" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%204.png"><img style="width:768px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%204.png"/></a></figure><p id="4c34a9a8-d88d-45d0-8383-a335a1396294" class="">最後に登録した情報の確認が出てくるので問題なければディレクトリの作成をクリックします。</p><figure id="e63f4fd0-f790-4e6c-8231-6c0a1794e518" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%205.png"><img style="width:768px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%205.png"/></a></figure><p id="a9cbe9b8-5827-40cc-903c-4db38e64efe5" class="">ディレクトリのステータスがアクティブになるまでしばし待ちます。</p><p id="ff497cf5-906e-40d9-aea0-f6a06307236a" class="">エラーが出た場合にはFWやオンプレミスとAWS間の通信、オンプレミスで作成したADのAD Connectorが接続するユーザーに間違いがないかなど確認をしてください。</p><figure id="f6b76b95-8099-4172-8b63-9e4c25f05c06" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%206.png"><img style="width:1008px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%206.png"/></a></figure><p id="b2d1909e-7f41-4155-bf7f-281a003bb384" class="">作成ができたらディレクトリの詳細を開きます。ここからはAD Connectorを使ってWorkSpacesを利用したのでWorkSpacesをクリックします。</p><figure id="5c547b49-74ed-4622-8678-bce007190665" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%207.png"><img style="width:816px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%207.png"/></a></figure><figure id="38b80112-8330-42a0-b27f-722ae9ad5b94" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%208.png"><img style="width:960px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%208.png"/></a></figure><p id="22b3967a-2edf-41dc-b6b2-edd3fc4c88e1" class="">WorkSpacesの画面ができたら、ディレクトリの登録を行います。</p><p id="c432a643-8b41-4df2-9eed-50c8b84d6c7f" class="">対象のディレクトリを選択して登録をクリックします。</p><figure id="a6e85647-25de-42cb-a571-ac1d78055d51" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%209.png"><img style="width:864px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%209.png"/></a></figure><p id="fc9ccfbd-73fa-4ee7-a3f3-96c91c195094" class="">WorkSpacesをデプロイする先のサブネットを選択します。</p><p id="17e93df2-f181-4ecb-a174-d35142a4c7f6" class="">なお、AD ConnectorとWorkSpacesがお互い通信ができるような形にしてください。</p><p id="f57342d8-5f79-4714-a9f3-aed6df25f96d" class="">一般的な構成としてはAD Connectorをデプロイした先と同じ場所にWorkSpacesをデプロイする構成が一般的のようです。</p><figure id="f1a6a5ae-b2b4-4fd4-ab82-5a8dc7c60e1d" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2010.png"><img style="width:864px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2010.png"/></a></figure><p id="a48e9e19-35a2-44aa-8f5c-9a0e2556da70" class="">セルフサービス許可を有効化は有効化にしてください。<div class="indented"><p id="8769bf3d-2cf8-49f1-9d45-d92d00e3891c" class="">機能を有効することによって、ユーザー自身がWorkSpaceを再起動したり、スペック変更や再構築もできるというものです。</p></div></p><p id="041452a8-09a8-41ee-9f50-ee97b7c2526c" class="">WorkDocsを利用する場合は有効化してください。<div class="indented"><p id="ae79ad6f-b712-4c33-9d82-3c7e486e66e5" class="">後から変更したい場合はCloudShellを使うことで変更できます。コマンドは以下の通りです。</p><p id="16a2a8d4-2afb-45aa-8d3d-ad9d14d6c12d" class="">以下コマンドを実行後、WorkDocsの画面で対象ディレクトリを選択した上でWorkDocsを作成してください。</p></div></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d5605a97-f5f9-481b-8d1c-20574c346da9" class="code"><code class="language-Bash">aws workspaces modify-workspace-creation-properties --resource-id {ディレクトリ ID} --workspace-creation-properties EnableWorkDocs=true</code></pre><p id="1511bdc0-2c1c-4f07-a240-a0293d5385d8" class="">WorkDocsの料金については<a href="https://aws.amazon.com/jp/workdocs/pricing/">以下の通り</a>です。</p><p id="fb8dff54-544f-449e-b098-1b44376bf9e4" class="">Amazon WorkSpaces のユーザーには、追加料金なしで WorkDocs へのアクセス権限が付与されます。</p><p id="6b114f6c-b5c7-46bd-ae1a-c3f7fb8dda15" class="">これには、WorkSpaces の 1 ユーザーにつき 50 GB のストレージが含まれます。 </p><p id="c3527495-5b03-4354-840b-622e65b2cc01" class="">WorkSpaces ユーザーは、割引料金で 1 TB のストレージを使用できるようにアップグレードすることができます。</p><p id="46cf4731-d3a3-4fb1-9216-2ecfbeb1fcb7" class="">登録できたら登録済みがYesになります。</p><figure id="4c4e484f-c9e0-450b-a836-9752341683f2" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2011.png"><img style="width:960px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2011.png"/></a></figure><h1 id="1d56fea2-55e2-492f-9dbd-816ee52d9e36" class="">登録したディレクトリの中身確認</h1><hr id="03c41cd7-655a-45a8-95c5-3beca006a8ef"/><p id="89c7aa61-8980-4413-96cc-0d9dc1965b02" class="">SMAL認証や、Active Directory ドメインで証明書ベースの認証を設定することができます。</p><figure id="ac5feff5-d8db-4b4a-b226-60eeb90e4d28" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2012.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2012.png"/></a></figure><p id="c68dc186-cea1-4667-ae08-f2fa6c16ed21" class="">WorkSpacesが所属するOUを指定することができます。</p><figure id="b89fd145-db13-4c41-b3af-7022f3ccd23c" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2013.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2013.png"/></a></figure><p id="19a2d76b-0e89-4a31-885e-398501726ec3" class="">デフォルトで作成されるセキュリティグループとは別に設定したいセキュリティグループがあれば選択することができます。</p><figure id="97541813-90fe-4757-93e1-94076e574737" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2014.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2014.png"/></a></figure><p id="2bcf72ac-cd11-4621-a147-9fd72231297e" class="">WorkSpacesにパブリックIPを割り当てることができます。</p><figure id="caebd833-ee08-4bd1-a618-65185bafb750" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2015.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2015.png"/></a></figure><p id="77b7ee7a-a6e6-44a0-8194-ccc4559e6117" class="">どのデバイスからWorkSpacesをアクセスさせるかを制限させると同時に、</p><p id="eb42d3c2-d0bc-4afc-997c-fe31128f42ad" class="">クライアント証明書を利用してWorkSpaces は証明書ベースの認証を使用して、デバイスが信頼できるかどうかを判断できます。</p><p id="1004616c-4a34-4071-a12c-72d4db2d13a9" class="">※Client証明書を利用した接続方法は別記事にて記載</p><figure id="3d88b61b-0606-47c8-9ff3-52921065c730" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2016.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2016.png"/></a></figure><p id="aa3befe0-c42f-46c2-856f-ea290bb26c11" class="">上記のWindows、MacOS、Android以外のOSから接続させたいかどうかを登録できます。</p><figure id="31a5c4b2-88e9-4bb7-8a3e-d81f01402c16" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2017.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2017.png"/></a></figure><p id="0f26296d-11aa-47d0-8376-e904c7e0debb" class="">WorkSpacesのユーザーをローカル管理者としたい場合には有効にします。</p><figure id="ac09f49d-89d4-41e6-8b17-c0be281794d4" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2018.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2018.png"/></a></figure><p id="e7707752-be4e-440e-9006-3db8d6d6b76d" class="">WorkSpacesにアクセスできるIPアドレスを制御できます。</p><p id="04f100d9-bb14-4496-986f-d082a761b178" class="">AWSアカウントあたり最大100のIPアクセスコントロールグループをリージョン毎に作成できますが、</p><p id="f07ece33-0432-4765-add8-d8d2075d76b4" class="">1つのディレクトリに関連付けすることができるのは最大25のIPアクセスコントロールグループのみです。</p><p id="a6eec577-6a4d-449c-b77b-b4dca87a4ea5" class=""><a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/amazon-workspaces-ip-access-control-groups.html">WorkSpaces の IP アクセスコントロールグループ</a></p><figure id="c031a18e-a424-450d-9705-e8916e3dce02" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2019.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2019.png"/></a></figure><p id="4a9dc082-5126-40cb-96c0-174621e51377" class="">Windowsの更新を自動で制御させたい場合には有効にしておくと良いと思います。</p><figure id="ea3f58c2-216c-48a1-b339-1a2adfc6d8ac" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2020.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2020.png"/></a></figure><p id="b8794a5f-624c-43b0-9fea-5ec03da4e9da" class="">ここは利用料金に関わるところになります。デフォルトは全て有効になります。</p><ul id="2eb7a5bb-0232-4ed8-afe9-a1f79dd195c9" class="bulleted-list"><li style="list-style-type:disc">このアカウントを記憶する<ul id="ca864bc9-90b7-40ad-8001-647d5101c0c8" class="bulleted-list"><li style="list-style-type:circle">WorkSpaces接続時に毎回アカウント名を訊かれるようになります。パスワードは有効にしても記憶されません。</li></ul></li></ul><ul id="1945f17b-d8db-460c-bb6f-a3e2df52d319" class="bulleted-list"><li style="list-style-type:disc">クライアントからWorkSpaceを再起動する<ul id="35546a95-4b29-4d69-b031-1757aad2ea3b" class="bulleted-list"><li style="list-style-type:circle">WorkSpacesClientからWorkSpacesの再起動を行うことができます。</li></ul></li></ul><ul id="85e4bb80-b2c8-4808-af82-8949cde7aecb" class="bulleted-list"><li style="list-style-type:disc">ボリュームサイズを増やす<ul id="d1a116e4-cfc3-4e23-aceb-28bfd5ddfba3" class="bulleted-list"><li style="list-style-type:circle">WorkSpacesClientからWorkSpacesのボリュームサイズを増やせるようになります。<p id="4e52763d-e61e-4b72-9161-531695916651" class="">※WorkSpaces構築後やボリュームサイズを変更した場合、6時間経過しないと変更できません。</p><p id="e0d9eb51-15a9-459b-b610-fdddfaaa090c" class="">※増やす際にも段階的に（最小で10GB、最大で50GBずつ）しか増やすことしかできません。</p></li></ul></li></ul><ul id="37a03f93-2a9e-4789-9bc5-c0a51025da05" class="bulleted-list"><li style="list-style-type:disc">コンピューティングタイプを変更する<ul id="87535d26-095e-44ac-815e-ce55745b26cb" class="bulleted-list"><li style="list-style-type:circle">6時間経過しないと変更できません。</li></ul><ul id="5d87ef7c-a7c1-494a-8a57-85e5c760d434" class="bulleted-list"><li style="list-style-type:circle">スペックを下げるのは30日に1回だけのようです。</li></ul></li></ul><ul id="32b9382a-9801-4cf3-81ca-aa03bb5ccee7" class="bulleted-list"><li style="list-style-type:disc">実行モードを切り替える<ul id="1c564199-3b8f-4dab-bb84-d174b86bec93" class="bulleted-list"><li style="list-style-type:circle">AlwaysOnにすると、その時点で月額料金が発生するので注意</li></ul></li></ul><ul id="26e3b632-6e59-400e-b17e-03ca9dc245a7" class="bulleted-list"><li style="list-style-type:disc">クライアントからWorkSpaceを再構築する<ul id="60367957-f7b7-4286-9bd4-9cca3b1cf1cf" class="bulleted-list"><li style="list-style-type:circle">バンドルイメージから WorkSpacesを再構築することができる機能になります。</li></ul><ul id="aa76b0d2-2206-415f-8eaf-d7553e68897c" class="bulleted-list"><li style="list-style-type:circle">イメージから再構築の為、リビルド前に設定していたシステム設定やアプリケーションは、イメージ取得時点のデータに戻ります。</li></ul><ul id="e3381e17-09e6-41d0-8458-891344bd4fd5" class="bulleted-list"><li style="list-style-type:circle">Cドライブはイメージから再構築が行われます。WorkSpaces作成後の Cドライブのデータは引き継がれません。</li></ul><ul id="f2feff60-9129-4b96-8494-b93a547e013b" class="bulleted-list"><li style="list-style-type:circle">Dドライブはイメージから再構築が行われません。<p id="acbe9694-7248-4b9a-9d5a-402dac9eb0c9" class="">WorkSpacesの標準機能である自動バックアップのデータから復旧が行われます。</p><p id="580a15f8-4286-4cc1-87ba-21019d207b72" class="">自動バックアップの取得は 12時間おきに実施され、取得のタイミングは WorkSpaces毎に異なります。</p><p id="0d9bf188-8bcd-44cf-9ecf-e5a46c2605a7" class="">バックアップに関する処理は全てバックグラウンドで制御されるため、ユーザ側で制御できる部分はありません。（世代管理不可）</p></li></ul></li></ul><figure id="74277206-2b8e-457f-a7f5-835b00f95a65" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2021.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2021.png"/></a></figure><p id="e91ae778-a10b-4875-8c8b-090c02c22a78" class="">ADとAD Connectorを繋ぐためのアカウント情報を登録します、後から変更したい場合にはここで変更をします。</p><figure id="5d875f6b-f460-4823-91e5-b4492ac0f777" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2022.png"><img style="width:1008px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2022.png"/></a></figure><p id="f8fe0b3d-4398-4f39-89ef-e7baa5fa30fe" class="">ADの認証だけでなく多要素認証をつけたい場合には登録することができます。</p><p id="66ec22db-a16c-4d62-8525-a95f76acbf6c" class="">筆者が知っている中ではPassLogic、Duo Security、ReeRadius/GoogleAuthenticator、Authentication Proxyを使ったやり方があります。</p><p id="4a0b8c4f-5cc2-487d-8504-38fa6a637418" class="">※それぞれ検証した結果は後日どこかで載せる予定です。</p><figure id="9420b16d-ecbb-4ac3-86b0-ddcbe9a5270d" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2023.png"><img style="width:1008px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2023.png"/></a></figure><h1 id="2fafa093-45e3-49b3-9d8b-866b5bb500f0" class="">WorkSpaces作成</h1><hr id="adf545fd-1b12-45a3-b852-2098b3b9e6a6"/><ul id="0411892b-eb59-43dc-b4e9-adfd6773e8ec" class="bulleted-list"><li style="list-style-type:disc">ActiveDirectoryRightsManagementサービスを追加します。</li></ul><ul id="d9d1c0b6-fc88-4fd8-b64f-263da8c92ffd" class="bulleted-list"><li style="list-style-type:disc">作成する前にWorkSpacesのOUを作成し、OU配下にユーザーを作成しています。</li></ul><ul id="3fd9faa5-9a63-4e98-b9c3-3c75e5f0056a" class="bulleted-list"><li style="list-style-type:disc">GPO作成する<ul id="df64d38d-db39-48f4-a182-c3abddd53d4c" class="bulleted-list"><li style="list-style-type:circle">ADサーバ内のコントロールパネルから管理ツールを選択し、グループポリシーの管理をクリック</li></ul><ul id="50434066-67fb-4d28-874d-a7a592c861a7" class="bulleted-list"><li style="list-style-type:circle">グループポリシーエディターからグループポリシーを作成</li></ul><ul id="3b8bb32e-1031-4e35-b4bc-f698c6023e87" class="bulleted-list"><li style="list-style-type:circle">作成したポリシーを右クリックして編集</li></ul><ul id="cf6e70ca-3162-4e4a-8d7c-4934c53b5a30" class="bulleted-list"><li style="list-style-type:circle">例えばパスワードポリシーを変えたい場合<p id="0e82ed47-a66e-4177-9cc3-4a96a4c657b4" class="">コンピュータの構成→ポリシー→Windowsの設定→セキュリティの接敵→アカウントポリシー→パスワードのポリシー</p></li></ul><ul id="42ba0703-2732-4ade-9672-f7c3d03368dc" class="bulleted-list"><li style="list-style-type:circle">作成したグループポリシーを割り当てしたいOUへドラック＆ドロップする</li></ul><ul id="373a3f36-f637-4578-b795-6f672bb6c3e2" class="bulleted-list"><li style="list-style-type:circle">ユーザーでグループポリシーが当たっているかどうかを確認実施する</li></ul></li></ul><figure id="ba4ba08f-5a94-41dc-8fce-8f7cbb1b9509" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2024.png"><img style="width:576px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2024.png"/></a></figure><p id="5447036e-8782-4787-a672-6c2920cc968b" class="">WorkSpacesを作成します。次へをクリックします。</p><figure id="403640ae-ce66-4f77-a3e0-57f13d6989da" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2025.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2025.png"/></a></figure><p id="80b4b9d3-fbce-4b5f-87a2-77187d822d6d" class="">次へをクリックします。</p><figure id="d6ab010d-c243-4529-ad99-dccc2ec7049e" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2026.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2026.png"/></a></figure><p id="40a27583-b056-4f96-a161-32dd39f825ca" class="">オンプレミスで作成したADのユーザーが表示されるので、ユーザーを選択します。</p><figure id="78100648-45ea-4c96-bfcf-07ab91ffac34" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2027.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2027.png"/></a></figure><p id="b01f872c-f3cc-4899-bd6a-f576b5a56f0a" class="">次にバンドルを選択します。</p><figure id="2d2561fa-83ba-41cc-9e0d-229bf955cd8a" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2028.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2028.png"/></a></figure><p id="b2db2c59-e262-4083-8ab7-9b7c7be5f8c0" class="">AlwaysOnとAutoStopが選べます。AutoStopを選択すると利用した時間だけ課金されます。</p><p id="5f2ee184-1bc1-4f73-a81d-72388ec35ac7" class="">最小の時間は1からしか選択できません。常時利用したい場合にはAlwaysOnにしますが月額課金になるので注意してください。</p><p id="40f09afb-773e-409c-9483-4ca0de53bc3b" class="">詳しい料金は<a href="https://aws.amazon.com/jp/workspaces/pricing/">こちらを参照</a>ください。</p><figure id="65aec8c1-e348-4d30-8823-161a4d025295" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2029.png"><img style="width:864px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2029.png"/></a></figure><p id="000d91a4-8e6d-43a0-b703-ce40cd72a76c" class="">最後にユーザーボリュームを選択します。</p><p id="d967d97a-c9b2-4abe-8f36-6a0fb72d185e" class="">なお、ルートボリュームとユーザーボリュームを暗号化すると以下の制限が発生します。<a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/encrypt-workspaces.html">※公式ページより引用</a></p><ul id="58e92118-801b-40ca-8977-39ed0b646c2b" class="bulleted-list"><li style="list-style-type:disc">既存の WorkSpace は暗号化できません。WorkSpace を起動するときは、暗号化する必要があります。</li></ul><ul id="a72f7ea0-ecaf-4990-b22f-c605ca5cf257" class="bulleted-list"><li style="list-style-type:disc">暗号化された WorkSpace からのカスタムイメージの作成は、サポートされていません。</li></ul><ul id="5cbe74c2-e548-4d6a-b45f-b2b06626165e" class="bulleted-list"><li style="list-style-type:disc">暗号化された WorkSpace の暗号化を無効にすることは、現在サポートされていません。</li></ul><ul id="8543dd24-d3e7-4118-8152-73a091bf729c" class="bulleted-list"><li style="list-style-type:disc">ルートボリュームの暗号化を有効にした状態で起動された WorkSpaces では、プロビジョニングに最大 1 時間かかる場合があります。</li></ul><ul id="aa6b6098-b388-41c2-bc73-ab80c538be51" class="bulleted-list"><li style="list-style-type:disc">暗号化された WorkSpace を再起動または再構築するには、AWS KMS キーが有効であることを最初に確認します。<p id="e7d32261-6cce-42ed-bbd2-bdfed60e71d4" class="">有効ではない場合、WorkSpace は使用できません。KMS キーが有効になっているかどうかを確認する方法については、「AWS Key Management Service デベロッパーガイド」の 「<a href="https://docs.aws.amazon.com/kms/latest/developerguide/viewing-keys-console.html#viewing-console-details">コンソールで KMS キーを表示する</a>」を参照してください。</p></li></ul><figure id="01f742d1-3881-4770-afcd-2c5f2ce3d521" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2030.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2030.png"/></a></figure><p id="ec316edc-05c9-420d-8397-84d423898fc9" class="">最後にプレビュー画面がでるので問題なければ作成します。</p><figure id="7798b676-37ee-4d97-964c-7bf8f2b6c6ba" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/FireShot_Capture_746_-_WorkSpaces_Console_-_ap-northeast-1.console.aws.amazon.com.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/FireShot_Capture_746_-_WorkSpaces_Console_-_ap-northeast-1.console.aws.amazon.com.png"/></a></figure><p id="1121cc6d-9915-4153-984f-54a328a95aee" class="">作成が完了するまで時間がかかるのでしばし待ち、スタータスが使用可能になったら利用可能です。</p><p id="e411ff77-93b8-470e-bcc6-5440468c410e" class="">最後にアクションよりユーザーを招待するをクリックすることで、WorkSpacesの登録コードなどが表示されますのでメモしておきます。</p><p id="41b330b6-5170-4b08-b5b7-766ce9db043d" class="">尚、ADユーザーの情報にメールアドレスが記載されていれば招待メールがぶかと思われます。（試していないのでわかりません。。。）</p><figure id="18218b62-7df7-497e-b8d4-5fd019504184" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2031.png"><img style="width:912px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2031.png"/></a></figure><p id="b95dc60b-bab3-411f-9b79-45567d99183d" class="">WorkSpaceClientを手元にダウンロードしてログイン</p><p id="552d9bf4-5cad-4080-8f62-81d157f1ebc8" class="">招待メールにあった登録コードとADのユーザー情報を使ってログインができれば完了です。</p><p id="69b8c621-13ba-41d0-b9e9-e3cd44b55bce" class="">尚、接続するにあたっては接続する端末がインターネット向けに以下のように通信要件を満たす必要があります。</p><p id="6e0805be-6a67-4c3d-962a-679a53b8a282" class="">あらかじめインターネット回線が引かれているアパートとかだと共用の部分でFWでブロックされていたりして接続できない可能性がでてくるので注意が必要です。</p><p id="890e2591-4609-4793-a709-aa7f6b8093b4" class=""><a href="https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/workspaces-port-requirements.html">https://docs.aws.amazon.com/ja_jp/workspaces/latest/adminguide/workspaces-port-requirements.html</a></p><h1 id="5428d358-3987-423b-be0a-07a567ea295b" class="">WorkSpacesがインターネットに出れる方法</h1><hr id="9bf38701-7e4f-48dd-a6d8-6f047ca8b062"/><p id="1f0e665d-6e05-49f2-92a9-8c761125458c" class="">WorkSpacesをプライベートサブネットに配置した場合には、</p><p id="3623e96e-9eaa-4562-89fe-836d3cdd1357" class="">パブリックサブネットにOutBound通信できるようにNAT Gatewayを利用するか、ネットワークアプライアンスを置くという手が考えられます。</p><p id="e767da98-e29e-447a-aac5-b693f8929fa6" class="">WorkSpacesをパブリックサブネットに配置した場合には、WorkSpacesにグローバルIPを紐づけて通信する方法が考えられます。</p><p id="2a5e416f-043f-4c34-9d90-accb8033cda9" class="">またオンプレミスと繋いでいる場合にはオンプレミス環境からインターネットに出る手法も考えられますが通信量が多くなるので回線料金が高くなってしまう可能性もあります。</p><p id="91a2439a-2cb6-4b5b-abcf-f59db1f2f892" class="">
+</p><p id="71f37252-c11d-4f8a-93fe-5fa23d69c9bb" class="">最後に補足です。</p><p id="42be6d50-ab12-42df-9649-b6513c7be92b" class="">尚、WorkDocsはディレクトリ一つに対して、一つしか作成できないのが注意してください。</p><figure id="a63ad265-02da-4789-9c21-d7f622ee2318" class="image" style="text-align:left"><a href="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2032.png"><img style="width:432px" src="%E3%82%AA%E3%83%B3%E3%83%95%E3%82%9A%E3%83%ACAD%E3%81%A8%E9%80%A3%E6%90%BA%E3%81%97%E3%81%A6AWS%20DirectoryService%20AD%20Connector%E3%81%A8Work%20056d3c2c1abf4fb0a02d38849f43c44c/Untitled%2032.png"/></a></figure><h1 id="110d10c3-3442-440a-8d6d-0b2681a2b0a9" class="">WorkSpaces作成後にすること</h1><hr id="b1389d1a-20be-4634-b5ed-4216821b6177"/><p id="46d219c7-fc39-4145-a9a1-935852c4aa52" class="">PCoIP のグループポリシー管理用テンプレートをオンプレADへインストールして、固有のグループポリシー設定を変更できるようにします。</p><p id="5165ed2c-0ca0-4714-9848-e77d26581b91" class="">作成したWorkSpacesにて以下を実行します。</p><ol type="1" id="ae7ee7b8-0ec0-4efb-a7c9-c4a4e956c3f8" class="numbered-list" start="1"><li>C:\Program Files\Teradici\PCoIP Agent\configuration\policyDefinitionsディレクトリ内のおよびファイルのコピーを作成<p id="345939d1-3ecb-445f-a99a-d47f3426a25a" class="">PCoIP.admx、PCoIP.adml</p></li></ol><ol type="1" id="c79d2add-d09a-4749-aa28-7ad048aae917" class="numbered-list" start="2"><li>オンプレADのエクスプローラーのアドレスバーで¥¥ドメイン名でアクセスします。</li></ol><ol type="1" id="fea67874-3bbf-4474-b940-5fdd6b062491" class="numbered-list" start="3"><li>sysvol フォルダを開きます。</li></ol><ol type="1" id="983484d2-455a-4f6e-b5e1-52242cc59f19" class="numbered-list" start="4"><li>ドメイン名のフォルダを開きます。</li></ol><ol type="1" id="6922401a-b894-480c-a91f-a9d874c9cb98" class="numbered-list" start="5"><li>Policiesフォルダを開きます。</li></ol><ol type="1" id="96a6823c-bd23-4d12-8c5c-5c36e963e3f4" class="numbered-list" start="6"><li>PolicyDefinitions という名前のフォルダを作成して、PCoIP.admxを保存します。</li></ol><ol type="1" id="67c62fca-7af4-4f16-bfcd-80d2a99dc0b6" class="numbered-list" start="7"><li>PolicyDefinitions フォルダに en-US という名前のフォルダを作成して、PCoIP.admlを保存します。</li></ol><ol type="1" id="8e258026-7494-4e0d-97e1-4aaf479d7609" class="numbered-list" start="8"><li>オンプレADでグループポリシーの管理を開き、[コンピュータの設定]、[ポリシー]、[管理用テンプレート]、[PCoIP セッション変数] の順に選択します。</li></ol><ol type="1" id="c9b29794-db9d-4f97-9480-dcb55d0d6829" class="numbered-list" start="9"><li>PCoIP セッション変数グループポリシーオブジェクトを使用して、PCoIP を使用する場合に固有のグループポリシー設定を変更できるようになります。<p id="7d29fd06-e6c8-4ae8-8167-6da4d5ebf930" class="">ユーザーによる設定の上書きを許可するには、[Overridable Administrator Settings] (上書き可能な管理者設定) を選択します。</p><p id="750511ed-9bfd-4369-bdce-9bc7f3562761" class="">許可しない場合は、[Not Overridable Administrator Settings] (上書き可能でない管理者設定) を選択します。</p></li></ol><p id="d2b6c6da-3ef2-4b5a-9dab-1edb422c2fbb" class="">
+</p><p id="d53926be-2334-41fd-ade8-9473852ff662" class="">上記を実行したあとにグループポリシーの設定内容などを確認するとWorkSpaces のポリシーだけになり、従来あった「Windowsコンポーネント」等が無くなってしまいました。。。</p><p id="c1cba1f1-121a-48c3-97a9-25b6f64aa4d1" class="">調べてみるとAWSのやり方はセントラルストアに配置するやり方のようです。（ADは通常複数あるものだと思うので）</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e122310a-b25d-41cc-808d-68ab7229753b" class="code"><code class="language-JavaScript">セントラルストアは、ドメインの共有フォルダにあたるSYSVOLにPolicyDefinitionsフォルダをセットしてあげることで
+ドメイン全体にレプリケーションされ、SYSVOL上のフォルダを優先的に見に行くようになる。</code></pre><p id="07f8331a-996a-472c-9f7c-ada9b79616ec" class="">復旧方法としては「C:\Windows\PolicyDefinitionsのフォルダ」を「\\(ドメイン名)\SYSVOL\(ドメイン名)\Policies\PolicyDefinitions」に上書きコピーすることで、</p><p id="e9c2afe1-8a32-418e-a01e-d34e8c196472" class="">従来のあったWindowsコンポーネントなどが表示されるようになります。</p><p id="b520f95a-7a6a-4f93-bcb5-3cec23e38334" class="">
+</p><p id="30f2a8fa-376a-47de-91c5-a3db614d7cb5" class="">そのためセントラルストアでのやり方で実施するのであれば、</p><ol type="1" id="9fbc086d-7d91-4a62-8921-1fa8b8f1c618" class="numbered-list" start="1"><li>C:\Windows\PolicyDefinitionsのフォルダを\\(ドメイン名)\SYSVOL\(ドメイン名)\Policies\配下にコピー</li></ol><ol type="1" id="2a625312-5969-4736-bcca-ba5edf7d445d" class="numbered-list" start="2"><li>PolicyDefinitions配下にPCoIP.admxを保存</li></ol><ol type="1" id="168c8f48-4445-49af-9824-4464a90e4b3e" class="numbered-list" start="3"><li>PolicyDefinitions フォルダに en-US という名前のフォルダを作成して、PCoIP.admlを保存</li></ol><p id="d650bdfa-4397-4a0d-b1e2-20ddabe32357" class="">というやり方になるのではないかと思いますが注意が必要で、ローカルコンピューターに配置した(C:\Windows\PolicyDefinitions)拡張子のadmx、adml のファイルは読み込まれなくなります。</p><p id="5aeed539-dd40-4aad-b305-b7e54d21524f" class="">
+</p><p id="65e0a199-2c4c-4d4f-ae7d-a0fdfed086a1" class="">AD毎に設定するということであれば、以下にローカルコンピューターに配置することで、このドメインコントローラのローカルのみ適用されます。</p><p id="082d73c1-a883-4b51-92f5-d6244279cb43" class="">C:\Windows\PolicyDefinitions\PCoIP.admx</p><p id="5650885f-d349-4b9e-a79b-84d193cba35a" class="">C:\Windows\PolicyDefinitions\en-US\PCoIP.adml	</p><p id="2a076eaf-9207-46c1-9f71-705339422f64" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

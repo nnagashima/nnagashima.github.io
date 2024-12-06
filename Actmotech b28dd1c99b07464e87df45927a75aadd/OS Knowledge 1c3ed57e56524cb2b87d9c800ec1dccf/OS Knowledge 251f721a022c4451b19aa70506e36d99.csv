@@ -1,0 +1,20 @@
+﻿名前,タグ
+RHEL9検証 ①インストール編,RHEL
+RHEL9検証 ②SELinuxの設定方法,RHEL
+RHEL9検証 ③GUI＋VNC ServerでGUI操作したい,RHEL
+RHEL9検証 ④初期設定,RHEL
+RHEL9検証 ⑤Apache関連,RHEL
+RHEL9検証 ⑥Let's EncryptによるSSL証明書適用,RHEL
+RHEL9検証 ⑦ Cockpit導入,RHEL
+Patroniを利用した高可用性DBクラスタの構築,RHEL
+Windows OS 初期セットアップ（日本語化）,Windows
+UbuntuOSの初期設定,Ubuntu
+自宅にキャッシュDNSサーバ,Ubuntu
+Ubuntuパッケージの自動更新を無効にする,Ubuntu
+Guacamoleを利用してリモートアクセス環境を整える,Ubuntu
+zoomの代わりのjitui meet,Ubuntu
+Cloudflareを利用して外部からアクセス,Ubuntu
+Graylogを活用したログ分析,
+WSUS構築と設定,
+IISを利用したリバースプロキシの構築,
+AdGuard HomeキャッシュDNSサーバをお家に導入,

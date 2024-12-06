@@ -1,0 +1,687 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Site to Site VPNとUnifi Dream Machine ProでIPSecVPN </title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="9d45eec3-7c2a-44bd-8875-eb93c6a36220" class="page sans"><header><h1 class="page-title">Site to Site VPNとUnifi Dream Machine ProでIPSecVPN </h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="d0bc3045-2992-4c01-98bb-fd6579c26f6b" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20200821131638.png"><img style="width:300px" src="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20200821131638.png"/></a></figure><h1 id="168e9b6a-0f69-4647-a27c-91b99f886464" class="">目次</h1><hr id="ae772841-5d1e-4eec-9403-4c4c5b05ae8d"/><nav id="53483228-263d-43ca-9798-9a48946ff03f" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#168e9b6a-0f69-4647-a27c-91b99f886464">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3a5b6c1a-c6d2-4f17-a6a1-5768e3356189">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b1e21480-c4ef-40a6-969a-3904cf2030ca">実施手順概要</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0fceb687-4e98-4b78-8b3a-15d92162812b">仮想プライベートゲートウェイの作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#da0681f5-9628-42e2-a2c9-68cb5041070e">カスタマーゲートウェイの作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1e530362-718b-4b8a-94ad-4b88c4609337">サイト間のVPN接続の設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a9bb3e76-3f66-464d-842d-4559d2d366c6">Unifi Dream Machine Proの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b89f828f-898f-411e-96ac-780e73659e0d">VPCのルートテーブルの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#07306fc9-4973-40f7-b0dd-8c9271b382e6">IPSecVPNステータスをチェック</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#71610a89-b7b3-482d-8e16-66020a9ae1d5">最後に</a></div></nav><h1 id="3a5b6c1a-c6d2-4f17-a6a1-5768e3356189" class="">はじめに</h1><hr id="0c0e8796-e42a-44ae-aef3-9dea55b2bedc"/><p id="7b2f0ba5-de19-4f60-96e8-1b41ff2cc21c" class="">ハイブリットクラウドの検討においてIPSecVPNでオンプレミスとAWSを接続しました。 </p><p id="7ca6399f-31d4-481a-8c3e-c6485f9db8ce" class="">Unifi Dream Machine Pro を利用しています。</p><p id="0eb8a3bd-0b17-4c64-8b91-8c024b43b256" class="">実施するにあたっての前提としてオンプレ側の外部アドレスは固定IPであること、 AWS側のVPCはサブネットやIGWの設定が完了しているものとします。</p><h1 id="b1e21480-c4ef-40a6-969a-3904cf2030ca" class="">実施手順概要</h1><hr id="dfb98c4f-9082-4bee-89ff-7fd64cefbff1"/><ol type="1" id="4599f61d-efcb-41c2-8dd9-f0f15de68402" class="numbered-list" start="1"><li>仮想プライベートゲートウェイの作成</li></ol><ol type="1" id="0203d52f-972e-450c-9586-300f401dd86c" class="numbered-list" start="2"><li>カスタマーゲートウェイの作成</li></ol><ol type="1" id="cc027e21-0941-483e-86b5-075ea52007eb" class="numbered-list" start="3"><li>サイト間のVPN接続の設定</li></ol><ol type="1" id="0b450711-efe2-47e7-8427-68cec46049d7" class="numbered-list" start="4"><li>Unifi Dream Machine Proの設定</li></ol><ol type="1" id="cbd20886-33dc-49f9-9f73-056807468641" class="numbered-list" start="5"><li>VPCのルートテーブルの設定</li></ol><p id="ecd08e2c-3cd1-4ff8-9da2-b78a62fe9830" class="">の順で実施していきます。</p><p id="d51eed70-5b65-4fd1-9491-086aa273d753" class=""> 料金は以下のような感じです。 </p><ul id="6d9afa75-8a78-4c0e-af9f-81419a3149b5" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/vpn/pricing/">https://aws.amazon.com/jp/vpn/pricing/</a></li></ul><h1 id="0fceb687-4e98-4b78-8b3a-15d92162812b" class="">仮想プライベートゲートウェイの作成</h1><hr id="e52c9d68-84a4-4aac-8ca2-2c8e4aa0b2d5"/><p id="9c935e5d-327e-4b03-84b1-c7c1ab4acd2b" class="">AWS ConsoleのVPCから仮想プライベートゲートウェイを選択して、仮想プライベートゲートウェイの作成をクリックします。 </p><p id="7c56eedc-1bc7-4e62-8903-0e62365782ad" class="">名前は任意としてASNはAmazonデフォルトASNにして、仮想プライベートゲートウェイを作成します。</p><figure id="d67c77b9-7352-494f-9084-2914cde75c37" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413012543.png"><img style="width:432px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413012543.png"/></a></figure><p id="93a390dd-3cc0-45d9-88d7-e725a23095c9" class="">作成ができたら作成した仮想プライベートゲートウェイを選択し、右上のアクションからVPCへのアタッチを実施します。</p><figure id="caa780f0-fff9-4c65-9d01-2910b147c9b0" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013016.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013016.png"/></a></figure><h1 id="da0681f5-9628-42e2-a2c9-68cb5041070e" class="">カスタマーゲートウェイの作成</h1><hr id="a4f0b6c7-8e4a-46cc-a837-5c462bcf1a21"/><p id="320f6f39-b08d-4c1c-bbb7-52260b8af166" class="">AWS ConsoleのVPCからカスタマーゲートウェイを選択して、カスタマーゲートウェイの作成をクリックします。 </p><p id="8d034125-a3a9-4bae-9b53-bdc0078ee730" class="">名前は任意、BGPのASNはデフォルト、IPアドレスはオンプレミス側のGIPを指定します。 </p><p id="ce408f5c-6cfd-47ba-b1d6-a32dcee00224" class="">ARN 証明書はIKE 認証のために事前に共有されたキーではなくデジタル証明書を使用する際に利用します。</p><p id="a1b3fbe2-2b62-4786-a418-f16c46c4f655" class=""><a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/vpn-certificate-based-site-to-site/">https://aws.amazon.com/jp/premiumsupport/knowledge-center/vpn-certificate-based-site-to-site/</a></p><p id="b305bfa8-fbbf-464d-9c45-4e57e17aecf0" class="">今回はIKE認証で実施するので何も選択しません。 デバイスも今回は未入力とし、カスタマーゲートウェイを作成します。</p><figure id="127c3892-a5ff-41c9-889c-343223fbdf47" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013116.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013116.png"/></a></figure><h1 id="1e530362-718b-4b8a-94ad-4b88c4609337" class="">サイト間のVPN接続の設定</h1><hr id="f1d0d8e7-0ad8-4b3a-8fa8-0e8d9b36f59d"/><p id="ada083f9-8b82-42b1-9b8c-59c572156c71" class="">AWS ConsoleのVPCからサイト間のVPN接続を選択して、VPN接続を作成するをクリックします。 </p><p id="19a67b2a-759a-4a39-9252-ee36024c22ab" class="">名前タブには任意の名前を入れ、仮想プライベートゲートウェイとカスタマーゲートウェイIDは先ほど作成したものを選択し、</p><p id="78c68b84-a897-49fc-899f-57955cbac4cb" class=""> ルーティングオプションは静的を選択します。</p><figure id="0a55aece-464c-46a8-b1ff-653a75561dca" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20220413014024.png"><img style="width:768px" src="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20220413014024.png"/></a></figure><p id="7ab056be-a919-4427-bd60-8f2026a901f4" class="">トンネルオプションはデフォルトのままでVPN接続の作成をクリックします。</p><figure id="ac5ad069-fe50-4b5c-a3a4-04622e691fb0" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20220413014044.png"><img style="width:768px" src="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20220413014044.png"/></a></figure><p id="6c5147ba-144e-484b-a5a7-d886e0ec3b7e" class="">トンネルオプションで選択できるものを一応貼っておきます。</p><figure id="fea2a054-bb34-4b84-b70a-4f750254638d" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20220413014424.png"><img style="width:768px" src="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/20220413014424.png"/></a></figure><figure id="39e0cfcc-3bd3-414d-b646-533475fa5057" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014447.png"><img style="width:480px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014447.png"/></a></figure><p id="d82ad4c8-fc4e-4650-816b-c19e631aa23a" class="">作成できたら作成したVPN接続を選択して設定のダウンロードを選択します。</p><p id="620bcf3c-87d1-4e46-a03b-19c83e95fb1d" class="">ベンダーは色々選べます（CISCO、Pfsense、Yamaha、Fortinet、F5、Juniperなど）</p><p id="a0dd8f2c-19c4-4c34-a71c-6a5eeced319c" class="">今回接続する対象はFortigateなので以下のような形で設定情報をダウンロードしています。</p><p id="e16e97a2-9cca-428c-a985-6a0bd0319a48" class="">設定ファイルをダウンロードするとトンネルIPや事前共有鍵の記載があるので確認しておきましょう。</p><figure id="245ae4b4-ede4-4256-bbe4-7a7744ba1759" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/Untitled.png"><img style="width:336px" src="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/Untitled.png"/></a></figure><h1 id="a9bb3e76-3f66-464d-842d-4559d2d366c6" class="">Unifi Dream Machine Proの設定</h1><hr id="a74abb22-4559-4a86-8ee8-adaee34d8461"/><p id="47ce35e3-80a7-42ca-b77b-8bf15210b179" class="">Unifi Dream Machine Pro のUIへログインし、</p><p id="ffdade40-5d00-41fc-a1a4-d61993dbd177" class="">Network&gt;Teleport&amp;VPNの画面にてSite-to-Site VPNからCreate Site-to-site VPNをクリックします。</p><ol type="1" id="80b6220d-6e72-4c3d-bac2-7c19f8f2393e" class="numbered-list" start="1"><li>VPN Protocolは、Manual IPsecを選択</li></ol><ol type="1" id="2cc8b1bf-dd17-4853-9c50-f8144727d80d" class="numbered-list" start="2"><li>Pre-shared Keyにはダウンロードしたvpn-xxxxxxxxxxxxxxxxxx.txtというファイルの36行目にある 、<br/>IPSec Tunnel #1 の Pre-Shared Key に記載されている32文字を入力<br/></li></ol><ol type="1" id="2c64e8fd-bc40-4e32-a4b8-c8df832229ae" class="numbered-list" start="3"><li>UniFi Gateway IP は、使用するWANを選択</li></ol><ol type="1" id="24abccf2-3ec4-46b0-861b-da96e082c4e0" class="numbered-list" start="4"><li>Shared Remote Subnet にVPCのプライベートIPとサブネットを入力</li></ol><ol type="1" id="d903cda3-2a22-42ca-85ea-4637b2ec5045" class="numbered-list" start="5"><li>Remote IP に、vpn-xxxxxxxxxxxxxxxxxx.txtの94行目にある IPSec Tunnel #1 の <br/>Virtual Private Gateway に記載されているグローバルIPアドレスを入力<br/></li></ol><ol type="1" id="0a15e564-185d-401c-aef6-1a14a75b72be" class="numbered-list" start="6"><li>AdvanedをManualに変更<ul id="1551968e-92c9-4510-9ff6-641e7700c17f" class="bulleted-list"><li style="list-style-type:disc">Key Exchange Version でIKEv2を選択</li></ul><ul id="844cb218-a9a6-4186-a6ef-1e0db469e16e" class="bulleted-list"><li style="list-style-type:disc">EncrytpionでAES-256を選択</li></ul><ul id="d706f4aa-11b5-4974-b218-75c60a20820e" class="bulleted-list"><li style="list-style-type:disc">HashでSHA256を選択</li></ul><ul id="0f0d9d6c-309a-48d9-9e5f-ac9065015352" class="bulleted-list"><li style="list-style-type:disc">IKE DH Group で24を選択</li></ul><ul id="a85dd823-3513-49fe-bbe1-6a970b00046b" class="bulleted-list"><li style="list-style-type:disc">ESP DH Group で18を選択</li></ul></li></ol><figure id="1a89c388-7f44-4406-a015-47cbcb2603cf" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/Untitled%201.png"><img style="width:960px" src="Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220/Untitled%201.png"/></a></figure><p id="750afad4-fac9-403c-a19e-fabf4e9c499a" class="">最後にAdd New VPN Network ボタンをクリックします。</p><p id="5fcc6874-fbb7-45bc-ae0c-88fa1f283e7c" class="">なお、AWS側では2個のトンネルを用意されていますが、UDM-Proが同一宛先のものは1個ずつしか有効にすることができないため、</p><p id="35b6f9c2-d53a-4b58-afba-9cf9a6da2119" class="">もう片側を設定を入れても有効化することができませんので注意が必要です。</p><h1 id="b89f828f-898f-411e-96ac-780e73659e0d" class="">VPCのルートテーブルの設定</h1><hr id="2795a269-e925-4120-a1fc-2437a8ef7aa2"/><p id="005b5b1f-7b8e-45cc-bfef-cbeccd270abe" class="">AWS ConsoleのVPCから接続したVPCのルートテーブルを選択し、アクションからルート編集をクリックします。 </p><p id="9db50b29-55fc-4e45-92d5-2f20ed9a2386" class="">ルートの追加をクリックして、Unifi Dream Machine ProのLAN(internal)側のネットワークアドレスを入力し、</p><p id="7de2f35b-b042-47af-8023-b4ae240721c6" class="">ターゲットを作成した仮想プライベートゲートウェイを指定します。 最後にルートの保存をクリックします。</p><figure id="d9760bd1-1783-430f-a127-e67c04a62b33" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413025401.png"><img style="width:912px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413025401.png"/></a></figure><h1 id="07306fc9-4973-40f7-b0dd-8c9271b382e6" class="">IPSecVPNステータスをチェック</h1><hr id="5f3aec90-f2a6-4d83-a096-87153743c337"/><p id="2b608308-3e6d-4146-be28-cf5a4c74efd6" class="">AWS ConsoleのVPCからサイト間のVPN接続を選択して、作成したVPNを選択します。 </p><p id="2768fced-7681-4653-bd7b-583d5297d558" class="">タブの中にトンネルの詳細があるのでクリックするとステータスがUPになっています。 </p><h1 id="71610a89-b7b3-482d-8e16-66020a9ae1d5" class="">最後に</h1><hr id="ca64aff9-ae4c-4b49-80f4-425bd473b1c8"/><p id="0a10b4f3-cd33-4cfa-a636-f467eb849a7d" class="">自宅にUnifi Dream Machine Proがある人はあまりいないように思いますが、これを自宅でやろうとしている人が誤家庭ですね。 </p><p id="09eff261-7e25-401c-a4ac-85f785368d7e" class="">
+</p><p id="310feec3-6cf9-4c78-9346-27e7edc02a26" class="">
+</p><p id="5effcad4-5ca1-45ea-9177-c86969c1352a" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

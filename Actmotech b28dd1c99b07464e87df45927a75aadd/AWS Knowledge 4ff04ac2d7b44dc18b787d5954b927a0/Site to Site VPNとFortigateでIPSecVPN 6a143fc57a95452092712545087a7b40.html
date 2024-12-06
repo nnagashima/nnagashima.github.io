@@ -1,0 +1,694 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Site to Site VPNとFortigateでIPSecVPN</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="6a143fc5-7a95-4520-9271-2545087a7b40" class="page sans"><header><h1 class="page-title">Site to Site VPNとFortigateでIPSecVPN</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="61302199-aa81-428c-83c6-7defcf70a11d" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20200821131638.png"><img style="width:300px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20200821131638.png"/></a></figure><h1 id="aee26318-3065-4287-861a-4fd317ea0f07" class="">目次</h1><hr id="5e4ad45a-6d31-47a8-b4bd-6f94f61015e7"/><nav id="22a63b8b-86d5-4b8d-8ee1-6a2a6947d839" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#aee26318-3065-4287-861a-4fd317ea0f07">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0fb8fdd4-75ec-4026-b90e-847d9c512c35">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#392d2f6d-002c-4dfa-864a-722404033647">実施手順概要</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#563e232c-4d7e-4524-8ff3-6c7fd8d5c80b">仮想プライベートゲートウェイの作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8ef8969a-8fbd-413a-bcb5-72d8536d8d1a">カスタマーゲートウェイの作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#64cc48c6-7020-4d5e-8b99-098e1cc6106f">サイト間のVPN接続の設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#af91e9ef-1899-46f0-8610-99ac69a202e4">Fortigateの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d088e9cb-aba6-4eba-8717-0a51340b05d5">VPCのルートテーブルの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9899e4bd-9485-4a4c-9167-e4edc3dc3cab">IPSecVPNステータスをチェック</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#89858e4a-2330-489f-b098-1728fdf5c5bc">最後に</a></div></nav><h1 id="0fb8fdd4-75ec-4026-b90e-847d9c512c35" class="">はじめに</h1><hr id="65ca5ebf-9fb6-43f2-8912-af90bf5506fd"/><p id="180747b9-d2f2-477b-b68c-1234e5d64b22" class="">ハイブリットクラウドの検討においてIPSecVPNでオンプレミスとAWSを接続しました。 </p><p id="82d4e02f-9272-40f1-bc49-02bab31ebcfd" class="">Fortigateは60D を利用しており、ファームウェアはv6.0.11 build0387 (GA)です。</p><p id="5dc43052-924c-4da3-b808-227b891bfd03" class=""> 実施するにあたっての前提としてオンプレ側の外部アドレスは固定IPであること、 AWS側のVPCはサブネットやIGWの設定が完了しているものとします。</p><h1 id="392d2f6d-002c-4dfa-864a-722404033647" class="">実施手順概要</h1><hr id="a4417ed5-3a74-4f7d-964c-5954874fa2de"/><ol type="1" id="98a488de-bc82-4f14-a5c9-12e59665d405" class="numbered-list" start="1"><li>仮想プライベートゲートウェイの作成</li></ol><ol type="1" id="dcd5c6f5-0ef7-441e-9585-8ffc38c466fd" class="numbered-list" start="2"><li>カスタマーゲートウェイの作成</li></ol><ol type="1" id="94ea9a05-f017-40f3-a30a-0a655d845ebf" class="numbered-list" start="3"><li>サイト間のVPN接続の設定</li></ol><ol type="1" id="31b2b8c8-18aa-441a-b09e-93cd52e9b47f" class="numbered-list" start="4"><li>Fortigateの設定</li></ol><ol type="1" id="45b9c3b1-afa2-48b4-9a15-041188a49309" class="numbered-list" start="5"><li>VPCのルートテーブルの設定</li></ol><p id="049ecc69-71fd-483e-ba4c-ad2ed32a85e7" class="">の順で実施していきます。</p><p id="99b091df-0eac-4edf-94fe-d9b7335d39f4" class=""> 料金は以下のような感じです。 </p><ul id="ae04d28b-e3ef-41f9-b90d-741ed77520c1" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/vpn/pricing/">https://aws.amazon.com/jp/vpn/pricing/</a></li></ul><h1 id="563e232c-4d7e-4524-8ff3-6c7fd8d5c80b" class="">仮想プライベートゲートウェイの作成</h1><hr id="0e6ff214-1c24-4702-82c4-df9c7e44714f"/><p id="ce167aea-c8ab-49f4-bfef-5ad896aca999" class="">AWS ConsoleのVPCから仮想プライベートゲートウェイを選択して、仮想プライベートゲートウェイの作成をクリックします。 </p><p id="de2f7397-bfd5-481a-afe1-f7fcbda5bb2c" class="">名前は任意としてASNはAmazonデフォルトASNにして、仮想プライベートゲートウェイを作成します。</p><figure id="1eb8af5a-dbf8-40c0-a1ff-cb7ea05fd913" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413012543.png"><img style="width:432px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413012543.png"/></a></figure><p id="edf02ad2-adee-4c59-a730-c64a47a535d3" class="">作成ができたら作成した仮想プライベートゲートウェイを選択し、右上のアクションからVPCへのアタッチを実施します。</p><figure id="713e2e6f-e183-42df-80c1-a5b74d867397" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013016.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013016.png"/></a></figure><h1 id="8ef8969a-8fbd-413a-bcb5-72d8536d8d1a" class="">カスタマーゲートウェイの作成</h1><hr id="43ee586d-9af2-4960-8fd8-ae77ca699fcd"/><p id="e401ea9e-2e1f-471f-8a85-d0e84b2f1e18" class="">AWS ConsoleのVPCからカスタマーゲートウェイを選択して、カスタマーゲートウェイの作成をクリックします。 </p><p id="8dcb1265-350b-465d-b13e-0332cbe290da" class="">名前は任意、BGPのASNはデフォルト、IPアドレスはオンプレミス側のGIPを指定します。 </p><p id="fbcb827f-1f92-4e3b-8c6b-36c50b24aa55" class="">ARN 証明書はIKE 認証のために事前に共有されたキーではなくデジタル証明書を使用する際に利用します。</p><ul id="028c900b-05b2-40ce-9315-91f66459fe01" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/vpn-certificate-based-site-to-site/">https://aws.amazon.com/jp/premiumsupport/knowledge-center/vpn-certificate-based-site-to-site/</a></li></ul><p id="1f23bad6-a82c-456f-88a7-1596b478fcac" class="">今回はIKE認証で実施するので何も選択しません。 デバイスも今回は未入力とし、カスタマーゲートウェイを作成します。</p><figure id="d3a581e7-1de4-4c25-9b59-1c3e8c628b9c" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013116.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413013116.png"/></a></figure><h1 id="64cc48c6-7020-4d5e-8b99-098e1cc6106f" class="">サイト間のVPN接続の設定</h1><hr id="b66f87c0-82fa-4f53-a400-d439fe3b90a3"/><p id="db479a97-311b-4336-a3b5-5f391eadd110" class="">AWS ConsoleのVPCからサイト間のVPN接続を選択して、VPN接続を作成するをクリックします。 </p><p id="0586540d-6915-43e2-bea7-b8458e085a7a" class="">名前タブには任意の名前を入れ、仮想プライベートゲートウェイとカスタマーゲートウェイIDは先ほど作成したものを選択し、</p><p id="a5132a36-43c0-4b90-ad04-cada367b6823" class=""> ルーティングオプションは静的を選択します。</p><figure id="acd203a4-ffdb-499c-a0f1-e35457702345" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014024.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014024.png"/></a></figure><p id="a196132d-8190-4e71-9e8e-b248b4ca5988" class="">トンネルオプションはデフォルトのままでVPN接続の作成をクリックします。</p><figure id="320012f4-3904-4105-9f14-4ab19c156b5b" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014044.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014044.png"/></a></figure><p id="d879aec6-a7fd-4395-bd49-1c72eff6e1a9" class="">トンネルオプションで選択できるものを一応貼っておきます。</p><figure id="eaaad86e-a694-46e3-9d88-72836a182307" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014424.png"><img style="width:672px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014424.png"/></a></figure><figure id="b99aaf69-69c6-4fb0-8de6-3c4168561865" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014447.png"><img style="width:480px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014447.png"/></a></figure><p id="c3455c0d-02db-4dfb-8a51-a58e1602af2b" class="">作成できたら作成したVPN接続を選択して設定のダウンロードを選択します。</p><p id="cd58664f-c3ba-4d63-8187-8e3198019cc4" class="">ベンダーは色々選べます（CISCO、Pfsense、Yamaha、Fortinet、F5、Juniperなど）</p><p id="c0e4f3da-0986-40cb-935d-415fdb61f953" class="">今回接続する対象はFortigateなので以下のような形で設定情報をダウンロードしています。</p><figure id="adf625e5-1325-4b2e-8a47-6fb03fc3393e" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014823.png"><img style="width:336px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413014823.png"/></a></figure><p id="415775a0-6622-4da4-b042-30b33c49686d" class="">設定ファイルをダウンロードするとトンネルIPや事前共有鍵の記載があるので確認しておきましょう。</p><h1 id="af91e9ef-1899-46f0-8610-99ac69a202e4" class="">Fortigateの設定</h1><hr id="7d475399-736c-4f45-b3d1-906874f27ee4"/><p id="eac29e1f-2382-4579-b222-961fdb13d96c" class="">AWS側は接続元のトンネルを２つ用意してくれているので２つ設定することを忘れないようにしてください。 </p><p id="2ec5a193-e59c-4087-9dab-6ba05494cd15" class="">またルーティング設定でプライオリティの設定をどちらかは下げるようにしてください。</p><p id="e34f2d78-fb26-492b-81cc-a2b0a7d651b6" class="">FortigateにログインしてメニューのVPNからIPSecウィーザードを選択します。 </p><p id="945097fe-3fa0-49ae-9f8e-0a46f822d428" class="">任意の名前を入れ、テンプレートタイプはカスタムを選択します。</p><figure id="359b5b88-8eeb-4cfc-9797-9747267480cf" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413020106.png"><img style="width:464px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413020106.png"/></a></figure><p id="66f59584-f2e3-4128-8ee5-a5da714e8a07" class="">
+</p><p id="ce7010d7-936c-4c46-ab9f-f9c167e5924a" class="">ネットワークの欄ではIPアドレスのところに先ほど設定ダウンロードしたAWS側のTunnelIPを記載します。<br/>インターフェースにはWANを選択します。<br/></p><figure id="c6c69e4d-2039-4990-9214-0047ea6077d1" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413020037.png"><img style="width:638px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413020037.png"/></a></figure><p id="d35fcedb-25bc-4462-ab2f-e15baeafa9f8" class="">認証方式は事前共有鍵を選択し、事前共有鍵に先ほど設定ダウンロードした記載のPre-Shared Keyを入力します。</p><p id="8dc55767-c357-4e28-8c86-a5ae494437fe" class=""> 残りはダウンロードした設定ファイルに従ってFortigate側の設定を行います。 </p><p id="e31ea52c-2e6b-4353-8368-504f52a5ae0f" class="">暗号化強度は最低要件を満たして実施しているので強度を上げる場合には適時暗号化強度を変更してください。 </p><p id="19d7c82a-a8da-4a92-aca0-dcd7b1985dc9" class="">尚、Ciscoの設定をダウンロードしたら以下のように記載がありました。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="ec775cac-402e-4e81-9156-169b19ce1eaf" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">! A policy is established for the supported ISAKMP encryption,
+! authentication, Diffie-Hellman, lifetime, and key parameters.
+! Please note, these sample configurations are for the minimum requirement of AES128, SHA1, and DH Group 2.
+! Category &quot;VPN&quot; connections in the GovCloud region have a minimum requirement of AES128, SHA2, and DH Group 14.
+! You will need to modify these sample configuration files to take advantage of AES256, SHA256, or other DH groups like 2, 14-18, 22, 23, and 24.
+! NOTE: If you customized tunnel options when creating or modifying your VPN connection, you may need to modify these sample configurations to match the custom settings for your tunnels.</code></pre><figure id="543fa486-7575-4f16-93dc-86f2dea788e0" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413021452.png"><img style="width:556px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413021452.png"/></a></figure><figure id="ef0db0b1-b07d-49ba-9efa-f6d472d2b6cd" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413022934.png"><img style="width:620px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413022934.png"/></a></figure><figure id="3a7fff37-22b6-4aba-aab4-39d9177586f7" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023206.png"><img style="width:624px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023206.png"/></a></figure><figure id="4b9c8752-5a35-4356-b86a-f71a13a9f485" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023238.png"><img style="width:623px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023238.png"/></a></figure><p id="daee32f7-ff21-4fbf-b838-34fc13f5d3fd" class="">次にルーティング設定を行います。</p><p id="ebabdb85-8a55-4b6e-870d-cde16646bcd9" class="">ネットワークからスタティクルートを選択し、新規作成をクリックします。</p><p id="05557526-b592-4a9b-94aa-adfe98b649f2" class="">宛先にはVPCのCIDRを入力し、インターフェースには先ほど作ったVPNをプルダウンから選択します。</p><figure id="2c9dec5f-bdd6-49f6-8e8e-887e70d35dfa" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023626.png"><img style="width:669px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023626.png"/></a></figure><p id="cd159817-e864-4cf3-9e22-c194e4742ea2" class="">次にAWSとの通信許可をポリシー&amp;オブジェクトのIPv4ポリシーから新規作成をクリックします。</p><p id="0bea275d-ac73-4748-b4d9-7155ba8a1460" class="">名前は任意で入力します。</p><p id="44a34c97-59d2-47de-879f-f496f4af4990" class="">入力インターフェースはLAN側のインターフェースを選択し、出力インターフェースは先ほど作ったVPNをプルダウンから選択します。</p><p id="56b9a85b-8bc9-4170-85a5-e3ba246c534c" class=""> 送信元や宛先、サービスなどは環境ごとに適時設定してください。今回はALLで設定しています。</p><p id="4f70cd6e-94f1-4011-ba4c-bbf4971a5ad6" class=""> 画像は省略しますが逆側の通信も同様に作るようにしてポリシーが両方向で設定できたら完了です。</p><p id="b6dd514a-e95e-4389-a8c7-8402a132dab5" class=""> 通信ができていない間は警告の黄色▲マークが表示されますがIPSec接続できるようになれば消えます。</p><figure id="bad2a93d-ee36-4b05-a8d7-136c4eb155e5" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023940.png"><img style="width:454px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413023940.png"/></a></figure><figure id="6230b525-cef7-4df9-b33c-0404bf8dac1b" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413024730.png"><img style="width:1056px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413024730.png"/></a></figure><p id="44597d54-c94e-4680-9012-b0eaf8112754" class="">ここまででFortigateの設定は完了です。</p><h1 id="d088e9cb-aba6-4eba-8717-0a51340b05d5" class="">VPCのルートテーブルの設定</h1><hr id="226f9429-2b61-483f-aa25-927566ea360d"/><p id="cf77f8fa-5d40-4341-ae5b-39c83c8e0b33" class="">AWS ConsoleのVPCから接続したVPCのルートテーブルを選択し、アクションからルート編集をクリックします。 </p><p id="9c280784-cd49-41f5-9bcf-126bdd201990" class="">ルートの追加をクリックして、FortigateのLAN(internal)側のネットワークアドレスを入力し、</p><p id="3894776a-ec6c-4597-b27d-4245a01cc4bf" class="">ターゲットを作成した仮想プライベートゲートウェイを指定します。 最後にルートの保存をクリックします。</p><figure id="c0c976f3-f2ca-47bf-81da-ec07dccc52df" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413025401.png"><img style="width:912px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413025401.png"/></a></figure><h1 id="9899e4bd-9485-4a4c-9167-e4edc3dc3cab" class="">IPSecVPNステータスをチェック</h1><hr id="9a248a59-65c6-4734-9231-8659f15e4a91"/><p id="89d00802-0e19-410c-88bf-886f115950c9" class="">AWS ConsoleのVPCからサイト間のVPN接続を選択して、作成したVPNを選択します。 </p><p id="515b5be0-44a5-4f5e-9a97-61b813e29759" class="">タブの中にトンネルの詳細があるのでクリックするとステータスがUPになっています。 </p><p id="8ee6c6d5-4207-4819-b27c-3578ea3e7c75" class="">もしUPなっていない場合にはFortigate側のモニタからIPSecモニタを選択し、対象のVPN接続を選択しアップをクリックしてください。</p><figure id="9a68f220-8555-4013-a719-a73b08b1fd42" class="image" style="text-align:left"><a href="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413025644.png"><img style="width:1632px" src="Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40/20220413025644.png"/></a></figure><p id="bbd9ab47-fcd8-4815-b742-52a63adff54b" class="">
+</p><p id="43d25858-afb4-4764-bc4f-d605d0056568" class="">以上でFortigateとAWS VPCとのVPN接続設定が完了です。</p><h1 id="89858e4a-2330-489f-b098-1728fdf5c5bc" class="">最後に</h1><hr id="a16a1bce-a834-40e3-b5c9-083767f39d7d"/><p id="20e98112-5fc2-4afb-aabf-778743df77b3" class="">自宅にFortigateがある人はあまりいないように思いますが、これを自宅でやろうとしている人が誤家庭ですね。 </p><p id="240abb42-b034-43a2-8c8c-b8e0b9152f1e" class="">
+</p><p id="01c6a44a-517c-437a-9632-f53786f63db9" class="">
+</p><p id="55af3a25-7089-4e0e-86f2-27761432cddb" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

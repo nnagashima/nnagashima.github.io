@@ -1,0 +1,693 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Lightsailについて</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="c0e0fe67-d084-4754-968e-34013875b209" class="page sans"><header><h1 class="page-title">Lightsailについて</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="74b14573-72ee-415c-8b27-456e9afc01a1" class="image" style="text-align:left"><a href="Lightsail%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%20c0e0fe67d0844754968e34013875b209/225428.webp"><img style="width:144px" src="Lightsail%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%20c0e0fe67d0844754968e34013875b209/225428.webp"/></a></figure><h1 id="5f1fe05a-e1e6-448f-b4bf-faa9638d72e3" class="">目次</h1><hr id="97df3b51-2229-441d-b785-5634f0648b0e"/><nav id="539393a8-bbe9-4ff7-a1ae-2480ddcc8f19" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5f1fe05a-e1e6-448f-b4bf-faa9638d72e3">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d29f85dc-e671-4108-83a5-2dca833be8d0">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#fc2a78c7-d600-4d15-8bce-74943ab20e99">Lightsailとは</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#eda2939e-d9d2-4951-bc15-fa65259b2e3a">Lightsailのインスタンスについて(2022/08/01)</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5964ea1c-e3fc-44af-97ec-8752e6353a8a">Lightsailのコンテナについて(2022/08/01)</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#2a0888ee-cb0e-441c-b58f-3cf2a2dc661a">Lightsailのデータベースについて(2022/08/01)</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5a0064b3-3e4c-4b3f-b274-1dd29e946d25">Lightsailのロードバランサーについて(2022/08/01)</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#68abfe24-0146-4951-bf05-9d1fb7ee5e82">LightsailのDNSについて</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e9270d83-faab-4f9d-a4dc-940519d2ba71">Lightsailのストレージについて</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#57065cc6-971a-4c21-b8d1-9ed55b4dd46a">Lightsail CDNとは</a></div></nav><h1 id="d29f85dc-e671-4108-83a5-2dca833be8d0" class="">はじめに</h1><hr id="405c0f02-81b7-4d3f-8a0d-5277608391e7"/><p id="2ccbed96-a868-4bc2-93d1-3345365dddb4" class="">LightsailとAWSの各サービスと比較してみました。</p><h1 id="fc2a78c7-d600-4d15-8bce-74943ab20e99" class="">Lightsailとは</h1><hr id="e6d297bd-1ee5-4e8d-906b-4b6d69d4cfbc"/><ul id="095b6a87-43ea-4ebd-b5bb-917f3f279be1" class="bulleted-list"><li style="list-style-type:disc">インスタンス/コンテナ/データベース/ストレージサービス/ロードバランサー/DNS/CDNを提供</li></ul><ul id="9b1dd505-fa28-4920-891e-2d5cda3b5baf" class="bulleted-list"><li style="list-style-type:disc">料金が基本月額固定のため予想可能な低価格の料金を支払うだけ*</li></ul><ul id="98a9e579-9e12-4dfa-9f67-f7c7ffd42982" class="bulleted-list"><li style="list-style-type:disc">スタートアップスクリプトが用意されているのですぐに開始できる</li></ul><ul id="e7891d5a-cd20-4267-bafe-6bb1ce0f5eb5" class="bulleted-list"><li style="list-style-type:disc">LightsailサービスとAWS主要サービスをVPC Peeringを用いて連携することができる</li></ul><ul id="2c0cf29c-f855-40ef-a76d-1b914301f6cc" class="bulleted-list"><li style="list-style-type:disc">スモールスタートをAWS主要サービスからではなくLightsailから始めるのはあり</li></ul><ul id="98b7199b-fc92-46be-9bb7-8904647d4fe0" class="bulleted-list"><li style="list-style-type:disc">SLA保証はなし</li></ul><ul id="20ba566a-708d-4488-86f7-ce3826da53aa" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/lightsail/faq/">https://aws.amazon.com/jp/lightsail/faq/</a></li></ul><ul id="ec330833-18e3-44d9-b0d5-47ced8157016" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/lightsail/pricing/">https://aws.amazon.com/jp/lightsail/pricing/</a></li></ul><h1 id="eda2939e-d9d2-4951-bc15-fa65259b2e3a" class="">Lightsailのインスタンスについて(2022/08/01)</h1><hr id="faadbd11-5d24-49d2-9126-e853f4271a34"/><ul id="b9ed36fe-d637-4bb2-a5c5-b5af468bd6c8" class="bulleted-list"><li style="list-style-type:disc">インスタンスはLinuxとWindowsの両方を提供</li></ul><ul id="8db8376e-24e6-4fe0-8755-d76fcc22ec70" class="bulleted-list"><li style="list-style-type:disc">月額固定でVMを利用することが可能(停止中も課金対象)</li></ul><ul id="a70b9290-8af2-43a5-ba10-363c79774651" class="bulleted-list"><li style="list-style-type:disc">料金の中には転送料金も含まれている(Overした分は料金加算、東京リージョンの場合は0.14 USD/GB)</li></ul><ul id="65057e6a-7a18-47fd-98be-40097f94fd09" class="bulleted-list"><li style="list-style-type:disc">スナップショット機能を提供しており、取得したスナップショットからEC2へアップグレード可能</li></ul><ul id="ce00681e-8a8f-462d-951e-cedaba29fcb8" class="bulleted-list"><li style="list-style-type:disc">静的GIPアドレスをLightsailインスタンスに紐づけることが可能（Redigon内で5つまで無料）</li></ul><ul id="a9ab3b86-d06b-4308-9fc4-bf9b77625766" class="bulleted-list"><li style="list-style-type:disc">CPUメトリクスの監視とアラーム設定が可能であり、それ以外は監視不可</li></ul><p id="019f610a-71a7-4f0a-9183-c01d9b82d7f0" class="">
+</p><p id="ee7adb16-eef4-4fda-a1b5-86bf682a1566" class="">LightsailとEC2の比較</p><table id="6a3155dc-5fe1-4b54-927e-abf00a7e3738" class="simple-table"><tbody><tr id="25232632-c73c-4863-887d-25781f76a7ea"><td id="E@G`" class="">項目</td><td id=";UG\" class="">Lightsail仮想マシン</td><td id="D?;G" class="">EC2</td></tr><tr id="6de2ccfa-02fc-4ce7-9d03-3d6a16aea20a"><td id="E@G`" class="">複数IP</td><td id=";UG\" class="">複数IPアドレスをアタッチすることが不可能</td><td id="D?;G" class="">複数IPアドレスをアタッチすることが可能</td></tr><tr id="f8ad38fe-a0be-4f4a-ba75-4ff9e153e443"><td id="E@G`" class="">コンソール出力</td><td id=";UG\" class="">実践編</td><td id="D?;G" class="">確認は可能</td></tr><tr id="e447cf43-7d3a-4f91-8d31-5d1371145516"><td id="E@G`" class="">終了保護</td><td id=";UG\" class="">終了保護機能なし</td><td id="D?;G" class="">終了保護機能あり</td></tr></tbody></table><ul id="700e819c-5b21-4760-8b41-3d76e1173b91" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-considerations-for-use/">https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-considerations-for-use/</a></li></ul><ul id="eebc14a2-e570-4ba0-953d-d8540f05a349" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-differences-from-ec2/">https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-differences-from-ec2/</a></li></ul><h1 id="5964ea1c-e3fc-44af-97ec-8752e6353a8a" class="">Lightsailのコンテナについて(2022/08/01)</h1><hr id="e86c6a2e-07b0-4a2a-9010-8afe973bccb7"/><ul id="76e0d697-7a60-412b-b4eb-2f675caeb354" class="bulleted-list"><li style="list-style-type:disc">手軽にコンテナサービスを始めることができる</li></ul><ul id="1eb4f9e6-6e9e-4946-8f00-d4c356ae35c8" class="bulleted-list"><li style="list-style-type:disc">DockerHub or ECRからリポジトリを指定してサービスを起動（パブリックのみ）</li></ul><ul id="1f5057d0-9d13-4bbf-ab35-fc08d3f48978" class="bulleted-list"><li style="list-style-type:disc">パブリックエンドポイントはHTTPSのみ提供</li></ul><ul id="dd3dd6e4-ef71-406e-9d54-2ddb4dfb25c7" class="bulleted-list"><li style="list-style-type:disc">コンテナのスケールアウト</li></ul><ul id="7d0a6453-8eae-45ee-b797-a455016bf5d0" class="bulleted-list"><li style="list-style-type:disc">CPUとメモリの監視とアラーム設定が可能</li></ul><h1 id="2a0888ee-cb0e-441c-b58f-3cf2a2dc661a" class="">Lightsailのデータベースについて(2022/08/01)</h1><hr id="8589ac54-e088-4954-ae79-3671b9a9a381"/><ul id="eb8cf2d0-09dd-4ab6-9a82-464d268f0ea1" class="bulleted-list"><li style="list-style-type:disc">MySQL：5.7.38 or 8.0.28のみ</li></ul><ul id="100cff8b-7852-4a0f-8d3c-ada78085f956" class="bulleted-list"><li style="list-style-type:disc">PostgreSQL:10.20 or 11.15 or 12.10のみ</li></ul><ul id="89e4df1e-0edf-49b6-9e6e-e53d053bd751" class="bulleted-list"><li style="list-style-type:disc">固定の月額料金(+snapshot料金)</li></ul><ul id="d67d61ba-c19a-4050-9cf1-6a9693604879" class="bulleted-list"><li style="list-style-type:disc">高可用性オプションあり（別のAZで提供）</li></ul><ul id="18ced378-b781-45ca-9117-b01af3f20ea6" class="bulleted-list"><li style="list-style-type:disc">スナップショット機能を提供（スタンバイから作成）</li></ul><ul id="bdacfe7f-0cdf-4ff0-b40d-708bc8e1e1a6" class="bulleted-list"><li style="list-style-type:disc">パブリックかプライベートを選択することができる</li></ul><ul id="bea88309-b9b5-435c-b0f9-00dbfb4a69a8" class="bulleted-list"><li style="list-style-type:disc">DBパラメータやメンテナンス設定はCLI経由での設定</li></ul><ul id="e9ee9ad9-0f71-4bc0-a5dd-4e6752e3f581" class="bulleted-list"><li style="list-style-type:disc">6項目の監視とアラーム設定が可能</li></ul><p id="cc6169f7-bd75-45ba-afa2-65e4529303e1" class="">
+</p><p id="af41840c-ced9-4115-a579-64ada98a0639" class="">LightsailとRDSの比較</p><table id="86014744-9961-4d6c-bc60-e484fd71eb8b" class="simple-table"><tbody><tr id="2e12b780-b5a2-4c8e-b89a-0929d7c0d1b9"><td id="|SoQ" class="" style="width:176.65625px">項目</td><td id="cjOs" class="" style="width:427.6666666666667px">Lightsailデータベース</td><td id="hIDM" class="" style="width:427.6666666666667px">RDS</td></tr><tr id="83a221f3-102d-4c51-bbe6-4b090bf6a8a9"><td id="|SoQ" class="" style="width:176.65625px">利用料金</td><td id="cjOs" class="" style="width:427.6666666666667px">月額固定</td><td id="hIDM" class="" style="width:427.6666666666667px">利用した分だけ課金</td></tr><tr id="6c7f2f4c-9377-4a12-980e-ae41fc7d197c"><td id="|SoQ" class="" style="width:176.65625px">提供OS</td><td id="cjOs" class="" style="width:427.6666666666667px">MySQL：5.7.38 or 8.0.28のみ/PostgreSQL:10.20 or 11.15 or 12.10のみ</td><td id="hIDM" class="" style="width:427.6666666666667px">MySQL / PostgreSQL / MSSQL / MariaDB / Aurora MySQL / Aurora PostgreSQL</td></tr><tr id="784c5b8f-87ba-4e69-8870-436849bca295"><td id="|SoQ" class="" style="width:176.65625px">インスタンスタイプ</td><td id="cjOs" class="" style="width:427.6666666666667px">固定で決まっているプラン変更不可</td><td id="hIDM" class="" style="width:427.6666666666667px">色々と選べる、プラン変更可能</td></tr><tr id="a99fe152-8791-4a36-a757-ffdfa3a24971"><td id="|SoQ" class="" style="width:176.65625px">サービス連携</td><td id="cjOs" class="" style="width:427.6666666666667px">VPC Peeringを用いてAWSサービスと連携可能</td><td id="hIDM" class="" style="width:427.6666666666667px">VPC Peeringなど意識することなく利用可能</td></tr><tr id="a91f846c-cb6a-49a8-b9f8-d94c69bdb425"><td id="|SoQ" class="" style="width:176.65625px">ネットワーク</td><td id="cjOs" class="" style="width:427.6666666666667px">パブリック、プライベート環境に配置可能</td><td id="hIDM" class="" style="width:427.6666666666667px">パブリック、プライベート環境に配置可能</td></tr><tr id="81870209-59f5-436e-aedd-510dabff9aa4"><td id="|SoQ" class="" style="width:176.65625px">監視</td><td id="cjOs" class="" style="width:427.6666666666667px">CPU使用率、DB接続、DISKキュー深度、DISK空き容量、ネットワークの送信/受信スループット</td><td id="hIDM" class="" style="width:427.6666666666667px">CloudWatchにて様々なメトリック監視提供が可能</td></tr><tr id="522b90f7-e1f2-46a6-9446-2d6abaac8f94"><td id="|SoQ" class="" style="width:176.65625px">DBパラメータ</td><td id="cjOs" class="" style="width:427.6666666666667px">CLI経由でないと更新不可</td><td id="hIDM" class="" style="width:427.6666666666667px">UI上で更新可能</td></tr><tr id="621225a6-158c-469a-8033-5b5e4157c129"><td id="|SoQ" class="" style="width:176.65625px">メンテナンス</td><td id="cjOs" class="" style="width:427.6666666666667px">CLI経由で設定が可能</td><td id="hIDM" class="" style="width:427.6666666666667px">UI上でスケジューリング設定可能</td></tr><tr id="c613425b-cc97-4bcf-a5f3-d973ac1f16eb"><td id="|SoQ" class="" style="width:176.65625px">ログ</td><td id="cjOs" class="" style="width:427.6666666666667px">LightsailのUI上で閲覧可能</td><td id="hIDM" class="" style="width:427.6666666666667px">CloudWatchLogsで閲覧とアラーム設定含めて可能</td></tr><tr id="75cb7af8-6a72-49be-8091-8d68408cf00e"><td id="|SoQ" class="" style="width:176.65625px">バックアップ</td><td id="cjOs" class="" style="width:427.6666666666667px">スナップショット、5分単位で7日分保管</td><td id="hIDM" class="" style="width:427.6666666666667px">スナップショット、5分単位でトランザクションログをS3へ保管、最大で35日分を保管</td></tr></tbody></table><h1 id="5a0064b3-3e4c-4b3f-b274-1dd29e946d25" class="">Lightsailのロードバランサーについて(2022/08/01)</h1><hr id="2be73217-8102-41b4-8444-2191a0a692db"/><ul id="de1c1297-48e6-4aa4-9c18-6408ff94d644" class="bulleted-list"><li style="list-style-type:disc">月額固定料金</li></ul><ul id="d13c8b2e-6a57-4085-b7e2-5d848b1edfad" class="bulleted-list"><li style="list-style-type:disc">SSL通信も利用可能（証明書の取得も可能）</li></ul><ul id="ff619631-bd36-4dca-80f3-8635cac93c99" class="bulleted-list"><li style="list-style-type:disc">取得したものはRoute53で管理可能、Lightsail DNSでも管理可能</li></ul><ul id="4d07c036-3994-43c4-8a8c-1bc93a249b7e" class="bulleted-list"><li style="list-style-type:disc">仮想マシンは80番ポートのListenのみをヘルスチェック</li></ul><ul id="8eeedf00-4440-470e-80f7-b0a2bbdbc820" class="bulleted-list"><li style="list-style-type:disc">正常なホスト数の監視とアラーム設定が可能</li></ul><ul id="f1a57602-3314-40ad-a479-7d27f611e0f8" class="bulleted-list"><li style="list-style-type:disc">機能が足りなければELBを利用することも視野に入れましょう</li></ul><p id="0db7b75f-059a-4654-99c7-c2be37629c41" class="">
+</p><p id="137de9a7-b58c-404b-9d52-85b62dfa6ad0" class="">LightsailロードバランサーとELBの比較</p><table id="b31c1d5c-adfa-4e57-aa69-90aec1eb5a33" class="simple-table"><tbody><tr id="82c1bd2f-217d-45a6-8a74-de52e9888d88"><td id="m;Da" class="" style="width:143.65625px">項目</td><td id="VTqh" class="" style="width:427.6666666666667px">Lightsailロードバランサー</td><td id="uaso" class="" style="width:427.6666666666667px">ELB</td></tr><tr id="c42e8ad2-02c4-434f-8ca6-035114816257"><td id="m;Da" class="" style="width:143.65625px">利用料金</td><td id="VTqh" class="" style="width:427.6666666666667px">18USD</td><td id="uaso" class="" style="width:427.6666666666667px">Application Load Balancer 時間あたり 0.0243USD、LCU 時間あたり 0.008USD</td></tr><tr id="ad189724-8123-4757-acae-3712a7bbf64d"><td id="m;Da" class="" style="width:143.65625px">利用可能ポート</td><td id="VTqh" class="" style="width:427.6666666666667px">80 or 443</td><td id="uaso" class="" style="width:427.6666666666667px">80/443以外も可能</td></tr><tr id="83cfe1d1-a516-490a-8e24-4d7ce36d8ecd"><td id="m;Da" class="" style="width:143.65625px">ターゲットポート</td><td id="VTqh" class="" style="width:427.6666666666667px">80ポートのみ ※CLI経由でカスタマイズ可能</td><td id="uaso" class="" style="width:427.6666666666667px">80ポート以外も可能</td></tr><tr id="d66ea4b6-b18b-4eae-9564-126ff13dfa43"><td id="m;Da" class="" style="width:143.65625px">サービス連携</td><td id="VTqh" class="" style="width:427.6666666666667px">VPC Peeringを用いてAWSサービスと連携可能</td><td id="uaso" class="" style="width:427.6666666666667px">VPC Peeringなど意識することなく利用可能</td></tr><tr id="cd048f85-8b32-49ca-9dfd-36a910be0495"><td id="m;Da" class="" style="width:143.65625px">証明書</td><td id="VTqh" class="" style="width:427.6666666666667px">LBサービスの中で取得可能、Route53 or Lightsail DNSで管理可能</td><td id="uaso" class="" style="width:427.6666666666667px">ACMで取得してRoute53で管理し自動更新可能</td></tr><tr id="4f953a3a-961e-41e6-aa92-a1547b5544be"><td id="m;Da" class="" style="width:143.65625px">ロギング</td><td id="VTqh" class="" style="width:427.6666666666667px">なし</td><td id="uaso" class="" style="width:427.6666666666667px">S3バケットにログ保存可能</td></tr><tr id="e2988925-8fbf-4367-b571-a3318c589789"><td id="m;Da" class="" style="width:143.65625px">HelthCheck</td><td id="VTqh" class="" style="width:427.6666666666667px">HealthCheckPath 設定のみ</td><td id="uaso" class="" style="width:427.6666666666667px">HealthCheckPort、HealthCheckProtocol、Matcherなど選択可</td></tr><tr id="8b2ebb21-d704-42d9-b48c-69644f4e4999"><td id="m;Da" class="" style="width:143.65625px">監視</td><td id="VTqh" class="" style="width:427.6666666666667px">正常なホスト数のみ</td><td id="uaso" class="" style="width:427.6666666666667px">CloudWatchにて様々なメトリック監視提供が可能</td></tr></tbody></table><h1 id="68abfe24-0146-4951-bf05-9d1fb7ee5e82" class="">LightsailのDNSについて</h1><hr id="3b74da5a-62d2-4f3c-a15a-1340b9f592cf"/><ul id="ed64b228-bdc5-4759-bd37-cbae21ab5415" class="bulleted-list"><li style="list-style-type:disc">DNSゾーンは3つまで作成可能 ※4つ以上作りたい場合はRoute53を利用</li></ul><ul id="c97057fe-519c-41e3-801c-c1ef6c87b79b" class="bulleted-list"><li style="list-style-type:disc">ルーティングポリシーなし</li></ul><ul id="3c74aaac-f8b3-4f3b-8516-713921a428ef" class="bulleted-list"><li style="list-style-type:disc">サポートされないレコードタイプ：CAA、DS、NAPTR、PTR、SOA、SPF</li></ul><ul id="fe77d7a6-0bdf-48fc-822e-49ddb4cb20b5" class="bulleted-list"><li style="list-style-type:disc">ヘルスチェック機能なし</li></ul><ul id="ccb05d4d-92d4-44cd-baea-7f8d44f46737" class="bulleted-list"><li style="list-style-type:disc">プライベートDNSゾーンサポートなし</li></ul><ul id="6471b751-504f-470a-8f11-5dd4088d9b85" class="bulleted-list"><li style="list-style-type:disc">機能が足りなければRoute53を利用することも視野に入れましょう</li></ul><p id="d10ac99e-38c9-46c0-a9d3-882e2cc63dea" class="">
+</p><p id="7b5706ac-8355-41e9-942c-1959a8e88f8e" class="">LightsailロードバランサーとELBの比較</p><table id="8d6febc3-ec9c-4d4a-a607-4dca83047a60" class="simple-table"><tbody><tr id="96ff3fc5-e435-40ea-9e28-b20f420c478a"><td id="k~}\" class="" style="width:179.65625px">項目</td><td id="myAn" class="" style="width:427.6666666666667px">Lightsail DNS</td><td id="q&gt;~F" class="" style="width:427.6666666666667px">Route53</td></tr><tr id="e22af1ba-5ece-4e58-82e0-3e9ea223b134"><td id="k~}\" class="" style="width:179.65625px">ゾーン管理</td><td id="myAn" class="" style="width:427.6666666666667px">3つまで管理可能</td><td id="q&gt;~F" class="" style="width:427.6666666666667px">500ゾーンまで管理可能</td></tr><tr id="b0a241af-a80f-4113-8236-2bad84029984"><td id="k~}\" class="" style="width:179.65625px">ルーティングポリシー</td><td id="myAn" class="" style="width:427.6666666666667px">3つまで管理可能</td><td id="q&gt;~F" class="" style="width:427.6666666666667px">500ゾーンまで管理可能</td></tr><tr id="2e218efb-b290-42b5-9b6c-24b0af0007ee"><td id="k~}\" class="" style="width:179.65625px">ヘルスチェック</td><td id="myAn" class="" style="width:427.6666666666667px">機能なし</td><td id="q&gt;~F" class="" style="width:427.6666666666667px">機能あり</td></tr><tr id="19f5cbbd-955a-4a43-bb01-af1dc29432ca"><td id="k~}\" class="" style="width:179.65625px">プライベートDNS</td><td id="myAn" class="" style="width:427.6666666666667px">プライベートDNS管理不可能</td><td id="q&gt;~F" class="" style="width:427.6666666666667px">プライベートDNS管理可能</td></tr></tbody></table><h1 id="e9270d83-faab-4f9d-a4dc-940519d2ba71" class="">Lightsailのストレージについて</h1><hr id="ff453e8d-fe83-49b6-8588-d2a185853a12"/><ul id="af2e1017-0dbe-4c7f-883c-717a2c6f9d9d" class="bulleted-list"><li style="list-style-type:disc">仮想マシンにアタッチできるDISKとオブジェクトストレージの両方を提供</li></ul><ul id="db2402d8-aaea-4c10-8f27-c5c840e1aede" class="bulleted-list"><li style="list-style-type:disc">仮想マシンにアタッチできるDISK<ul id="79b238a2-c135-45c0-8d00-e3dab2c271c1" class="bulleted-list"><li style="list-style-type:circle">サイズはカスタマイズで必要な量だけを選択可能</li></ul><ul id="38f84310-7ec2-4abd-b760-e5db2b7366af" class="bulleted-list"><li style="list-style-type:circle">DISKタイプはSSDのみを提供</li></ul><ul id="9d46ffe9-8b3c-4e25-b294-5809de4bb0bf" class="bulleted-list"><li style="list-style-type:circle">最小8GBから作成でき最大16TBまで可能</li></ul><ul id="abaaccbc-e452-4814-a167-9367d7a9ba35" class="bulleted-list"><li style="list-style-type:circle">リージョン内で20,000GBまで</li></ul></li></ul><ul id="35e41ab8-d786-4543-ae65-590a32c6f54b" class="bulleted-list"><li style="list-style-type:disc">オブジェクトストレージ<ul id="d4fe4ef9-3881-47d5-9d35-07d0a08e07d1" class="bulleted-list"><li style="list-style-type:circle">事前に必要量を確保した月次サービス（容量or転送量超えると追加課金）</li></ul><ul id="ebf2b943-ce33-440a-81b7-93948de1bf3c" class="bulleted-list"><li style="list-style-type:circle">毎月AWS請求サイクル内で1回だけLightsailオブジェクトストレージのプランを変更可能</li></ul><ul id="146232b8-8277-41da-9486-541aa85db03d" class="bulleted-list"><li style="list-style-type:circle">総使用容量やバケット内のオブジェクト数の監視とアラーム設定が可能</li></ul></li></ul><p id="38aae8ff-314a-446b-a0ca-a8ac976f8bbe" class="">
+</p><p id="31517caa-6d3c-43ad-af61-057adbc0a142" class="">Lightsail DISKとEBSの比較</p><table id="5d1f9434-a375-4222-a12f-ffb3854874cd" class="simple-table"><tbody><tr id="490cf8e9-3702-4bfd-9237-11c6526b33c2"><td id="BJ}`" class="" style="width:128.65625px">項目</td><td id="HL{B" class="" style="width:427.6666666666667px">Lightsail Disk</td><td id="{?:a" class="" style="width:427.6666666666667px">EBS</td></tr><tr id="cd8437c0-8851-4693-ad84-440fbc35d656"><td id="BJ}`" class="" style="width:128.65625px">ディスクタイプ</td><td id="HL{B" class="" style="width:427.6666666666667px">SSDのみ</td><td id="{?:a" class="" style="width:427.6666666666667px">SSDの他にgp3/gp2/IOPS SSDなど使用可能</td></tr><tr id="b1161221-7b1e-4d85-b579-edf4d0a45bde"><td id="BJ}`" class="" style="width:128.65625px">暗号化</td><td id="HL{B" class="" style="width:427.6666666666667px">デフォルトで暗号化</td><td id="{?:a" class="" style="width:427.6666666666667px">暗号化の選択はユーザーにて実施</td></tr><tr id="cb079330-6310-45db-998d-568e0424e52c"><td id="BJ}`" class="" style="width:128.65625px">最大容量</td><td id="HL{B" class="" style="width:427.6666666666667px">16TB</td><td id="{?:a" class="" style="width:427.6666666666667px">64TB</td></tr><tr id="ea6e1c6f-ac56-441f-a53a-8a957da556bc"><td id="BJ}`" class="" style="width:128.65625px">設定サイズ</td><td id="HL{B" class="" style="width:427.6666666666667px">任意で指定可能</td><td id="{?:a" class="" style="width:427.6666666666667px">任意で指定可能</td></tr></tbody></table><p id="717a3d30-0d72-45a7-a346-d1b860e1ef07" class="">Lightsail オブジェクトストレージとS3の比較</p><ul id="7e7c8cea-1639-4552-9e06-5954a0d999d3" class="bulleted-list"><li style="list-style-type:disc">S3の機能をLightsailは踏襲しているため基本機能の違いはほとんどなし</li></ul><table id="31200532-2a7f-4be2-9c74-b93bf575311e" class="simple-table"><tbody><tr id="3030fa55-5f1c-4bd6-bae1-eefde165b504"><td id="b~U&lt;" class="" style="width:126.65625px">項目</td><td id="h{jy" class="" style="width:427.6666666666667px">Lightsail オブジェクトストレージ</td><td id="bC[H" class="" style="width:427.6666666666667px">S3</td></tr><tr id="e8c76dfd-a427-4880-9431-deaabc1e5414"><td id="b~U&lt;" class="" style="width:126.65625px">料金</td><td id="h{jy" class="" style="width:427.6666666666667px">容量と転送料金の固定、※容量もしくは転送料金超えたら課金</td><td id="bC[H" class="" style="width:427.6666666666667px">従量課金</td></tr></tbody></table><h1 id="57065cc6-971a-4c21-b8d1-9ed55b4dd46a" class="">Lightsail CDNとは</h1><hr id="0a04c799-cc23-4190-bc8a-15ef4da88dff"/><ul id="2e74db12-7eb6-4e29-a82a-8bde21743ab9" class="bulleted-list"><li style="list-style-type:disc">3つのプランがあり、1ヶ月当たりの転送量が決まった定額制</li></ul><ul id="931f0535-f60d-4e9d-8e6d-d1db27bb8d6f" class="bulleted-list"><li style="list-style-type:disc">超過した分は別途料金が発生</li></ul><ul id="0b80d1b2-273c-43b8-a4cd-964752ea4bd1" class="bulleted-list"><li style="list-style-type:disc">キャッシュの設定が予めプリセットで用意されており、独自の設定を追加することも可能</li></ul><ul id="b224f124-9b21-49e2-aabf-d3f4e15e30c6" class="bulleted-list"><li style="list-style-type:disc">SSL 証明書の発行やメトリクスの確認など、全操作がLightsailのコンソールから操作可能</li></ul><ul id="319fa9ee-f210-454f-b0e8-a65252a62518" class="bulleted-list"><li style="list-style-type:disc">LightsailのDNSゾーンでCloudFrontのディストリビューションをAliasレコードで指定可能</li></ul><ul id="7a3a8b8d-923c-47eb-82bb-876907b652bf" class="bulleted-list"><li style="list-style-type:disc">一部CloudFront で出来た設定が出来ない<ul id="a41a45ba-a900-418e-a3d9-776bae4e895e" class="bulleted-list"><li style="list-style-type:circle">インスタンスへの直接アクセスをブロックできない</li></ul><ul id="6cca985a-06df-4dfd-bc16-b75321aaf705" class="bulleted-list"><li style="list-style-type:circle">エラーの場合、カスタムエラーページを表示することができない</li></ul><ul id="64efae64-ee64-4ab7-83c8-a4bd2e566012" class="bulleted-list"><li style="list-style-type:circle">オリジンのフェイルオーバー機能がない</li></ul></li></ul><p id="fa152977-d36a-4397-a3c7-ab73a9b332da" class="">
+</p><p id="e768ade0-93ee-4d48-be6c-f91206f185dc" class="">Lightsail CDNとCloudFrontの比較</p><table id="abb2b0f5-bb84-4855-9d5f-d09027d45133" class="simple-table"><tbody><tr id="b26a979d-79c1-48f5-a4a9-77be4606c89d"><td id="hzc:" class="" style="width:145.65625px">項目</td><td id="=M:@" class="" style="width:427.6666666666667px">Lightsail CDN</td><td id="Afcj" class="" style="width:427.6666666666667px">CloudFront</td></tr><tr id="7fe1f00d-22de-484c-93cf-35b08f1136d4"><td id="hzc:" class="" style="width:145.65625px">料金</td><td id="=M:@" class="" style="width:427.6666666666667px">容量と転送料金の固定、※容量もしくは転送料金超えたら課金</td><td id="Afcj" class="" style="width:427.6666666666667px">1TB のデータ転送 (アウト)、1,000 万件の HTTP または HTTPS リクエスト、2,000,000 件の CloudFront Function 呼び出しが毎月無料</td></tr><tr id="2ec1a9c8-f6ab-4510-9110-e19a2a8189bc"><td id="hzc:" class="" style="width:145.65625px">オリジン対象</td><td id="=M:@" class="" style="width:427.6666666666667px">Lightsail インスタンス、コンテナ、ロードバランサーバケット</td><td id="Afcj" class="" style="width:427.6666666666667px">S3バケット、EC2、ELB、MediaStoreコンテナ、MediaPackageエンドポイント</td></tr><tr id="3acb6557-2246-4199-99b8-ad7a87619bfd"><td id="hzc:" class="" style="width:145.65625px">オリジン</td><td id="=M:@" class="" style="width:427.6666666666667px">複数のオリジンは不可能</td><td id="Afcj" class="" style="width:427.6666666666667px">複数のオリジン可能</td></tr><tr id="d74c7c93-cd9c-4c96-81a1-4a06617da323"><td id="hzc:" class="" style="width:145.65625px">向き不向き</td><td id="=M:@" class="" style="width:427.6666666666667px">インスタンスやロードバランサーなどのLightsailリソースでウェブサイトまたはウェブアプリケーションをホストしているユーザー向け</td><td id="Afcj" class="" style="width:427.6666666666667px">AWS で別のサービスを使用してウェブサイトやアプリをホストしている場合、複雑な設定が必要な場合、または1秒あたりのリクエスト数が多いワークロードや大量の動画ストリーミングで配信向け</td></tr></tbody></table><p id="8b9446da-f7f8-4ed6-9622-58575910f9a1" class="">
+</p><p id="ce5139e6-c861-459c-a1df-9286c53b4a7e" class="">
+</p><p id="bca1956b-6b3c-44bd-bfcb-60ab49c4a46d" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

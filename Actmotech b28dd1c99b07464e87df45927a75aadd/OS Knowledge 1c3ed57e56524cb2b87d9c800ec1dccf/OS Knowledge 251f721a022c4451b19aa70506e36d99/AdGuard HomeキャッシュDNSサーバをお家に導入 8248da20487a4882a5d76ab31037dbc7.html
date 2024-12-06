@@ -1,0 +1,948 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>AdGuard HomeキャッシュDNSサーバをお家に導入</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="8248da20-487a-4882-a5d7-6ab31037dbc7" class="page sans"><header><h1 class="page-title">AdGuard HomeキャッシュDNSサーバをお家に導入</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="c90739f4-c783-43b3-86b6-4b517bfb12bb" class="image" style="text-align:left"><a href="Guacamole%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E7%92%B0%E5%A2%83%E3%82%92%E6%95%B4%E3%81%88%E3%82%8B%2006607b0254a146f2926a6087ee4ab548/ubuntu_14143.png"><img style="width:192px" src="Guacamole%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E7%92%B0%E5%A2%83%E3%82%92%E6%95%B4%E3%81%88%E3%82%8B%2006607b0254a146f2926a6087ee4ab548/ubuntu_14143.png"/></a></figure><p id="44cff0e9-4e71-4c87-bcd9-18c598d34026" class="">目次</p><nav id="40a57931-e066-47a5-8b5d-5eff38c8e0bb" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8b1de400-62db-4f1e-8b29-9f9c98928a46">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1279da9f-3730-80f1-9d6b-f68b4527de4c">UnboudとADGuardを組み合わせてやりたこと</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#89e218ed-68fb-484a-9dc3-a2785b766539">構築環境</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f9713494-ae54-43b7-9243-bb1b354b83ca">OSセットアップ</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f5c85b83-4fea-4bbe-85cd-9e61dde1b218">AdGuard Homeインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7a8bcaa9-e37b-499c-a420-108bea599e54">ADGuardのDoH設定に関わる補足情報</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3b3ca02f-a81a-48bf-8d7a-1f7ea0011c81">AdGuard Homeの設定 - <strong>アップストリームDNSサーバー設定</strong></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e01d27b3-69a2-48b9-854c-6444b85d7ee6">AdGuard Homeの設定 - 暗号化設定をする場合の情報</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d5ceaa8f-afdc-48df-b7e9-f323c8de612e">AdGuard Homeの設定 - DNSブロックリストの追加</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5ebc9c13-6ded-443b-934b-f2d5a3140a4d">AdGuard Homeの設定 - 同期設定（AdguardHome-sync）</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5d6bc238-3bfd-4b98-93fd-410376808b62">最後に管理画面の画像</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1279da9f-3730-8066-9d47-d73d634b2459">Unboudの設定</a></div></nav><h1 id="8b1de400-62db-4f1e-8b29-9f9c98928a46" class="">はじめに</h1><hr id="1289da9f-3730-80e3-add3-c49cd0d9a474"/><p id="727e3547-0f28-4280-b9e4-99c3187949af" class="">今まで自宅ではUnboundでDNSキャッシュサーバ運用していましたが、Unboundにさまざまなサイトのブロックリストを喰わせるのに、</p><p id="fd7032eb-cb52-43f7-a057-c7403572938b" class="">スクリプト書いたり、ブロックされたドメインのチェックをするのがUIでできないのでめんどくさいなと思っていたところ、</p><p id="d18c419a-e855-43a0-84b1-d3346b279624" class="">AdGuardHomeでDNSキャッシュサーバ兼ドメインブロックができることを知り、UnboundからAdGuardに切り替えたことを備忘録として残す。</p><p id="1279da9f-3730-80cd-b7b2-e33147efc08c" class="">なお、UnboundはADGuardのアップストリームとして継続して利用しています。</p><ul id="402e9c5b-6f74-4609-9761-7438721715b9" class="bulleted-list"><li style="list-style-type:disc">以前のキャッシュDNSサーバ</li></ul><figure id="5476b835-5f64-42e4-b1e8-6c0d649bc251"><a href="https://blog.actmotech.xyz/d21b533870cc41d9ad4f6f12dc24c1bf" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">自宅にキャッシュDNSサーバ</div><div class="bookmark-description">目次 はじめに 自宅にキャッシュDNSサーバがあればWebアクセス速度があがるかなと思ったので好奇心で作りました。 利用するものはunboundになります。 OSはUbuntu22.04を採用しています。 Unboundとは UnboundはDNSリゾルバ、キャッシュ、DNSSEC検証機能を持つDNSキャッシュサーバー</div></div><div class="bookmark-href"><img src="https://storage.googleapis.com/notionstyles.appspot.com/users/aIck3Ce5hJgAHKtgHvCwzXfxx4H2/be600ffc-81aa-4b81-a911-2b0b8bbaf125.png" class="icon bookmark-icon"/>https://blog.actmotech.xyz/d21b533870cc41d9ad4f6f12dc24c1bf</div></div><img src="https://s3.ap-northeast-1.amazonaws.com/wraptas-prod/actmotech/dd28bf69-bc66-4d6d-a2b9-9f873d4e67bb/05a08aa58e35ac107008462a7f9d1911.png" class="bookmark-image"/></a></figure><h1 id="1279da9f-3730-80f1-9d6b-f68b4527de4c" class="">UnboudとADGuardを組み合わせてやりたこと</h1><hr id="1289da9f-3730-8097-8d35-e9fdbcd48c44"/><ul id="1279da9f-3730-809a-b91d-eb75f494447e" class="bulleted-list"><li style="list-style-type:disc">Unboudは軽量でありパラメータチューニングが可能なため、リゾルバとしての動作を高速化させる。</li></ul><ul id="1279da9f-3730-80e8-822d-f8abc0df6d14" class="bulleted-list"><li style="list-style-type:disc">ADGuardは機能通り、トラッキングリクエストや広告をフィルタリングすることでマルウェアからの保護を向上させる。</li></ul><h1 id="89e218ed-68fb-484a-9dc3-a2785b766539" class="">構築環境</h1><hr id="1289da9f-3730-80b6-8d86-ca311ce5cc49"/><ul id="99d67b6e-30a6-438b-bf04-34000ac4faac" class="bulleted-list"><li style="list-style-type:disc">自宅ハイパーバイザー：Proxmox8.2</li></ul><ul id="809331d7-0a44-4579-afbe-6f676cc9b145" class="bulleted-list"><li style="list-style-type:disc">OS：RockyLinux9の冗長構成</li></ul><ul id="77f283cc-93d2-457f-aa72-7eddf1938e53" class="bulleted-list"><li style="list-style-type:disc">何かしらのドメインを取得していること（ADGuardでDoHをやりたい場合）</li></ul><h1 id="f9713494-ae54-43b7-9243-bb1b354b83ca" class="">OSセットアップ</h1><hr id="1289da9f-3730-802f-a994-edf9e67baec7"/><p id="1fb1be21-b235-4ce0-a26a-8bf8029614f8" class="">以下を参考にしてください。</p><figure id="c144edcc-7841-4cac-b356-57dd9aba879d"><a href="https://blog.actmotech.xyz/f8933b6457e64efcbc802962379dca6c" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">UbuntuOSの初期設定</div><div class="bookmark-description">目次 はじめに 個人的に実施する初期設定の内容を以下に記載していきます。 ホスト名の設定 Firewallの無効化 Firewall設定の確認して無効化であればOK 無効化するのであれば以下コマンドを実行 OSの日本語化 日本語関連パッケージのインストール システムのロケールを日本語(UTF-8)へ設定と確認 Time</div></div><div class="bookmark-href"><img src="https://storage.googleapis.com/notionstyles.appspot.com/users/aIck3Ce5hJgAHKtgHvCwzXfxx4H2/be600ffc-81aa-4b81-a911-2b0b8bbaf125.png" class="icon bookmark-icon"/>https://blog.actmotech.xyz/f8933b6457e64efcbc802962379dca6c</div></div><img src="https://s3.ap-northeast-1.amazonaws.com/wraptas-prod/actmotech/c98d1417-03b5-459a-8260-4c8d504cd2c1/c0785f0371019bc87f1d2e2fa6c4d4ae.png" class="bookmark-image"/></a></figure><h1 id="f5c85b83-4fea-4bbe-85cd-9e61dde1b218" class="">AdGuard Homeインストール</h1><hr id="1289da9f-3730-8084-bc59-d617348b6f27"/><p id="00b6487b-637c-4e5a-9a15-0a3ede5897c7" class="">1号機(192.168.21.5)と2号機(192.168.21.6)で同じことを実施します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7ad12c1e-7819-40f1-832e-3c41c38160fd" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># apt install curl
+# curl -s -S -L https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
+starting AdGuard Home installation script
+channel: release
+operating system: linux
+cpu type: amd64
+AdGuard Home will be installed into /opt/AdGuardHome
+checking tar
+script is executed with root privileges
+no need to uninstall
+downloading package from https://static.adtidy.org/adguardhome/release/AdGuardHome_linux_amd64.tar.gz -&gt; AdGuardHome_linux_amd64.tar.gz
+successfully downloaded AdGuardHome_linux_amd64.tar.gz
+unpacking package from AdGuardHome_linux_amd64.tar.gz into /opt
+successfully unpacked, contents: 
+合計 31580
+-rwxrwxrwx 1 root root 32149656  6月  6 23:36 AdGuardHome
+-rw-rw-rw- 1 root root      566  6月  6 23:36 AdGuardHome.sig
+-rw-r--r-- 1 root root   115641  6月  6 23:36 CHANGELOG.md
+-rw-r--r-- 1 root root    35149  6月  6 23:36 LICENSE.txt
+-rw-r--r-- 1 root root    22128  6月  6 23:36 README.md
+2024/06/19 01:58:14 [info] AdGuard Home, version v0.107.51
+2024/06/19 01:58:14 [info] service: control action: install
+2024/06/19 01:58:15 [info] service: started
+2024/06/19 01:58:15 [info] Almost ready!
+AdGuard Home is successfully installed and will automatically start on boot.
+There are a few more things that must be configured before you can use it.
+Click on the link below and follow the Installation Wizard steps to finish setup.
+AdGuard Home is now available at the following addresses:
+2024/06/19 01:58:15 [info] go to http://127.0.0.1:3000
+2024/06/19 01:58:15 [info] go to http://[::1]:3000
+2024/06/19 01:58:15 [info] go to http://192.168.21.5:3000
+2024/06/19 01:58:15 [info] service: action install has been done successfully on linux-systemd
+AdGuard Home is now installed and running
+you can control the service status with the following commands:
+sudo /opt/AdGuardHome/AdGuardHome -s start|stop|restart|status|install|uninstall</code></pre><p id="bcd43e49-3edf-49d2-ac28-6500e84cbfa7" class="">インストール完了したらhttp://IPアドレス:3000でアクセスを実施し、ウィザードに従って入力していきます。</p><p id="11a8a6e7-df9f-475b-972d-962245b3af6d" class="">表示された内容は以下です。（スクショ撮り忘れました）</p><ul id="3cf2453a-e648-48c4-8fcd-cb673ec5fc9a" class="bulleted-list"><li style="list-style-type:disc">管理用待ち受けインターフェースの設定と待ち受けポート番号</li></ul><ul id="44f88eb6-270d-4929-a70a-34c4e4deb9e0" class="bulleted-list"><li style="list-style-type:disc">DNSサーバ待ち受けインターフェースの設定と待ち受けポート番号</li></ul><ul id="08d141df-70c0-4541-b0cd-1ea584dc6b40" class="bulleted-list"><li style="list-style-type:disc">管理用UIにログインする際のユーザー名とパスワード</li></ul><h1 id="7a8bcaa9-e37b-499c-a420-108bea599e54" class="">ADGuardのDoH設定に関わる補足情報</h1><hr id="1289da9f-3730-800f-9a74-ccaaf04c1aa9"/><p id="d852a966-4e03-4c29-85d5-67f8468ce864" class="">このあと同期設定を実施しますが本設定については同期はされないのでDoH及びDoTを有効化するのに証明書が必要となるためLet`s Encryptを利用します。</p><p id="4639f5d2-f971-4490-8b4c-adf05f4a944f" class="">※ DNS over TLS（DoT）とは、DNSにTLSを組み合わせ、ドメイン名やIPアドレスなどの問い合わせや応答を暗号化する通信規約です。</p><p id="bbe42011-82bf-4c1e-9329-28cf111b7a03" class="">1号機(192.168.21.5)と2号機(192.168.21.6)で同じことを実施します。</p><p id="a63978e0-a664-43a5-8965-c4ffd892c912" class="">なお、Let`s Encryptで証明書を更新する際にCronに記載していた記憶があるのですが、</p><p id="10512dcf-e296-4583-8d07-125ebac227c4" class="">今はCertbotに組み込まれたタイマーを使って簡単にSSL証明書の更新をしてくれるらしいです。（systemctl status certbot.timer）</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a4811c06-d146-47b5-a3c9-8fed8f2b0a20" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># apt -y install certbot
+# certbot certonly --manual --preferred-challenges=dns --preferred-chain=&quot;ISRG Root X1&quot;
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Please enter the domain name(s) you would like on your certificate (comma and/or
+space separated) (Enter &#x27;c&#x27; to cancel): 登録するドメイン名を記載
+Requesting a certificate for 登録するドメイン名
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Please deploy a DNS TXT record under the name:
+
+_acme-challenge.登録するドメイン名
+
+with the following value:
+
+【DNS TXT record】
+
+Before continuing, verify the TXT record has been deployed. Depending on the DNS
+provider, this may take some time, from a few seconds to multiple minutes. You can
+check if it has finished deploying with aid of online tools, such as the Google
+Admin Toolbox: https://toolbox.googleapps.com/apps/dig/#TXT/_acme-challenge.登録するドメイン名.
+Look for one or more bolded line(s) below the line &#x27;;ANSWER&#x27;. It should show the
+value(s) you&#x27;ve just added.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Press Enter to Continue
+
+※ここでTXTレコードの登録を促されているので、ドメインを管理画面でTXTレコードを登録してくさい。
+※登録後しばらくすると配信されるので待ってからEnterを押してください。
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/登録するドメイン名/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/登録するドメイン名/privkey.pem
+This certificate expires on 2024-09-17.
+These files will be updated when the certificate renews.
+
+NEXT STEPS:
+- This certificate will not be renewed automatically. Autorenewal of --manual certificates requires the use of an authentication hook script (--manual-auth-hook) but one was not provided. To renew this certificate, repeat this same certbot command before the certificate&#x27;s expiry date.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let&#x27;s Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# systemctl status certbot.timer
+● certbot.timer - Run certbot twice daily
+     Loaded: loaded (/usr/lib/systemd/system/certbot.timer; enabled; preset: enabled)
+     Active: active (waiting) since Wed 2024-06-19 22:23:42 JST; 9min ago
+    Trigger: Thu 2024-06-20 09:23:33 JST; 10h left
+   Triggers: ● certbot.service
+
+ 6月 19 22:23:42 adguard02 systemd[1]: Started certbot.timer - Run certbot twice daily.</code></pre><h1 id="3b3ca02f-a81a-48bf-8d7a-1f7ea0011c81" class="">AdGuard Homeの設定 - <strong>アップストリームDNSサーバー設定</strong></h1><hr id="1289da9f-3730-8006-99ad-d72a3336fb5c"/><p id="c7a3c2cc-50df-4667-8a2e-3d3412fd9c2b" class="">1号機(192.168.21.5)で実施します。</p><p id="e6e41779-2b9b-43fc-8817-f529a086f14c" class="">AdGuard Homeの問い合わせ先として使用するDNSサーバを設定します。</p><p id="bf68a071-3ddb-42d0-9b75-9e66e45da144" class="">設定＞DNS設定＞アップストリームDNSサーバで以下の内容で反映します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="091c750a-2d25-424d-9362-3beac49c19dc" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">127.0.0.1:8953</code></pre><p id="e322856a-fb50-4abc-9f1e-084e81878307" class="">※リクエストモードは「並列リクエスト」にすることで解決スピードを向上させます。</p><h1 id="e01d27b3-69a2-48b9-854c-6444b85d7ee6" class="">AdGuard Homeの設定 - 暗号化設定をする場合の情報</h1><hr id="1289da9f-3730-80a3-9080-ffeac6914170"/><p id="e58ca6e5-2c1a-4e96-9b23-91d75d60dc28" class="">1号機(192.168.21.5)で実施します。</p><p id="c551047b-ee8a-4eb4-9278-0b52ad56b9fc" class="">設定＞暗号化設定で設定をしていきます。</p><ul id="99ae373f-0124-4eb5-b280-dc2de3138f2f" class="bulleted-list"><li style="list-style-type:disc">暗号化を有効にする（HTTPS、DNS-over-HTTPS、DNS-over-TLS）にチェックオンにします。</li></ul><ul id="14b8b84b-57ef-434b-bbdc-a9de0a7421d1" class="bulleted-list"><li style="list-style-type:disc">サーバ名はSSL証明書を取得する際に利用したドメイン名にします。</li></ul><ul id="0274ec54-44ef-4bae-808a-04d61821a9be" class="bulleted-list"><li style="list-style-type:disc">証明書では<ul id="5e617cee-0f29-4579-9653-136b8d55183d" class="bulleted-list"><li style="list-style-type:circle">証明書のパスを設定するを選択し、fullcahin.pemのファイルパスを記載します。</li></ul><ul id="ded42ba8-9182-42f1-aac9-1ee819b6f1d2" class="bulleted-list"><li style="list-style-type:circle">秘密鍵のパスを設定するを選択し、privkey.pemのファイルパスを記載します。</li></ul></li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="0d2edc26-7ecb-402b-97f9-6760d7eca793" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">/etc/letsencrypt/live/登録するドメイン名/fullchain.pem
+/etc/letsencrypt/live/登録するドメイン名/privkey.pem</code></pre><h1 id="d5ceaa8f-afdc-48df-b7e9-f323c8de612e" class="">AdGuard Homeの設定 - DNSブロックリストの追加</h1><hr id="1289da9f-3730-8016-8abf-c6a23c0712bc"/><p id="9d6713b4-557f-4d5c-943b-46129485bba0" class="">1号機(192.168.21.5)で実施します。</p><p id="b212ce49-b013-4271-97dc-b0333e5a810a" class="">インストール直後のリストは以下となっていました。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="4e32fab7-aa33-416e-b748-64688a2233f8" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">・AdGuard DNS filterが有効
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
+・AdAway Default Blocklistが無効
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt</code></pre><p id="29b61e2d-3e07-4a94-9585-05d45efed986" class="">上記に以下内容を加えました。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1a32a701-154e-4686-86bf-4b4e6fb2fcc8" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">・Steven Black&#x27;s List（広告やトラッキング、および悪意のあるドメインをブロックするためのホストファイルリスト）
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_33.txt
+・豆腐フィルタ（有名ですよね）
+https://raw.githubusercontent.com/tofukko/filter/master/Adblock_Plus_list.txt</code></pre><p id="43a31dae-21ee-4007-9c46-ae1a81f66ae3" class="">リストについてはAdGuardHomeにて定期的に最新化したものをダウンロードしてくれます。</p><h1 id="5ebc9c13-6ded-443b-934b-f2d5a3140a4d" class="">AdGuard Homeの設定 - 同期設定（AdguardHome-sync）</h1><hr id="1289da9f-3730-80d1-a930-d632bd931189"/><p id="8c1d472f-5909-4a65-ba4f-d94ebcef48ed" class="">1号機(192.168.21.5)で設定を実施します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="951c6e04-e2e1-42e4-bd5f-76d20c0c6a25" class="code"><code class="language-TypeScript" style="white-space:pre-wrap;word-break:break-all"># mkdir adguardhome-sync &amp;&amp; cd adguardhome-sync
+# curl -OL https://github.com/bakito/adguardhome-sync/releases/download/v0.6.11/adguardhome-sync_0.6.11_linux_amd64.tar.gz
+# tar zxvf adguardhome-sync_0.6.11_linux_amd64.tar.gz
+# vi ~/.bash_profile
+export LOG_LEVEL=info
+export ORIGIN_URL=http://192.168.21.5 #1号機
+export ORIGIN_USERNAME=ray-adm #1号機で作成したアカウント
+export ORIGIN_PASSWORD=****** #1号機で作成したパスワード
+export REPLICA1_URL=http://192.168.21.6 #2号機
+export REPLICA1_USERNAME=ray-adm #2号機で作成したアカウント
+export REPLICA1_PASSWORD=****** #2号機で作成したパスワード
+# source .bash_profile</code></pre><p id="32c34da6-eec0-47ca-90ec-64370f901e5b" class="">手動でテスト実行し同期が実施できるか確認します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="78322d8a-60ab-4d8f-92cc-0a9d950ac3a3" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># ./adguardhome-sync run
+2024-06-19T21:23:44.587+0900    INFO    sync    sync/sync.go:38 AdGuardHome sync        {&quot;version&quot;: &quot;0.6.11&quot;, &quot;build&quot;: &quot;2024-05-25T06:15:56Z&quot;, &quot;os&quot;: &quot;linux&quot;, &quot;arch&quot;: &quot;amd64&quot;}
+2024-06-19T21:23:44.588+0900    INFO    sync    sync/http.go:68 Starting API server     {&quot;port&quot;: 8080}
+2024-06-19T21:23:44.588+0900    INFO    sync    sync/sync.go:75 Running sync on startup
+2024-06-19T21:23:44.639+0900    INFO    sync    sync/sync.go:174        Connected to origin     {&quot;from&quot;: &quot;192.168.21.5&quot;, &quot;version&quot;: &quot;v0.107.51&quot;}
+2024-06-19T21:23:45.352+0900    INFO    sync    sync/sync.go:267        Start sync      {&quot;from&quot;: &quot;192.168.21.5&quot;, &quot;to&quot;: &quot;192.168.21.6&quot;}
+2024-06-19T21:23:45.404+0900    INFO    sync    sync/sync.go:275        Connected to replica    {&quot;from&quot;: &quot;192.168.21.5&quot;, &quot;to&quot;: &quot;192.168.21.6&quot;, &quot;version&quot;: &quot;v0.107.51&quot;}
+2024-06-19T21:23:45.505+0900    INFO    client  client/client.go:437    Set profile     {&quot;host&quot;: &quot;192.168.21.6&quot;, &quot;language&quot;: &quot;ja&quot;, &quot;theme&quot;: &quot;auto&quot;}
+2024-06-19T21:23:45.813+0900    INFO    client  client/client.go:338    Set stats config        {&quot;host&quot;: &quot;192.168.21.6&quot;, &quot;interval&quot;: 7776000000}
+2024-06-19T21:23:45.969+0900    INFO    client  client/client.go:241    Add filter      {&quot;host&quot;: &quot;192.168.21.6&quot;, &quot;url&quot;: &quot;https://adguardteam.github.io/HostlistsRegistry/assets/filter_33.txt&quot;, &quot;whitelist&quot;: false, &quot;enabled&quot;: true}
+2024-06-19T21:23:46.291+0900    INFO    client  client/client.go:241    Add filter      {&quot;host&quot;: &quot;192.168.21.6&quot;, &quot;url&quot;: &quot;https://raw.githubusercontent.com/tofukko/filter/master/Adblock_Plus_list.txt&quot;, &quot;whitelist&quot;: false, &quot;enabled&quot;: true}
+2024-06-19T21:23:46.397+0900    INFO    client  client/client.go:262    Refresh filter  {&quot;host&quot;: &quot;192.168.21.6&quot;, &quot;whitelist&quot;: false}
+2024-06-19T21:23:47.196+0900    INFO    client  client/client.go:276    Set user rules  {&quot;host&quot;: &quot;192.168.21.6&quot;, &quot;rules&quot;: 0}
+2024-06-19T21:23:47.424+0900    INFO    client  client/client.go:375    Set access list {&quot;host&quot;: &quot;192.168.21.6&quot;}
+2024-06-19T21:23:47.593+0900    INFO    sync    sync/sync.go:303        Sync done       {&quot;from&quot;: &quot;192.168.21.5&quot;, &quot;to&quot;: &quot;192.168.21.6&quot;}</code></pre><p id="1e532cd5-a3d0-4a0d-a55f-aadb94a5a213" class="">手動実行ができればあとはCrontabに記載するのみです。（毎日0時に1号機から2号機へ同期実行）</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="f33b6738-c34e-4abb-a644-719873dd8768" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># crontab -e
+LOG_LEVEL=info
+ORIGIN_URL=http://192.168.21.5
+ORIGIN_USERNAME=ray-adm
+ORIGIN_PASSWORD=******
+REPLICA1_URL=http://192.168.21.6
+REPLICA1_USERNAME=ray-adm
+REPLICA1_PASSWORD=******
+00 00 * * * /root/adguardhome-sync/adguardhome-sync run
+
+※ctrl+sで保存、ctrl+xで終了</code></pre><h1 id="5d6bc238-3bfd-4b98-93fd-410376808b62" class="">最後に管理画面の画像</h1><hr id="1289da9f-3730-80b1-b417-e113d43f0f77"/><p id="93110b6b-ec44-4f8f-89b8-c893f5b6c76d" class="">日本語対応しているし、どのドメインをブロックしているのかや、どのIPからどういったリクエストがあったのかをUIで確認できるのは非常に便利です。</p><p id="13540097-dea3-474d-a126-67b0e18f6f6c" class="">統計保持で最大365日保持することが可能となります。（設定は時間単位になるので8760時間）</p><p id="ae1b1054-046a-4e60-a6b2-e1f01cd952e7" class="">なにより端末毎にいれなくていいのがいいですよね！その代わりサーバが増えることになりますが。。。</p><figure id="784c76c7-d0fd-4561-b9af-a801c5f2215e" class="image" style="text-align:left"><a href="AdGuard%20Home%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5DNS%E3%82%B5%E3%83%BC%E3%83%8F%E3%82%99%E3%82%92%E3%81%8A%E5%AE%B6%E3%81%AB%E5%B0%8E%E5%85%A5%208248da20487a4882a5d76ab31037dbc7/Untitled.png"><img style="width:912px" src="AdGuard%20Home%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5DNS%E3%82%B5%E3%83%BC%E3%83%8F%E3%82%99%E3%82%92%E3%81%8A%E5%AE%B6%E3%81%AB%E5%B0%8E%E5%85%A5%208248da20487a4882a5d76ab31037dbc7/Untitled.png"/></a></figure><h1 id="1279da9f-3730-8066-9d47-d73d634b2459" class="">Unboudの設定</h1><hr id="1289da9f-3730-803e-8b08-eb8a7486941c"/><p id="1279da9f-3730-800b-a891-d269accb8f4b" class="">ADGuardのサーバ上で設定をしていきます。（1号機と2号機両方で実施ください。）</p><p id="1279da9f-3730-80dc-89db-f4539c39aeb2" class="">設定内容については初期インストールを想定して記載しています。</p><p id="1279da9f-3730-80d7-ba4f-cb2d7722ca3d" class="">Unboudとdigコマンドをインストールします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-80cc-8372-ecca2662eb20" class="code"><code class="language-JavaScript"># dnf install unbound bind-utils</code></pre><p id="1279da9f-3730-80b6-a1d9-eac418930c8b" class="">ベースとなる設定ファイルを作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-8038-a0b0-f2f7a1857565" class="code"><code class="language-JavaScript">
+# vi /etc/unbound/conf.d/base.conf
+server:
+    interface: 127.0.0.1@8953
+    interface: 127.0.0.1@5353
+
+    access-control: 0.0.0.0/0 refuse
+    access-control: 127.0.0.0/8 allow
+    access-control: 192.168.11.0/24 allow
+    access-control: 192.168.12.0/24 allow
+    access-control: 192.168.21.0/24 allow
+
+    interface-automatic: no 
+
+    module-config: &quot;respip validator iterator&quot;
+
+    val-permissive-mode: yes
+
+    hide-version: yes
+    hide-identity: yes
+
+    root-hints: &quot;/var/lib/unbound/root.hints&quot;
+
+    do-ip6: no 
+
+    use-syslog: no
+    logfile: /var/log/unbound/unbound.log
+    log-replies: yes
+    log-local-actions: yes
+    log-queries: yes
+    log-time-ascii: yes
+    extended-statistics: yes 
+
+forward-zone:
+    name: &quot;.&quot;
+    forward-addr: 1.1.1.1
+    forward-addr: 8.8.8.8 
+
+remote-control:
+    control-interface: &quot;/var/run/unbound-control.sock&quot; 
+</code></pre><p id="1279da9f-3730-80ee-a687-f24901bfc7a0" class="">所有者を変更します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-80b4-9390-e087309f468c" class="code"><code class="language-JavaScript"># chown root:unbound base.conf</code></pre><p id="1279da9f-3730-80b1-aa8b-d595f59e5b5f" class="">保管先ログフォルダを作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-801c-b4da-c9a0c2ee4357" class="code"><code class="language-JavaScript"># mkdir /var/log/unbound
+# chown unbound:unbound /var/log/unbound</code></pre><p id="1279da9f-3730-80d3-9525-fa2ec9137092" class="">DNSSEC（DNS Security Extensions）で使用される鍵ファイルの所有者を変更します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-803d-a491-f5552f03cb68" class="code"><code class="language-JavaScript"># chown unbound:unbound /etc/unbound/root.key </code></pre><p id="1279da9f-3730-8056-84b7-e33cc2d4319a" class="">元の設定ファイルの後ろにorgをつけます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-8003-bb98-cb3c089c59e7" class="code"><code class="language-JavaScript"># pwd
+/etc/unbound/conf.d
+# ls
+base.conf  example.com.conf.org  remote-control.conf.org  tuning.conf</code></pre><p id="1279da9f-3730-8082-ad6f-e0d303b210c3" class="">チューニング設定をします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-80d7-ae45-d279d4bddd40" class="code"><code class="language-JavaScript"># cat tuning.conf 
+server:
+    msg-cache-slabs: 8
+    rrset-cache-slabs: 8
+    infra-cache-slabs: 8
+    key-cache-slabs: 8
+
+    rrset-cache-size: 512m
+    msg-cache-size: 128m
+
+    outgoing-num-tcp: 1000
+    incoming-num-tcp: 1000
+
+    outgoing-range: 8192
+    num-queries-per-thread: 4096
+
+    so-rcvbuf: 4m
+    so-sndbuf: 4m
+
+    minimal-responses: yes
+    qname-minimisation: yes
+
+    infra-cache-numhosts: 1000000</code></pre><p id="1279da9f-3730-8093-b291-f24273fbad95" class="">各パラメータの解説を記載しておきます。</p><ul id="1279da9f-3730-80ed-8649-e77b5a152e56" class="bulleted-list"><li style="list-style-type:disc">msg-cache-slabs: 8:</li></ul><p id="1279da9f-3730-806d-a280-cad60bf0f5f3" class="">メッセージキャッシュに使用するスラブの数を指定します。スラブはメモリ管理手法の一つで、特定サイズのオブジェクトを効率的に管理します。この設定では、8つのスラブを使用します。</p><ul id="1279da9f-3730-802d-99ef-f1fc080d4058" class="bulleted-list"><li style="list-style-type:disc">rrset-cache-slabs: 8:</li></ul><p id="1279da9f-3730-80af-b3d4-d69d2274593d" class="">リソースレコードセット（RRset）のキャッシュに使用するスラブの数を指定します。</p><ul id="1279da9f-3730-80eb-89eb-de20f97d7c8a" class="bulleted-list"><li style="list-style-type:disc">infra-cache-slabs: 8:</li></ul><p id="1279da9f-3730-807e-9de6-ee654457bc85" class="">インフラキャッシュに使用するスラブの数を指定します。インフラキャッシュは、特定のホスト情報をキャッシュして、名前解決を迅速に行うために使用されます。</p><ul id="1279da9f-3730-807e-8256-c4aec9add6cc" class="bulleted-list"><li style="list-style-type:disc">key-cache-slabs: 8:</li></ul><p id="1279da9f-3730-80b8-b7a7-c6a097bdb303" class="">鍵キャッシュに使用するスラブの数を指定します。</p><ul id="1279da9f-3730-8021-9427-c5e1b3c4b1cf" class="bulleted-list"><li style="list-style-type:disc">rrset-cache-size: 512m:</li></ul><p id="1279da9f-3730-80eb-9253-fb582d48e75f" class="">リソースレコードセットのキャッシュサイズを512MBに設定します。キャッシュサイズが大きいほど、DNSクエリの応答が高速になりますが、使用するメモリも増加します。</p><ul id="1279da9f-3730-80a8-881a-da2ea35c7970" class="bulleted-list"><li style="list-style-type:disc">msg-cache-size: 128m:</li></ul><p id="1279da9f-3730-80aa-9627-dd24367e9bf3" class="">メッセージキャッシュのサイズを128MBに設定します。</p><ul id="1279da9f-3730-809a-b861-d97c302f6bc4" class="bulleted-list"><li style="list-style-type:disc">outgoing-num-tcp: 1000:</li></ul><p id="1279da9f-3730-80ba-a606-ffc3bac0bb08" class="">TCP接続でのアウトゴーイングクエリの最大数を1000に設定します。</p><ul id="1279da9f-3730-80ce-8c0a-e3c06cfa45af" class="bulleted-list"><li style="list-style-type:disc">incoming-num-tcp: 1000:</li></ul><p id="1279da9f-3730-8035-bb70-c21a914ce07f" class="">TCP接続でのインカミングクエリの最大数を1000に設定します。</p><ul id="1279da9f-3730-80e8-8a40-d37e642f84ff" class="bulleted-list"><li style="list-style-type:disc">outgoing-range: 8192:</li></ul><p id="1279da9f-3730-8079-b14a-e96eee774d56" class="">アウトゴーイングトラフィックに使用できるポート範囲を8192に設定します。これにより、同時に処理できる接続の数が増加します。</p><ul id="1279da9f-3730-80d1-b856-e362f6ac86ce" class="bulleted-list"><li style="list-style-type:disc">num-queries-per-thread: 4096:</li></ul><p id="1279da9f-3730-8091-8da7-eb56a4853138" class="">各スレッドが処理できる最大クエリ数を4096に設定します。これにより、スレッドの負荷を制御できます。</p><ul id="1279da9f-3730-8037-ae4f-e797c0907cff" class="bulleted-list"><li style="list-style-type:disc">so-rcvbuf: 4m:</li></ul><p id="1279da9f-3730-8003-b3c2-d2b2ca13387d" class="">ソケット受信バッファのサイズを4MBに設定します。受信したデータをバッファリCOんｆングするためのメモリ領域です。</p><ul id="1279da9f-3730-8011-b48c-cdc02529ff58" class="bulleted-list"><li style="list-style-type:disc">so-sndbuf: 4m:</li></ul><p id="1279da9f-3730-80f8-b971-f5d4c516e22f" class="">ソケット送信バッファのサイズを4MBに設定します。送信するデータをバッファリングするためのメモリ領域です。</p><ul id="1279da9f-3730-808e-be44-f77ab199cc87" class="bulleted-list"><li style="list-style-type:disc">minimal-responses: yes:</li></ul><p id="1279da9f-3730-803d-8115-da2d763fb827" class="">クエリに対する応答を最小限にするオプションを有効にします。これにより、不要な情報を含まない応答が返され、プライバシーとパフォーマンスが向上します。</p><ul id="1279da9f-3730-80ac-bf38-e688d6cbe536" class="bulleted-list"><li style="list-style-type:disc">qname-minimisation: yes:</li></ul><p id="1279da9f-3730-80f2-99c8-deda80524b16" class="">名前解決の際に、クエリの名前を最小限に抑える設定を有効にします。これにより、プライバシーが向上します。具体的には、DNSクライアントが必要な情報だけをクエリするようになります。</p><ul id="1279da9f-3730-8079-a432-d2c01f6b46d4" class="bulleted-list"><li style="list-style-type:disc">infra-cache-numhosts: 1000000:</li></ul><p id="1279da9f-3730-8021-b04e-edce633f0b91" class="">インフラキャッシュに保存できるホストの最大数を100万に設定します。この設定により、大規模なネットワーク環境でのキャッシュの効率が向上します。<br/><br/></p><p id="1279da9f-3730-80f9-85fa-c71d0da4fd2e" class="">所有者を変更します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-8036-a421-d78d7c1c87e6" class="code"><code class="language-JavaScript"># chown root:unbound tuning.conf</code></pre><p id="1279da9f-3730-809d-9fbb-cc4d7bc58567" class="">最後に残りのunboudのパラメータを作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-8059-990c-dfd74cf28bc0" class="code"><code class="language-JavaScript"># pwd
+/etc/unbound
+
+# vi unbound.conf
+server:
+        verbosity: 2 
+        statistics-interval: 0
+        statistics-cumulative: no
+        extended-statistics: yes
+        num-threads: 4
+        interface-automatic: no
+        outgoing-port-permit: 32768-60999
+        outgoing-port-avoid: 0-32767
+        so-reuseport: yes
+        ip-transparent: yes
+        max-udp-size: 3072
+        chroot: &quot;&quot;
+        username: &quot;unbound&quot;
+        directory: &quot;/var/lib/unbound&quot;
+        log-time-ascii: yes
+        harden-glue: yes
+        harden-dnssec-stripped: yes
+        harden-below-nxdomain: yes
+        harden-referral-path: yes
+        qname-minimisation: yes
+        aggressive-nsec: yes
+        unwanted-reply-threshold: 10000000
+        prefetch: yes
+        prefetch-key: yes
+        rrset-roundrobin: yes
+        minimal-responses: yes
+        trust-anchor-signaling: yes
+        root-key-sentinel: yes
+        val-clean-additional: yes
+        serve-expired: yes
+        val-log-level: 1
+        ipsecmod-enabled: no
+        ipsecmod-hook:/usr/libexec/ipsec/_unbound-hook
+        auto-trust-anchor-file: &quot;/var/lib/unbound/root.key&quot;
+        include: /etc/unbound/conf.d/*.conf
+
+remote-control:
+        control-enable: yes
+        server-key-file: &quot;/etc/unbound/unbound_server.key&quot;
+        server-cert-file: &quot;/etc/unbound/unbound_server.pem&quot;
+        control-key-file: &quot;/etc/unbound/unbound_control.key&quot;
+        control-cert-file: &quot;/etc/unbound/unbound_control.pem&quot;</code></pre><p id="1279da9f-3730-8065-bd81-ee6dc6ad4e24" class="">Unboundで秘密鍵と公開鍵を作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-804b-a85b-dacd4213a879" class="code"><code class="language-JavaScript"># systemctl start unbound-keygen</code></pre><p id="1279da9f-3730-80ea-a4ba-c1b05e87d580" class="">root.hintをダウンロードします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-8096-a20c-ee35790d4e64" class="code"><code class="language-JavaScript"># curl -o /var/lib/unbound/root.hints https://www.internic.net/domain/named.cache</code></pre><p id="1279da9f-3730-802e-a988-d9db478481d3" class="">UnboundのConfigをチェックします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-8027-99dd-d5a673a7b5f0" class="code"><code class="language-JavaScript"># unbound-checkconf 
+unbound-checkconf: no errors in /etc/unbound/unbound.conf</code></pre><p id="1279da9f-3730-8043-8b52-ea1607e8a920" class="">Unboudのulimitを変更して、Unboundサービスを起動します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1279da9f-3730-80df-9bb2-f6e7acdf113a" class="code"><code class="language-JavaScript">
+# vi /lib/systemd/system/unbound.service
+[Unit]
+Description=Unbound recursive Domain Name Server
+After=network.target
+After=unbound-keygen.service
+Wants=unbound-keygen.service
+Wants=unbound-anchor.timer
+Before=nss-lookup.target
+Wants=nss-lookup.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/sysconfig/unbound
+ExecStartPre=/bin/ulimit -HSn 65536
+ExecStartPre=/usr/sbin/unbound-checkconf
+ExecStartPre=/bin/bash -c &#x27;if [ ! &quot;$DISABLE_UNBOUND_ANCHOR&quot; == &quot;yes&quot; ]; then /usr/sbin/unbound-anchor -a /var/lib/unbound/root.key -c /etc/unbound/icannbundle.pem -f /etc/resolv.conf -R; else echo &quot;Updates of root keys with unbound-anchor is disabled&quot;; fi&#x27;
+ExecStart=/usr/sbin/unbound -d $UNBOUND_OPTIONS
+ExecReload=/usr/sbin/unbound-control reload
+
+[Install]
+WantedBy=multi-user.target
+
+# systemctl deamon-reload
+# systemctl --now enable unbound</code></pre></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

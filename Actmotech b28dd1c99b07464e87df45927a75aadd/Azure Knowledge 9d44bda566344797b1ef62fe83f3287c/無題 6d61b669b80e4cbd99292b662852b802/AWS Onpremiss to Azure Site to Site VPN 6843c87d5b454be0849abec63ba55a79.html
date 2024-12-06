@@ -1,0 +1,688 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>AWS/Onpremiss to Azure Site to Site VPN</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="6843c87d-5b45-4be0-849a-bec63ba55a79" class="page sans"><header><h1 class="page-title">AWS/Onpremiss to Azure Site to Site VPN</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="5545228b-d1f3-4268-8fe2-d30a71adbd4c" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E3%2583%2580%25E3%2582%25A6%25E3%2583%25B3%25E3%2583%25AD%25E3%2583%25BC%25E3%2583%2589.png"><img style="width:336px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E3%2583%2580%25E3%2582%25A6%25E3%2583%25B3%25E3%2583%25AD%25E3%2583%25BC%25E3%2583%2589.png"/></a></figure><h1 id="34fb989c-ac75-485e-8ca4-550ee2466ef1" class="">目次</h1><hr id="d9a7116b-e82c-4a30-a54b-87fd031ad46d"/><nav id="7a1d20c5-9b43-4344-9b1c-ad9de945eeea" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#34fb989c-ac75-485e-8ca4-550ee2466ef1">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0dc4b704-3171-4aaa-922b-b4874a12bf53">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#ba386807-28fb-4fbd-991c-3127b42abc3b">前提</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5d4f207a-0b9c-46e4-b171-e91c83e57696">参考にした情報</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#352ceb19-01cc-435c-b9f8-a9330c01df82">Azure側で仮想ネットワークでゲートウェイサブネット作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3e96ddc0-dce8-492e-b640-b98ac60904aa">Azure 側で仮想ネットワークゲートウェイ作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b1058a62-a9c9-4253-af84-800895d5eea0">AWS側の設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#abae9c2c-9f9c-4847-b518-51639da1d17b">オンプレミス側の設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7e2efd39-2a03-467e-abc7-fc5e616a8761">Azure側で ローカルネットワークゲートウェイ作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8185bd64-859e-4427-a3b1-b35815fd8784">VPN接続を作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#28520a8d-ae9c-4525-bd8d-2e8d730706b8">VPN接続確認</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4d5da195-76c6-4b92-926b-428450fb2994">最後に</a></div></nav><h1 id="0dc4b704-3171-4aaa-922b-b4874a12bf53" class="">はじめに</h1><hr id="073aa718-5a7a-40c7-ad92-fe950bcde2cf"/><p id="d7530ba2-2997-4fca-a3d3-d6b8bdf38abb" class="">ハイブリットクラウドの検討においてIPSecVPNでAzureとAWS / Onpremissを接続しました。 </p><p id="7c1ce083-899b-4cf4-94d2-008cd964ff39" class="">OnpremissにはUnifi Dream Machine Pro を利用しています。</p><h1 id="ba386807-28fb-4fbd-991c-3127b42abc3b" class="">前提</h1><hr id="86a7da4d-b483-4456-946e-68dc7665ea08"/><ul id="bd5168d1-0fef-40b7-8018-4ea6081a8e9f" class="bulleted-list"><li style="list-style-type:disc">AWSの仮想ネットワークは作成済み</li></ul><ul id="38dd67e8-4f99-4f98-b849-82f1947957d5" class="bulleted-list"><li style="list-style-type:disc">Azureの仮想ネットワークは作成済み</li></ul><h1 id="5d4f207a-0b9c-46e4-b171-e91c83e57696" class="">参考にした情報</h1><p id="a76c9cbf-f73b-403a-a7cf-cfe2d610c6ce" class=""><a href="https://learn.microsoft.com/ja-jp/azure/vpn-gateway/tutorial-site-to-site-portal">https://learn.microsoft.com/ja-jp/azure/vpn-gateway/tutorial-site-to-site-portal</a></p><h1 id="352ceb19-01cc-435c-b9f8-a9330c01df82" class="">Azure側で仮想ネットワークでゲートウェイサブネット作成</h1><hr id="9bb1da9c-255c-4d78-baa6-09d080d86f1e"/><p id="1e344b93-7fc1-4fcf-b530-c1794e6d092f" class="">サブネットからゲートウェイサブネット作成します。</p><p id="ee69fbfb-6c76-4202-8d22-4fb6afea38da" class="">サブネットアドレス範囲：ゲートウェイサブネット用に作成します。</p><figure id="7425c967-8c54-4d6f-9642-40d3e988af30" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled.png"><img style="width:555px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled.png"/></a></figure><h1 id="3e96ddc0-dce8-492e-b640-b98ac60904aa" class="">Azure 側で仮想ネットワークゲートウェイ作成</h1><hr id="1ca1246e-1f1c-4626-a925-4264ad766263"/><p id="f2957887-24a6-4299-af6d-73392784e901" class="">仮想ネットワークゲートウェイを作成します。</p><ul id="49b982c8-f0dc-40be-b24b-37b2bdc41c4d" class="bulleted-list"><li style="list-style-type:disc"><strong>[名前]:</strong> 好きな名前で作成します。</li></ul><ul id="a53df6a9-1ea4-42ed-9948-49eb3bafcdf2" class="bulleted-list"><li style="list-style-type:disc"><strong>[リージョン]:</strong> RGがあるリージョンを選択します。</li></ul><ul id="9fdb15fd-8ebe-499a-922b-b4b32a01f56f" class="bulleted-list"><li style="list-style-type:disc"><strong>ゲートウェイの種類:</strong> VPN</li></ul><ul id="66e57cee-e958-44c0-9b81-19f8a2cea69a" class="bulleted-list"><li style="list-style-type:disc"><strong>VPN の種類:</strong> ルート ベース</li></ul><ul id="338674bf-d59f-4787-9482-8cffa610bdb0" class="bulleted-list"><li style="list-style-type:disc"><strong>SKU:</strong> VpnGw2</li></ul><ul id="ba39a88c-96d2-450c-8509-b8f323f92d15" class="bulleted-list"><li style="list-style-type:disc"><strong>世代:</strong> 第 2 世代</li></ul><ul id="bf5fd5c0-b8da-457c-9b60-b0deea822fe2" class="bulleted-list"><li style="list-style-type:disc"><strong>仮想ネットワーク:</strong> 先ほど作成したゲートウェイサブネットが存在する仮想ネットワークを選びます。</li></ul><ul id="b6cf1996-47e2-4451-9cc4-91021f5bd1d6" class="bulleted-list"><li style="list-style-type:disc"><strong>ゲートウェイ サブネットのアドレス範囲:</strong> 仮想ネットワークを選択するとゲートウェイサブネットが表示されます。</li></ul><ul id="982f5e1c-de85-4b9b-9dc5-c3fdc31792ca" class="bulleted-list"><li style="list-style-type:disc"><strong>[パブリック IP アドレス]</strong> : 新規作成</li></ul><ul id="05fb4d65-3178-4321-8b36-42a752034035" class="bulleted-list"><li style="list-style-type:disc"><strong>パブリック IP アドレス名:</strong> 好きな名前で作成します。</li></ul><ul id="9db7505f-16c7-4001-bf8b-1227520be09b" class="bulleted-list"><li style="list-style-type:disc"><strong>アクティブ/アクティブ モードの有効化:</strong> 有効</li></ul><p id="2e47ce71-4215-4b7a-8bf8-38e58b9c6b6f" class="">→有効にすることでアクティブ/アクティブ モードでのVPNゲートウェイを作成することができます。</p><p id="bb6b433f-81bf-47c5-a17d-01ef193272d3" class="">　※ゾーン冗長はゾーン指定でもいいですが今回はゾーン冗長で実施しました。（料金は変わらないはず）</p><ul id="06246f7c-49fc-4fc0-950f-39d9e50cb032" class="bulleted-list"><li style="list-style-type:disc"><strong>[Configure BGP](BGP の構成):</strong> 無効</li></ul><p id="e07535d7-deef-45d6-ad63-bd525fc283e9" class="">
+</p><p id="de01bd3b-2543-44d4-a9c5-c1096d42df3e" class="">参考情報</p><p id="ac256295-6f49-40e4-bf22-e4c94012ac0a" class="">SKUについて：<a href="https://learn.microsoft.com/ja-jp/azure/vpn-gateway/vpn-gateway-about-vpngateways">https://learn.microsoft.com/ja-jp/azure/vpn-gateway/vpn-gateway-about-vpngateways</a></p><p id="ef27d40e-1a4d-4305-a346-d16fbb6c99bf" class="">VNGの料金について：<a href="https://azure.microsoft.com/ja-jp/pricing/details/vpn-gateway/">https://azure.microsoft.com/ja-jp/pricing/details/vpn-gateway/</a></p><p id="e8c00c89-4a46-42ed-a902-804d2c8974bd" class="">※SKUのサイズによってデプロイされる時間が結構変わるようです。</p><figure id="06d78232-54ca-473f-849e-218a1a836703" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled%201.png"><img style="width:1392px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled%201.png"/></a></figure><h1 id="b1058a62-a9c9-4253-af84-800895d5eea0" class="">AWS側の設定</h1><hr id="feb4d30c-ee18-4547-8ea7-233421fc2359"/><p id="cd949c0b-4d61-4fc9-8952-b732badf4285" class="">カスタマーゲートウェイ作成（Azureの仮想ネットワークゲートウェイのGIPを入力）</p><p id="18586d0c-039e-42f1-b7fc-8b882538a38e" class="">仮想プライベートゲートウェイはすでにあるものを利用、サブネットのルーティング設定を追記</p><p id="c5a82564-f61e-4151-8e40-611202b3a623" class="">VPN接続設定作成</p><p id="f5bba670-0830-4b3e-9f39-69cbee2730d3" class=""><a href="../../AWS%20Knowledge%204ff04ac2d7b44dc18b787d5954b927a0/Site%20to%20Site%20VPN%E3%81%A8Fortigate%E3%81%A6%E3%82%99IPSecVPN%206a143fc57a95452092712545087a7b40.html">Site to Site VPNとFortigateでIPSecVPN</a> のAWS側の設定を参照</p><h1 id="abae9c2c-9f9c-4847-b518-51639da1d17b" class="">オンプレミス側の設定</h1><hr id="cfa33b2c-0fdd-441d-bf3e-8c700a9cce3d"/><p id="58194c9c-0352-4d3a-88a6-6b7cbdff8ddc" class="">VPN接続設定作成</p><p id="7c36b7b1-2a88-4ac7-8a8e-07792fec4a52" class=""><a href="../../AWS%20Knowledge%204ff04ac2d7b44dc18b787d5954b927a0/Site%20to%20Site%20VPN%E3%81%A8Unifi%20Dream%20Machine%20Pro%E3%81%A6%E3%82%99IPSecVPN%209d45eec37c2a44bd8875eb93c6a36220.html">Site to Site VPNとUnifi Dream Machine ProでIPSecVPN </a> のUnifi Dream Machine Proの設定を参照</p><h1 id="7e2efd39-2a03-467e-abc7-fc5e616a8761" class="">Azure側で ローカルネットワークゲートウェイ作成</h1><hr id="709c4d78-5172-4a88-b1e3-f3c4427698a4"/><p id="553826e2-d94c-4ab9-90ac-20e8808b6e09" class="">ローカルネットワークゲートウェイを作成します。</p><p id="69f4d4d2-11f7-4ba2-bc13-83419e9f50b8" class="">接続したい先の数の分だけ作成します。</p><ul id="327bd829-5757-45e7-8c62-728dc97fdc8a" class="bulleted-list"><li style="list-style-type:disc">IPアドレス：接続先のIPアドレスを記載します。</li></ul><ul id="67883ca2-0015-4e88-978b-ff1d44bc3c7f" class="bulleted-list"><li style="list-style-type:disc">アドレス空間：接続先のLocalIPを記載します。<figure id="d8a318eb-0b0b-4305-b3cb-cd36464e5b74" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E5%2590%258D%25E7%25A7%25B0%25E6%259C%25AA%25E8%25A8%25AD%25E5%25AE%259A.png"><img style="width:528px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E5%2590%258D%25E7%25A7%25B0%25E6%259C%25AA%25E8%25A8%25AD%25E5%25AE%259A.png"/></a></figure></li></ul><p id="b58fc6d6-c056-47e8-973e-2ccd4dd780d7" class="">
+</p><p id="eb326d78-9e31-4749-96dd-10abdf6b96ee" class="">デフォルトのままとして作成をします。</p><figure id="cfd6ef7d-13d6-4129-b148-3173f182c5c4" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E5%2590%258D%25E7%25A7%25B0%25E6%259C%25AA%25E8%25A8%25AD%25E5%25AE%259A%201.png"><img style="width:192px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E5%2590%258D%25E7%25A7%25B0%25E6%259C%25AA%25E8%25A8%25AD%25E5%25AE%259A%201.png"/></a></figure><h1 id="8185bd64-859e-4427-a3b1-b35815fd8784" class="">VPN接続を作成</h1><hr id="5d99cc44-1160-4d8f-8903-f98ceabfc7ec"/><p id="3d085715-aada-402f-8d33-2ec457a6bb83" class="">作成した仮想ネットワークゲートウェイとローカルネットワークゲートウェイを使ってVPN接続を作成します。</p><p id="34bed1e3-1cf4-448c-bb2c-e489044aff30" class="">作成した仮想ネットワークゲートウェイに移動し、左メニューの接続をクリックして接続を追加します。</p><p id="41ce1c60-a46c-448f-b9b1-9c573fc0d0d3" class="">接続したい先の数の分だけ作成します。</p><ul id="29999510-5adf-40a1-bb36-e7748863e7ce" class="bulleted-list"><li style="list-style-type:disc">名前：作成する名前</li></ul><ul id="6307a852-464f-4300-bb12-79feec1b0bdf" class="bulleted-list"><li style="list-style-type:disc">接続の種類：サイト対サイト</li></ul><ul id="807cc8d1-4947-4421-a4e9-3b827af9f627" class="bulleted-list"><li style="list-style-type:disc">仮想ネットワークゲートウェイ：作成した仮想ネットワークゲートウェイ</li></ul><ul id="b9c87340-e627-4862-9e05-65b385ab6118" class="bulleted-list"><li style="list-style-type:disc">ローカルネットワークゲートウェイ：作成したローカルネットワークゲートウェイ</li></ul><ul id="08c8bc12-daa9-4107-89d9-c60defd93499" class="bulleted-list"><li style="list-style-type:disc">共有キー：入れる値はなんでもいいですが、接続先と一致させる必要があります。</li></ul><p id="7a3c8383-d407-4822-a488-f2401311b49a" class="">→AWSであれば共有キーが払い出されるので、そちらを利用。オンプレミスだとランダムでキーを作る必要があります。</p><ul id="35c94170-ba8b-44c2-b2b9-95f448937239" class="bulleted-list"><li style="list-style-type:disc">Azure プライベート IP アドレスを使用する]：オフのままにします。</li></ul><ul id="10e2ff63-4a3c-42f7-802b-f3284a49a540" class="bulleted-list"><li style="list-style-type:disc">BGP を有効にする：オフのままにします。</li></ul><ul id="60463752-0223-4e23-9682-0f425da7882b" class="bulleted-list"><li style="list-style-type:disc">IKEプロトコル：IKEv2 を選択します。<figure id="15147e6b-173d-498c-91ad-105ca1e4854a" class="image"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E5%2590%258D%25E7%25A7%25B0%25E6%259C%25AA%25E8%25A8%25AD%25E5%25AE%259A%202.png"><img style="width:1392px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/%25E5%2590%258D%25E7%25A7%25B0%25E6%259C%25AA%25E8%25A8%25AD%25E5%25AE%259A%202.png"/></a></figure></li></ul><p id="044b5fc7-6a70-40e5-aeef-7fb040beab19" class="">
+</p><p id="063c99fd-b018-4007-a6e6-957d993a27b1" class="">なお、VPN接続作成後にIPSecおよびIKEポリシーを変更することができます。</p><p id="81470104-6b5c-450c-ac2b-0c71b1aa246f" class="">変更する際にはVPN接続作成した対象を選択すると左メニューに構成があるのでクリックすることでIPSecおよびIKEポリシーを変更することができます。</p><p id="1289da9f-3730-8012-ae50-c7509f775e1c" class=""><a href="https://learn.microsoft.com/ja-jp/azure/vpn-gateway/vpn-gateway-about-compliance-crypto">https://learn.microsoft.com/ja-jp/azure/vpn-gateway/vpn-gateway-about-compliance-crypto</a></p><p id="6fe7167e-7de4-40d5-8cc6-7e83adfb218c" class="">参考までに設定した内容を載せておきます。</p><figure id="973b3a10-2845-4b9e-bacb-3166b534d4a3" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled%202.png"><img style="width:580px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled%202.png"/></a></figure><h1 id="28520a8d-ae9c-4525-bd8d-2e8d730706b8" class="">VPN接続確認</h1><hr id="ee098d99-c884-4d66-86fb-42bfc857de4a"/><p id="f06a8a8f-906a-49a2-bc9c-a350721adcdf" class="">Azureで起動しているVMから、AWSやOnPremissで動いているVMに対してPingを実行して応答があれば接続ができています。</p><p id="ef534e09-3126-4aad-950d-76a25bae2a4c" class="">他の確認方法としては仮想ネットワークゲートウェイの左メニューの接続から状態の確認をすることができます。</p><figure id="fa13a056-7157-46d4-9080-2d5542e7c008" class="image" style="text-align:left"><a href="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled%203.png"><img style="width:1584px" src="AWS%20Onpremiss%20to%20Azure%20Site%20to%20Site%20VPN%206843c87d5b454be0849abec63ba55a79/Untitled%203.png"/></a></figure><h1 id="4d5da195-76c6-4b92-926b-428450fb2994" class="">最後に</h1><hr id="8115e2bf-c3a7-43e0-93db-3e6dcfdfb14d"/><p id="2dd98b0d-b55b-4041-92d5-6e87672a7969" class="">IPSecをやるたびにIPSecおよびIKEポリシーを忘れるので、良い復習になりました。</p><p id="d37cb165-0a7c-4cf9-85c5-0704fc7a7cb0" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

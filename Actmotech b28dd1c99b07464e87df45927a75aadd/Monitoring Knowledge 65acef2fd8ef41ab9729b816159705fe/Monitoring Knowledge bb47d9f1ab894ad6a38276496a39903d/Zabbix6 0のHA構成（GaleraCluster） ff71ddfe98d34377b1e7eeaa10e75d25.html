@@ -1,0 +1,1061 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Zabbix6.0のHA構成（GaleraCluster）</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="ff71ddfe-98d3-4377-b1e7-eeaa10e75d25" class="page sans"><header><h1 class="page-title">Zabbix6.0のHA構成（GaleraCluster）</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="6c3ed816-05a4-457d-9346-d23a8d2d0bf7" class="image" style="text-align:left"><a href="Zabbix6%200%E3%81%AEHA%E6%A7%8B%E6%88%90%EF%BC%88GaleraCluster%EF%BC%89%20ff71ddfe98d34377b1e7eeaa10e75d25/Zabbix_logo-RGB.png"><img style="width:336px" src="Zabbix6%200%E3%81%AEHA%E6%A7%8B%E6%88%90%EF%BC%88GaleraCluster%EF%BC%89%20ff71ddfe98d34377b1e7eeaa10e75d25/Zabbix_logo-RGB.png"/></a></figure><p id="00c14c4f-ea0a-4085-9a38-06474e2c2e9d" class="">目次</p><nav id="9ad5d98c-c6a3-40fc-966c-ecf0b46ff6a8" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f373fca0-47ed-4d7c-b3b5-2d0c146810b7">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#71508032-cf9b-41b7-b575-ca21f1c71731">構成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8ec144d2-4a39-42c0-a03d-da5d992a9442">MariaDBのインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#26105f72-a511-45ed-9b66-d8341fa24b57">GaleraClusterの設定ファイルを作成します。</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e65cb42e-9b63-45bd-8bed-d27f9ca90373">GaleraClusterの起動</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4457ed2c-d923-49bd-b727-dbf04558f61e">GaleraClusterの起動を確認します。</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#66e2926f-7e03-40dc-bd8e-9d45773d8abb">keepaliveのインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#57cfd91d-6f1a-481e-b3b2-f4e9b64d6e75">Zabbix6.0のインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3bc4ad29-a05c-49a7-ad6b-9a0dcde8903c">ZabbixProxyのインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e3c42bf3-fe15-459b-bd96-c11c98ecc822">ZabbixAgentを監視対象へインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#98823e03-ea4d-4668-9bf1-8f7d120adcb4">肝心のHAクラスターの動作確認</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#844da174-cecb-4070-b0ea-5cc601da55cd">最後に</a></div></nav><h1 id="f373fca0-47ed-4d7c-b3b5-2d0c146810b7" class="">はじめに</h1><hr id="1289da9f-3730-80c7-a1bd-dadfc9edf58f"/><p id="9f2b5902-ff05-449d-9aa8-d834643b9fd1" class="">Zabbix6にWebフロントにHA構成が搭載されたので、その機能を試したいと思います。 </p><p id="ddc8ffb4-118b-42e4-917d-dfd17819d254" class="">ですがフロントだけがHA機能なのでDBは別途考えなれければなりません。</p><p id="a0463912-9468-49fb-8565-28ae634a5a54" class=""> AWS RDSのようなマネージドサービスを利用すれば楽なのかもしれませんが、 </p><p id="da2a04d0-c575-438f-9c92-a6a3744a0644" class="">自宅サーバでZabbixを動かすのであればそんなことは言っていられません。 </p><p id="e73be335-0aa4-4fd1-97cf-9099c5f4fe6d" class="">なのでDBのHA構成するには比較的容易なGaleraClusterを利用して構築しました。</p><h1 id="71508032-cf9b-41b7-b575-ca21f1c71731" class="">構成</h1><hr id="1289da9f-3730-8084-851f-ed66213faa5c"/><p id="24ed3e90-cca0-443e-9305-8478f5af0c44" class="">Ubuntuサーバ３台のZabbixServer構成とZabbixProxyを動かします。 </p><p id="96da34e5-565d-4a4c-95f7-e16a9b45dc36" class="">ホスト名：zbx6-webdb01(192.168.12.31) / zbx6-webdb02(192.168.12.32) / zbx6-webdb03(192.168.12.33) / zbx6-proxy01(192.168.12.38)</p><p id="8c897fb4-37ff-4006-a19a-a8e634516968" class="">GaleraClusterは2台構成でも動作はしますが、1台になった場合動作しなくなるので3台構成にしています。 </p><p id="e3083cf8-2ab9-4a63-a563-63cdedf27123" class="">なお、起動しているDBはどのサーバでもRead/Writeが可能となります。</p><h1 id="8ec144d2-4a39-42c0-a03d-da5d992a9442" class="">MariaDBのインストール</h1><hr id="1289da9f-3730-801f-b66e-c6f87fe5c280"/><p id="76eb8ddb-71cc-4d89-a4ce-fe8cb419e31d" class="">対象：zbx6-webdb01 / zbx6-webdb02 / zbx6-webdb03</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a960d685-d0ff-4bfa-9ec9-d149cbeed2a3" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># apt install mariadb-server
+# systemctl restart mariadb
+# mysql_secure_installation
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+In order to log into MariaDB to secure it, we&#x27;ll need the current
+password for the root user. If you&#x27;ve just installed MariaDB, and
+haven&#x27;t set the root password yet, you should just press enter here.
+
+Enter current password for root (enter for none):
+OK, successfully used password, moving on...
+
+Setting the root password or using the unix_socket ensures that nobody
+can log into the MariaDB root user without the proper authorisation.
+
+You already have your root account protected, so you can safely answer &#x27;n&#x27;.
+
+Switch to unix_socket authentication [Y/n]
+Enabled successfully!
+Reloading privilege tables..
+ ... Success!
+
+You already have your root account protected, so you can safely answer &#x27;n&#x27;.
+
+Change the root password? [Y/n] y
+New password:
+Re-enter new password:
+Password updated successfully!
+Reloading privilege tables..
+ ... Success!
+
+By default, a MariaDB installation has an anonymous user, allowing anyone
+to log into MariaDB without having to have a user account created for
+them.  This is intended only for testing, and to make the installation
+go a bit smoother.  You should remove them before moving into a
+production environment.
+
+Remove anonymous users? [Y/n] y
+ ... Success!
+
+Normally, root should only be allowed to connect from &#x27;localhost&#x27;.  This
+ensures that someone cannot guess at the root password from the network.
+
+Disallow root login remotely? [Y/n] y
+ ... Success!
+
+By default, MariaDB comes with a database named &#x27;test&#x27; that anyone can
+access.  This is also intended only for testing, and should be removed
+before moving into a production environment.
+
+Remove test database and access to it? [Y/n] y
+ - Dropping test database...
+ ... Success!
+ - Removing privileges on test database...
+ ... Success!
+
+Reloading the privilege tables will ensure that all changes made so far
+will take effect immediately.
+
+Reload privilege tables now? [Y/n] y
+ ... Success!
+
+Cleaning up...
+
+All done!  If you&#x27;ve completed all of the above steps, your MariaDB
+installation should now be secure.
+
+Thanks for using MariaDB!</code></pre><h1 id="26105f72-a511-45ed-9b66-d8341fa24b57" class="">GaleraClusterの設定ファイルを作成します。</h1><hr id="1289da9f-3730-805f-885e-f1049b22a53f"/><p id="322701ea-9457-41b8-b46e-d4f920ea5628" class="">[zbx6-webdb01]</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="95dcaa4e-7612-4c35-aea6-b55cba9f4d5d" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cp -p /etc/mysql/mariadb.conf.d/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf_20220916
+# vi /etc/mysql/mariadb.conf.d/50-server.cnf
+# diff -u0 /etc/mysql/mariadb.conf.d/50-server.cnf_20220916 /etc/mysql/mariadb.conf.d/50-server.cnf
+--- /etc/mysql/mariadb.conf.d/50-server.cnf_20220916    2022-04-27 18:23:07.000000000 +0000
++++ /etc/mysql/mariadb.conf.d/50-server.cnf     2022-09-16 13:37:05.104500018 +0000
+@@ -109,0 +110,9 @@
++wsrep_on=ON
++wsrep_provider=/usr/lib/galera/libgalera_smm.so
++wsrep_cluster_address=&quot;gcomm://192.168.12.31,192.168.12.32,192.168.12.33&quot;
++binlog_format=ROW
++default_storage_engine=InnoDB
++innodb_autoinc_lock_mode=2
++innodb_doublewrite=1
++wsrep_node_address=&quot;192.168.12.31&quot;
++wsrep_cluster_name=&quot;zabbix_db&quot;</code></pre><p id="5d86ad58-caeb-45de-9e28-561d83e15a89" class="">[zbx6-webdb02]</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="519fafe2-156b-41ea-8b35-a69c4e5254d6" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># diff -u0 /etc/mysql/mariadb.conf.d/50-server.cnf_20220916 /etc/mysql/mariadb.conf.d/50-server.cnf
+--- /etc/mysql/mariadb.conf.d/50-server.cnf_20220916    2022-04-27 18:23:07.000000000 +0000
++++ /etc/mysql/mariadb.conf.d/50-server.cnf     2022-09-16 13:09:00.288042923 +0000
+@@ -109,0 +110,9 @@
++wsrep_on=ON
++wsrep_provider=/usr/lib/galera/libgalera_smm.so
++wsrep_cluster_address=&quot;gcomm://192.168.12.31,192.168.12.32,192.168.12.33&quot;
++binlog_format=ROW
++default_storage_engine=InnoDB
++innodb_autoinc_lock_mode=2
++innodb_doublewrite=1
++wsrep_node_address=&quot;192.168.12.32&quot;
++wsrep_cluster_name=&quot;zabbix_db&quot;</code></pre><p id="2edaf1b2-d2e8-4722-8439-c75fcd72cbcf" class="">[zbx6-webdb03]</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e1ebdcb9-a319-4ca1-8cdd-9d93c59df36c" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># diff -u0 /etc/mysql/mariadb.conf.d/50-server.cnf_20220916 /etc/mysql/mariadb.conf.d/50-server.cnf
+--- /etc/mysql/mariadb.conf.d/50-server.cnf_20220916    2022-04-27 18:23:07.000000000 +0000
++++ /etc/mysql/mariadb.conf.d/50-server.cnf     2022-09-16 13:10:06.220384089 +0000
+@@ -109,0 +110,9 @@
++wsrep_on=ON
++wsrep_provider=/usr/lib/galera/libgalera_smm.so
++wsrep_cluster_address=&quot;gcomm://192.168.12.31,192.168.12.32,192.168.12.33&quot;
++binlog_format=ROW
++default_storage_engine=InnoDB
++innodb_autoinc_lock_mode=2
++innodb_doublewrite=1
++wsrep_node_address=&quot;192.168.12.33&quot;
++wsrep_cluster_name=&quot;zabbix_db&quot;</code></pre><h1 id="e65cb42e-9b63-45bd-8bed-d27f9ca90373" class="">GaleraClusterの起動</h1><hr id="1289da9f-3730-8066-9a63-ddc2d47d4d9e"/><p id="65643aad-f896-40a3-834f-714a955ad789" class="">1台目で以下コマンドを実行します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="506d161e-34a9-48e0-9494-45d87223ce90" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">galera_new_cluster</code></pre><p id="b518ed25-3f92-4264-84e8-03365192bce3" class="">2,3台目で以下コマンドを実行します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="58578878-adb8-4d22-8c57-58678575ea51" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">systemctl restart mariadb</code></pre><h1 id="4457ed2c-d923-49bd-b727-dbf04558f61e" class="">GaleraClusterの起動を確認します。</h1><hr id="1289da9f-3730-8054-b8f6-df9b0d6d24d0"/><p id="3396ed8d-8055-4311-b2f7-1dd0e7b864a2" class="">wsrep_local_state_commentがSyncedになっていることを確認します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="fc3bf4df-014f-49b8-a473-2b8cad0c9ce7" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># mysql
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 36
+Server version: 10.6.7-MariaDB-2ubuntu1.1 Ubuntu 22.04
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.
+
+MariaDB [(none)]&gt; show status like &#x27;wsrep_%&#x27;;
++-------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| Variable_name                 | Value                                                                                                                                          |
++-------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| wsrep_local_state_uuid        | bb41a595-3038-11ed-a8ed-6f31e730f072                                                                                                           |
+| wsrep_protocol_version        | 10                                                                                                                                             |
+| wsrep_last_committed          | 2                                                                                                                                              |
+| wsrep_replicated              | 0                                                                                                                                              |
+| wsrep_replicated_bytes        | 0                                                                                                                                              |
+| wsrep_repl_keys               | 0                                                                                                                                              |
+| wsrep_repl_keys_bytes         | 0                                                                                                                                              |
+| wsrep_repl_data_bytes         | 0                                                                                                                                              |
+| wsrep_repl_other_bytes        | 0                                                                                                                                              |
+| wsrep_received                | 3                                                                                                                                              |
+| wsrep_received_bytes          | 216                                                                                                                                            |
+| wsrep_local_commits           | 0                                                                                                                                              |
+| wsrep_local_cert_failures     | 0                                                                                                                                              |
+| wsrep_local_replays           | 0                                                                                                                                              |
+| wsrep_local_send_queue        | 0                                                                                                                                              |
+| wsrep_local_send_queue_max    | 1                                                                                                                                              |
+| wsrep_local_send_queue_min    | 0                                                                                                                                              |
+| wsrep_local_send_queue_avg    | 0                                                                                                                                              |
+| wsrep_local_recv_queue        | 0                                                                                                                                              |
+| wsrep_local_recv_queue_max    | 1                                                                                                                                              |
+| wsrep_local_recv_queue_min    | 0                                                                                                                                              |
+| wsrep_local_recv_queue_avg    | 0                                                                                                                                              |
+| wsrep_local_cached_downto     | 2                                                                                                                                              |
+| wsrep_flow_control_paused_ns  | 0                                                                                                                                              |
+| wsrep_flow_control_paused     | 0                                                                                                                                              |
+| wsrep_flow_control_sent       | 0                                                                                                                                              |
+| wsrep_flow_control_recv       | 0                                                                                                                                              |
+| wsrep_flow_control_active     | false                                                                                                                                          |
+| wsrep_flow_control_requested  | false                                                                                                                                          |
+| wsrep_cert_deps_distance      | 0                                                                                                                                              |
+| wsrep_apply_oooe              | 0                                                                                                                                              |
+| wsrep_apply_oool              | 0                                                                                                                                              |
+| wsrep_apply_window            | 0                                                                                                                                              |
+| wsrep_apply_waits             | 0                                                                                                                                              |
+| wsrep_commit_oooe             | 0                                                                                                                                              |
+| wsrep_commit_oool             | 0                                                                                                                                              |
+| wsrep_commit_window           | 0                                                                                                                                              |
+| wsrep_local_state             | 4                                                                                                                                              |
+| wsrep_local_state_comment     | Synced                                                                                                                                         |
+| wsrep_cert_index_size         | 0                                                                                                                                              |
+| wsrep_causal_reads            | 0                                                                                                                                              |
+| wsrep_cert_interval           | 0                                                                                                                                              |
+| wsrep_open_transactions       | 0                                                                                                                                              |
+| wsrep_open_connections        | 0                                                                                                                                              |
+| wsrep_incoming_addresses      | AUTO,AUTO                                                                                                                                      |
+| wsrep_cluster_weight          | 2                                                                                                                                              |
+| wsrep_desync_count            | 0                                                                                                                                              |
+| wsrep_evs_delayed             |                                                                                                                                                |
+| wsrep_evs_evict_list          |                                                                                                                                                |
+| wsrep_evs_repl_latency        | 0/0/0/0/0                                                                                                                                      |
+| wsrep_evs_state               | OPERATIONAL                                                                                                                                    |
+| wsrep_gcomm_uuid              | 3f0a21cb-3039-11ed-91b5-c7627a45a889                                                                                                           |
+| wsrep_gmcast_segment          | 0                                                                                                                                              |
+| wsrep_applier_thread_count    | 1                                                                                                                                              |
+| wsrep_cluster_capabilities    |                                                                                                                                                |
+| wsrep_cluster_conf_id         | 2                                                                                                                                              |
+| wsrep_cluster_size            | 2                                                                                                                                              |
+| wsrep_cluster_state_uuid      | bb41a595-3038-11ed-a8ed-6f31e730f072                                                                                                           |
+| wsrep_cluster_status          | Primary                                                                                                                                        |
+| wsrep_connected               | ON                                                                                                                                             |
+| wsrep_local_bf_aborts         | 0                                                                                                                                              |
+| wsrep_local_index             | 0                                                                                                                                              |
+| wsrep_provider_capabilities   | :MULTI_MASTER:CERTIFICATION:PARALLEL_APPLYING:TRX_REPLAY:ISOLATION:PAUSE:CAUSAL_READS:INCREMENTAL_WRITESET:UNORDERED:PREORDERED:STREAMING:NBO: |
+| wsrep_provider_name           | Galera                                                                                                                                         |
+| wsrep_provider_vendor         | Codership Oy &lt;info@codership.com&gt;                                                                                                              |
+| wsrep_provider_version        | 4.9(rcece3ba2)                                                                                                                                 |
+| wsrep_ready                   | ON                                                                                                                                             |
+| wsrep_rollbacker_thread_count | 1                                                                                                                                              |
+| wsrep_thread_count            | 2                                                                                                                                              |
++-------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+69 rows in set (0.001 sec)</code></pre><h1 id="66e2926f-7e03-40dc-bd8e-9d45773d8abb" class="">keepaliveのインストール</h1><p id="d66d0558-f26a-4874-8c89-b72ac667d874" class="">keepalivedのインストールを実施します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="aafa8b70-aac2-4ec7-8cba-42dfb61a8b49" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># apt install keepalived</code></pre><p id="17c078dc-6087-464b-b699-c6dc34744fd2" class="">
+</p><p id="7d993425-e47c-4307-b228-07e5efce836a" class="">keepalivedの設定を作ります。</p><p id="92beaa6f-ce05-4ce9-9be9-deb1a152d048" class="">[zbx6-webdb01]</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b1462b7a-e43f-4a28-8489-bcd98db52ad5" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cat /etc/keepalived/keepalived.conf
+vrrp_script chk_mariadb {
+    script &quot;systemctl is-active mariadb&quot;
+}
+
+vrrp_script chk_zabbix {
+    script &quot;systemctl is-active zabbix-server&quot;
+}
+
+vrrp_script chk_apache {
+    script &quot;systemctl is-active apache2&quot;
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface ens18
+    virtual_router_id 1
+    priority 300
+    virtual_ipaddress {
+        192.168.12.34
+    }
+    track_script {
+        chk_mariadb
+        chk_zabbix
+        chk_apache
+    }
+}</code></pre><p id="a343cb31-f84f-4ff5-a201-cf0d9f2ec170" class="">
+</p><p id="b92ee4ad-7d68-40d0-8e5b-f170ac01bd99" class="">[zbx6-webdb02]</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="0cd29d03-1a8d-49a0-86ea-0a3e6785dc48" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cat /etc/keepalived/keepalived.conf
+vrrp_script chk_mariadb {
+    script &quot;systemctl is-active mariadb&quot;
+}
+
+vrrp_script chk_zabbix {
+    script &quot;systemctl is-active zabbix-server&quot;
+}
+
+vrrp_script chk_apache {
+    script &quot;systemctl is-active apache2&quot;
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface ens18
+    virtual_router_id 1
+    priority 200
+    virtual_ipaddress {
+        192.168.12.34
+    }
+    track_script {
+        chk_mariadb
+        chk_zabbix
+        chk_apache
+    }
+}</code></pre><p id="ce7aa702-f02a-4b61-92b2-090acea48a0c" class="">[zbx6-webdb03]</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="765c4abf-7dbf-4d38-b2f0-d3d1d7b31e7c" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">root@ray-zbx6-webdb03:~# cat /etc/keepalived/keepalived.conf
+vrrp_script chk_mariadb {
+    script &quot;systemctl is-active mariadb&quot;
+}
+
+vrrp_script chk_zabbix {
+    script &quot;systemctl is-active zabbix-server&quot;
+}
+
+vrrp_script chk_apache {
+    script &quot;systemctl is-active apache2&quot;
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface ens18
+    virtual_router_id 1
+    priority 100
+    virtual_ipaddress {
+        192.168.12.34
+    }
+    track_script {
+        chk_mariadb
+        chk_zabbix
+        chk_apache
+    }
+}</code></pre><p id="4c6a5b99-91a1-4eb7-995a-21591c95693d" class="">
+</p><p id="43173894-ffa7-495f-8167-c0deb3ff473b" class="">設定完了後、keepalivedを再起動します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="feb94cd5-4a56-4c48-b314-2bffab49517f" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># systemctl restart keepalived.service</code></pre><h1 id="57cfd91d-6f1a-481e-b3b2-f4e9b64d6e75" class="">Zabbix6.0のインストール</h1><p id="6926e97e-f9a0-495a-bc6e-b9e054d52b98" class="">対象：zbx6-webdb01 / zbx6-webdb02 / zbx6-webdb03</p><p id="e019f2c7-fce4-42fb-977c-0798457aea64" class="">Zabbix6のインストールをします。 </p><p id="0df6c938-fd5d-45ec-b732-e48471144b7e" class="">またZabbixAgentについてはAgent2を利用するためにAgent2をインストールします。 </p><p id="78cbfa1a-a812-480e-87bb-1e2139a16187" class="">違いについては以下に記載があります。 https://www.zabbix.com/documentation/6.0/jp/manual/appendix/agent_comparison</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="52b04e13-faa3-4cbc-96eb-6acabc70f424" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># curl -O https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4%2Bubuntu22.04_all.deb
+# dpkg -i zabbix-release_6.0-4+ubuntu22.04_all.deb
+# apt update
+# apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent2</code></pre><p id="48192cba-9006-451e-8873-673945f840ee" class="">
+</p><p id="c764e9f8-321c-4a27-b444-467232c6bb8f" class="">対象：zbx6-webdb01</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="59118961-49f4-4822-a4cd-271e4f259c34" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># mysql -uroot -p
+password
+mysql&gt; create database zabbix character set utf8mb4 collate utf8mb4_bin;
+mysql&gt; create user zabbix@localhost identified by &#x27;password&#x27;;
+mysql&gt; grant all privileges on zabbix.* to zabbix@localhost;
+mysql&gt; quit;
+# zcat /usr/share/doc/zabbix-sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -p zabbix</code></pre><p id="5a1e3aca-50ae-40d7-ba1c-0a8c3dac1d47" class="">
+</p><p id="048d3ce3-c5cd-4e15-881d-a2496475f922" class="">対象：zbx6-webdb01 / zbx6-webdb02 / zbx6-webdb03</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="db235e94-f795-4d0c-a46a-a376882671b0" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cp -p /etc/zabbix/zabbix_server.conf /etc/zabbix/zabbix_server.conf_20220916
+# vi /etc/zabbix/zabbix_server.conf
+# diff -u0 /etc/zabbix/zabbix_server.conf_20220916 /etc/zabbix/zabbix_server.conf
+--- /etc/zabbix/zabbix_server.conf_20220916     2022-09-16 14:42:33.786549816 +0000
++++ /etc/zabbix/zabbix_server.conf      2022-09-16 14:58:33.433000801 +0000
+@@ -129,0 +130 @@
++DBPassword=password　#DBパスワードを記載
+@@ -443,0 +445 @@
++CacheSize=256M　#足りないとZabbixサーバプロセスがクラッシュします。大きすぎると起動に時間がかかります。
+@@ -629,0 +632 @@
++ProxyConfigFrequency=60　#ZabbixProxyとの同期頻度
+@@ -657,0 +661 @@
++AllowRoot=1　#ZabbixServerをrootで起動
+@@ -720 +724 @@
+-StatsAllowedIP=127.0.0.1
++StatsAllowedIP=192.168.12.31 #Zabbixの内部統計を取得するのに利用するIPを記載します。
+@@ -986,0 +991 @@
++HANodeName=zbx6-webdb01 #HAモードを設定する際に識別するノード名を記載します。
+@@ -996,0 +1002 @@
++NodeAddress=192.168.12.31:10051 #Zabbix の Web フロントエンドと Zabbix サーバーのアクティブなノードとの間の通信で使用します。
+
+# diff -U0 zabbix_agent2.conf_20220917 zabbix_agent2.conf
+--- zabbix_agent2.conf_20220917 2022-08-29 07:33:19.000000000 +0000
++++ zabbix_agent2.conf  2022-09-16 15:49:18.439999155 +0000
+@@ -80 +80 @@
+-Server=127.0.0.1
++Server=192.168.12.31,192.168.12.32,192.168.12.33 #ZabbixServerもしくはZabbixProxyのIPアドレスを記載します。
+@@ -133 +133 @@
+-ServerActive=127.0.0.1
++ServerActive=192.168.12.31,192.168.12.32,192.168.12.33 #ZabbixServerもしくはZabbixProxyのIPアドレスを記載します。
+@@ -144 +144 @@
+-Hostname=Zabbix server
++Hostname=ray-zbx6-webdb01 #ZabbixのUIにて登録するホスト名を記載します。
+
+# systemctl restart zabbix-server zabbix-agent2 apache2
+# systemctl enable zabbix-server zabbix-agent2 apache2</code></pre><p id="5bdd17e8-adfa-4f32-8d7b-2fc25ac8b95f" class="">
+</p><p id="b1f8a570-b563-4a95-8f8f-1147b27d0c66" class="">Zabbixを起動しても日本語フォントに対応していないので、フォントを追加します。</p><p id="9b8ca9dd-7b0f-4dbc-a5c4-fedce5202591" class="">対象：zbx6-webdb01 / zbx6-webdb02 / zbx6-webdb03</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="86e7fb35-aee6-4dcc-8ade-0ffde4b1d09c" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># dpkg-reconfigure locales
+# reboot
+# apt install fonts-ipafont-gothic
+# ln -s /usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf /usr/share/zabbix/assets/fonts/ipagp.ttf
+# vi /usr/share/zabbix/include/defines.inc.php
+【変更前】
+define(&#x27;ZBX_GRAPH_FONT_NAME&#x27;, &#x27;graphfont&#x27;);
+define(&#x27;ZBX_FONT_NAME&#x27;, &#x27;graphfont&#x27;);
+
+【変更後】
+define(&#x27;ZBX_GRAPH_FONT_NAME&#x27;, &#x27;ipagp&#x27;);
+define(&#x27;ZBX_FONT_NAME&#x27;, &#x27;ipagp&#x27;);</code></pre><h1 id="3bc4ad29-a05c-49a7-ad6b-9a0dcde8903c" class="">ZabbixProxyのインストール</h1><p id="57e31149-7142-4c4b-b510-a2c84adb64be" class="">ZabbixServerの負荷を極力減らすため、監視対象からのデータ収集をZabbixProxyに任せます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="96fa4d14-0f67-4f7c-b589-d2ce69f98203" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4%2Bubuntu22.04_all.deb
+# dpkg -i zabbix-release_6.0-4+ubuntu22.04_all.deb
+# apt update
+# apt install zabbix-proxy-mysql zabbix-sql-scripts
+# mysql -uroot -p
+password
+mysql&gt; create database zabbix_proxy character set utf8mb4 collate utf8mb4_bin;
+mysql&gt; create user zabbix@localhost identified by &#x27;password&#x27;;
+mysql&gt; grant all privileges on zabbix_proxy.* to zabbix@localhost;
+mysql&gt; quit;
+
+# sed &#x27;/^$/d&#x27; /etc/zabbix/zabbix_proxy.conf | grep -v &quot;#&quot;
+ProxyMode=1
+Server=192.168.12.31,192.168.12.32,192.168.12.33
+Hostname=zbx6-proxy01
+LogFile=/var/log/zabbix/zabbix_proxy.log
+LogFileSize=0
+PidFile=/run/zabbix/zabbix_proxy.pid
+SocketDir=/run/zabbix
+DBName=zabbix_proxy
+DBUser=zabbix
+DBPassword=password
+ConfigFrequency=60
+SNMPTrapperFile=/var/log/snmptrap/snmptrap.log
+Timeout=4
+FpingLocation=/usr/bin/fping
+Fping6Location=/usr/bin/fping6
+LogSlowQueries=3000
+AllowRoot=1
+StatsAllowedIP=192.168.12.38
+
+# systemctl restart zabbix-proxy
+# systemctl enable zabbix-proxy</code></pre><h1 id="e3c42bf3-fe15-459b-bd96-c11c98ecc822" class="">ZabbixAgentを監視対象へインストール</h1><p id="6a226aec-3d02-4726-9c7b-55764fbb9c66" class="">あとは監視したい対象にZabbixAgent2をインストールして設定し起動をします。 </p><p id="5c11ab18-7615-4bb9-8698-5788f9c24291" class="">インストールをしたらZabbixUIへログインをしてホストの登録とテンプレートを適用することで監視を開始することができます。</p><h1 id="98823e03-ea4d-4668-9bf1-8f7d120adcb4" class="">肝心のHAクラスターの動作確認</h1><p id="7c00d7cd-8756-4b70-88cf-8e4d39829e4c" class="">ActiveなZabbixServer上で以下コマンドを実行します。 </p><p id="83ae3e69-6cb4-473a-8eef-21f582808891" class="">Activeモードの確認はsystemctl status zabbix-serverを実行することで、 ZabbixServerのプロセスツリーを見ることでわかります。 </p><p id="9ebd4107-2cbe-4346-9142-8ceeaf91c506" class="">Activeの場合は必要なプロセスが多岐に渡り起動していますが、Standbyはメインプロセスとha managerプロセスのみです。</p><p id="71caceb0-3b96-4e62-801e-11083575f4b3" class=""> unavailableに至ってはメインプロセスのみです。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="0dcfaf8d-24f1-4cce-b6bf-bd3634c4b3a4" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># zabbix_server -R ha_status
+Failover delay: 60 seconds
+Cluster status:
+   #  ID                        Name                      Address                        Status      Last Access
+   1. cl84lvk3w0001r955qois5756 zbx6-webdb01          192.168.12.31:10051            standby     4s
+   2. cl84m0pdx0001qq579h999k90 zbx6-webdb03          192.168.12.33:10051            unavailable 7d 1h 1m 32s
+   3. cl84m50g60001kg56q8pcaymn zbx6-webdb02          192.168.12.32:10051            active      0s</code></pre><p id="beeff05f-cccf-4bed-998b-cd18c3f443da" class="">
+</p><p id="60ca3142-bedd-416e-b632-71c216d87cb4" class="">HAの切り替わり時間はデフォルトだと60秒になりますが、カスタムで変更することも可能です。 </p><p id="203b4040-6ae5-4696-a377-3aec4a77089e" class="">可能な範囲は10秒から15分になります。設定はActiveモードで動作している対象で実施します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="60ac5c75-a216-443c-a543-67be108d1221" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># zabbix_server -R ha_set_failover_delay=10s</code></pre><p id="2f503fc7-c493-43c1-9f92-588ba1693cc7" class="">
+</p><p id="966f9b96-0289-49c8-8799-52a186af61d2" class="">フェイルオーバーについてはha_manager プロセス5秒おきにDBとハードビートを送信して、</p><p id="9b564d42-40ec-4744-9fb4-d9284949cd32" class="">自身のステータスや他ノードのステータスを監視します。</p><p id="b133906c-5229-4dd7-bfcd-f7af0e3b27fc" class=""> ha manager プロセスはハートビートによってアクセスした時刻を更新し、アクティブノードのアクセス時刻が、 </p><p id="1c82d13f-ddef-4325-a837-5c7c0a7db364" class="">ha_set_failover_delayで設定した時間以上更新されていない場合は障害となりフェイルオーバーを実行されます。</p><p id="c32e758a-266e-4961-ba4d-6504b2aa3dca" class="">フェイルオーバーテストについては、Avtiveのzabbix-serverプロセスを停止することでStandbyに切り替わったことを確認します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e5fb6ceb-61c9-4474-afb4-83bcdc18971a" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">#  zabbix_server -R ha_status
+Failover delay: 10 seconds
+Cluster status:
+   #  ID                        Name                      Address                        Status      Last Access
+   1. cl84lvk3w0001r955qois5756 ray-zbx6-webdb01          192.168.12.31:10051            active      3s
+   2. cl84m0pdx0001qq579h999k90 ray-zbx6-webdb03          192.168.12.33:10051            unavailable 7d 1h 14m 51s
+   3. cl84m50g60001kg56q8pcaymn ray-zbx6-webdb02          192.168.12.32:10051            stopped     11s</code></pre><h1 id="844da174-cecb-4070-b0ea-5cc601da55cd" class="">最後に</h1><p id="2f42df9f-d453-4621-b7b3-02f725425cc0" class="">冒頭にも書いたようにDBのHAは含まれていないので、DBに対してどうするかは考えないといけないかと思います。 </p><p id="48093949-c2b2-45ba-a3fb-50b715ce9d82" class="">今回はZabbixServerのHA機能ですが、今後ZabbixProxyのHA機能が実装予定ということなのでUpdate情報は追っていこうと思います。</p><p id="fe746f71-9e29-4925-96f3-0d6506dce417" class="">ZabbixのRoadmapを見ると6.4ではEnd-user Web monitoringやパブリッククラウド向けの監視テンプレート開発が入っています。 </p><p id="577f5194-4cf6-4f4e-a599-d88e90229744" class="">7.2ではAPMも入っているのでSaaSで提供しているモニタリングツールの後をしっかり追っていこうという意思が伝わってきます。 </p><p id="0bb6cdea-1155-436e-882e-ab604eff6f90" class="">これからZabbixがどういった方向に向かっていくのかにも注目していきたいと思います。 </p><figure id="66e7c3e6-b42e-4083-9548-ab08b74082b2"><a href="https://www.zabbix.com/roadmap" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Zabbix roadmap</div><div class="bookmark-description">Explore features to come.</div></div><div class="bookmark-href"><img src="https://assets.zabbix.com/img/favicon.ico" class="icon bookmark-icon"/>https://www.zabbix.com/roadmap</div></div><img src="https://assets.zabbix.com/img/backgrounds/roadmap_background_v2_870x580.jpg" class="bookmark-image"/></a></figure><p id="499f27f3-1060-47f2-9a4f-ea4da581c749" class="">
+</p><p id="d51b5ef1-191a-4e8e-a3a7-cb9a6bce3e81" class="">
+</p><p id="c3f1316a-9994-47c9-93e0-ebde695405f1" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

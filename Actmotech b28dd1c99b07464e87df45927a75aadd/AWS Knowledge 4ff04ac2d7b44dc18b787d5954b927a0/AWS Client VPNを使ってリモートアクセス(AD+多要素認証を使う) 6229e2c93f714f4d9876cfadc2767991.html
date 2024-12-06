@@ -1,0 +1,877 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="6229e2c9-3f71-4f4d-9876-cfadc2767991" class="page sans"><header><h1 class="page-title">AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="e6054407-ca62-4244-9652-0726ac666b40" class="image" style="text-align:left"><a href="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/AWS-Client-VPN_light-bg4x.png"><img style="width:300px" src="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/AWS-Client-VPN_light-bg4x.png"/></a></figure><h1 id="b6ebdb3b-dd27-4c17-8da6-e7c59f78327e" class="">目次</h1><hr id="9f02bec8-69a0-4422-bbb2-ffb027143c96"/><nav id="b0d9359b-078f-431b-a16a-f169e1726c8f" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b6ebdb3b-dd27-4c17-8da6-e7c59f78327e">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a4ea6d40-d7c3-420b-9703-b0c832f6e50f">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8451b67d-400c-49f0-93da-b7fe350ff76f">AWSでCA認証局について</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a3887b2f-4e01-4109-8e3e-bc9a2c1aa3cb">認証局の作成とクライアントの証明書とキーを生成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#66a6dee1-2739-4371-9039-8f15bee3b5f1">クライアント証明書の更新方法</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0a6bcc15-a2a3-4c21-b286-c8e1e4e4db27">サーバー証明書の更新方法（CA更新は含まない）</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#72c73a88-55c4-4833-80e6-fc5411ee7acc">サーバー証明書の更新方法（CA更新を含む）</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b1e79b38-3770-4799-8ee8-2340eeaac8e4">Client VPN Endpoint の作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9bf650b6-ba13-4688-920d-9c79d38005f6">作成したVPNエンドポイントにサブネットを関連付け</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#dd447198-3546-4c32-9ee9-9cb30058b1b3">作成したVPNエンドポイントに承認ルールを追加</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#019838cf-e549-4d75-86b7-b7f6d092b18e">作成したVPNエンドポイントに接続元制限</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#997cbfad-3a3d-4d98-95cf-7a6e5cc51370">クライアント側の設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#8165364f-1bcb-4a58-a23d-286eb029e73c">最後に</a></div></nav><h1 id="a4ea6d40-d7c3-420b-9703-b0c832f6e50f" class="">はじめに</h1><hr id="e24ed71d-59a3-4b80-9b2c-2d6b1b0e771a"/><p id="6b814fef-1c74-4938-87c6-b34b8e0cc428" class="">AWS Client VPNを利用して、AWSリソースへのアクセス方法について調べてみたのでまとめて、 </p><p id="555e42bf-71ba-4137-b70f-21952ff7b579" class="">実際にOpenVPNを利用してAWSへアクセスも行ってみました。</p><h1 id="8451b67d-400c-49f0-93da-b7fe350ff76f" class="">AWSでCA認証局について</h1><hr id="a059922f-5102-4ee2-a7bf-5745d1697469"/><p id="cc048191-6389-49cf-af1a-01ff5bf3aff7" class="">ここのURLに書いてある通り、AWSでプライベート認証機関を用意すると400ドルかかる上に、 </p><p id="a4d4272f-8139-45e8-8071-54212ed6828d" class="">プライベート証明書の数ごとに料金が発生するのでコスト節約の観点オレオレ認証局を立てて実施します。 </p><ul id="ede75b5c-89cc-49ec-a3fe-777b5c732f56" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/certificate-manager/pricing/?nc=sn&amp;loc=3">https://aws.amazon.com/jp/certificate-manager/pricing/?nc=sn&amp;loc=3</a></li></ul><h1 id="a3887b2f-4e01-4109-8e3e-bc9a2c1aa3cb" class="">認証局の作成とクライアントの証明書とキーを生成</h1><hr id="f9fadc20-ed13-42f7-9144-4fe4b917dd92"/><p id="3348681d-42e1-4282-85fc-06a64717d215" class="">ADによるSimple ADを利用した接続方法もありますが、今回は相互認証を利用した接続を実施したいと思います。 </p><ul id="8fe07d60-a17e-43ab-87ad-7d4704b8bfd5" class="bulleted-list"><li style="list-style-type:disc"><a href="https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/client-authentication.html">https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/client-authentication.html</a></li></ul><p id="f5286bd6-8e71-43ec-8fb3-a8ba65d01804" class="">OSはAmazonLinux2にて実施しています。 またEC2に対してAWSCertificateManagerFullAccessのロールを割り当てるようにしてください。 </p><p id="01aba0f5-c6a6-4a42-a636-1affde8a7b79" class="">※後程AWSコマンドでACM にインポートするため</p><p id="61ec4d5d-fbd4-4901-9ff1-34fc8b6de690" class="">gitコマンドがインストールしていない場合にはgitコマンドをインストールしてください。 </p><p id="3d2738d6-9dda-466d-ba6e-3248631da7ff" class="">基本的には上記URLに記載のある通り実施していきます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="4ab047c2-f1fb-496a-8b75-aa264ed2c4c2" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">gitのインストール
+$ sudo dnf install git
+
+証明書を作成するフォルダに移動
+$ cd /usr/local/src
+
+リポジトリをダウンロード
+$ sudo git clone https://github.com/OpenVPN/easy-rsa.git
+
+フォルダに移動
+$ cd easy-rsa/easyrsa3/
+$ pwd
+/usr/local/src/easy-rsa/easyrsa3
+
+CAの有効期間を100年にする
+$ sudo cp -p vars.example vars
+$ sudo vi vars
+$ diff vars.example vars
+138c138
+&lt; #set_var EASYRSA_CA_EXPIRE	3650
+---
+&gt; set_var EASYRSA_CA_EXPIRE	36500
+
+新しい PKI 環境を初期化
+$ sudo ./easyrsa init-pki
+
+新しい認証局 (CA) を構築
+$ sudo ./easyrsa build-ca nopass → COMMONネームを記載:ca-actmotech.local
+
+CA情報の確認
+$ sudo openssl x509 -text -noout -in pki/ca.crt
+
+サーバー証明書作成(サーバ名は任意)
+$ sudo ./easyrsa --days=36500 build-server-full actmotech.local nopass
+※easy-rsa 3.2.0からドメイン名で作成しない場合、server subject alternative nameが削除されたので、alternativeを明示的に指定する必要があります。
+例：sudo ./easyrsa --days=36500 --san=DNS:actmotech-local build-server-full actmotech-local nopass
+
+クライアント証明書の作成(Client名は任意)
+$ sudo ./easyrsa --days=365 build-client-full client.actmotech.local nopass
+
+サーバ証明書、クライアント証明書の有効期限を確認します。
+$ sudo openssl x509 -noout -subject -dates -in ./pki/issued/actmotech.local.crt
+$ sudo openssl x509 -noout -subject -dates -in ./pki/issued/client.actmotech.local.crt
+
+カスタムフォルダ作成
+$ sudo mkdir published
+
+認証局のCA証明書、サーバ証明書、キーをカスタムフォルダにコピー
+$ sudo cp -p pki/ca.crt published/
+$ sudo mv pki/issued/actmotech.local.crt published/
+$ sudo mv pki/private/actmotech.local.key published/
+
+作成したクライアント証明書をカスタムフォルダにコピー
+$ sudo mv pki/issued/client.actmotech.local.crt published/
+$ sudo mv pki/private/client.actmotech.local.key published/
+
+acmの画面にてサーバ証明書とクラインと証明書をアップロードします。
+※サーバ証明書はクライアントVPNエンドポイントを作成しているリージョンのACMに存在するようにしてください。
+
+もしくはCLIで実施する場合は。。。
+
+カスタムフォルダに移動して、ACMへインポート
+$ aws acm import-certificate --certificate file://actmotechserver.crt --private-key file://actmotechserver.key --certificate-chain file://ca.crt --region ap-northeast-1
+
+カスタムフォルダに移動して、ACMへインポート
+$ aws acm import-certificate --certificate file://client1.actmotech.xyz.crt --private-key file://client1.actmotech.xyz.key --certificate-chain file://ca.crt --region ap-northeast-1</code></pre><h1 id="66a6dee1-2739-4371-9039-8f15bee3b5f1" class="">クライアント証明書の更新方法</h1><hr id="12c2af28-5b35-4284-ada0-5965e4671d07"/><p id="b4396e33-90e1-4955-a9ae-04868d9f4f72" class="">証明書は期限を迎えたら使えなくなるので、更新方法についても記載します。</p><p id="61a82171-ff95-4b50-b92d-1be5afd92ca6" class="">CAは初期作成時と同じCAを利用した場合となります。</p><p id="2ce8d12b-1c80-4691-a778-ad6ee05a5b0d" class="">以下コマンドを実行するとエラーが返ってきます。これはすでに証明書要求があることによるエラーなので、</p><p id="5a6d77c0-40c0-4e59-b804-27ba79198700" class="">ファイル名を変えて作成するか、同じ名前で作成したい場合には「client.actmotech.local.req」を削除します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e1dda39d-3bb3-4f9f-93fa-49be7a657e1a" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">$ sudo ./easyrsa --days=400 build-client-full client.actmotech.local nopass
+Using Easy-RSA &#x27;vars&#x27; configuration:
+* /usr/local/src/easy-rsa/easyrsa3/vars
+
+EasyRSA version ~VER~
+
+Error
+-----
+Request file already exists. Aborting build to avoid overwriting this file.
+If you wish to continue, please use a different name.
+Conflicting file found at:
+* /usr/local/src/easy-rsa/easyrsa3/pki/reqs/client.actmotech.local.req</code></pre><p id="b6c68dc9-e824-4545-a30f-b2bebc392bb1" class="">削除後にもう一度コマンドを実行してみます。途中で回答を求められるところはyもしくはyesで回答します。</p><p id="86b9d0f9-0997-4c37-9099-85e121248345" class="">そうすると新しい有効期限でクライアント証明書が発行することができます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="346a99dd-5d94-4b1e-a45f-7e5bebc6788e" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">$ sudo ./easyrsa --days=400 build-client-full client.actmotech.local nopass
+Using Easy-RSA &#x27;vars&#x27; configuration:
+* /usr/local/src/easy-rsa/easyrsa3/vars
+Warning!
+
+An inline file for name &#x27;client.actmotech.local&#x27; already exists:
+* /usr/local/src/easy-rsa/easyrsa3/pki/inline/client.actmotech.local.inline
+
+Type the word &#x27;y&#x27; to continue, or any other input to abort.
+  Confirm OVER-WRITE existing inline file ? y
+......
+Type the word &#x27;yes&#x27; to continue, or any other input to abort.
+  Confirm request details: yes
+......
+Write out database with 1 new entries
+Data Base Updated
+
+Notice
+------
+Certificate created at:
+* /usr/local/src/easy-rsa/easyrsa3/pki/issued/client.actmotech.local.crt
+
+Notice
+------
+Inline file created:
+* /usr/local/src/easy-rsa/easyrsa3/pki/inline/client.actmotech.local.inline</code></pre><h1 id="0a6bcc15-a2a3-4c21-b286-c8e1e4e4db27" class="">サーバー証明書の更新方法（CA更新は含まない）</h1><hr id="61f40a62-de6e-4917-9f17-8d7e0a1632df"/><p id="9984d8fc-61e1-451e-af76-e70880827295" class="">サーバ証明書を100年とか作っていれば更新することはないのですが、</p><p id="94763a0f-f34d-4253-a1b8-4b9b2094d966" class="">期限を設けてサーバ証明書を作っている場合には期限切れが発生するので更新する必要があります。</p><p id="8acb20e2-d75d-4454-8bb5-f5a67ac607eb" class="">以下コマンドを実行するとエラーが返ってきます。これはすでに証明書要求があることによるエラーなので、</p><p id="8cc95ccc-7728-48c9-a8eb-eab11e65e3c5" class="">ファイル名を変えて作成するか、同じ名前で作成したい場合には「actmotech.local.req」を削除します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d58a2dbf-29f8-44af-bc6f-37426cc11112" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">$ sudo ./easyrsa --days=365000 build-server-full actmotech.local nopass
+Using Easy-RSA &#x27;vars&#x27; configuration:
+* /usr/local/src/easy-rsa/easyrsa3/vars
+
+EasyRSA version ~VER~
+
+Error
+-----
+Request file already exists. Aborting build to avoid overwriting this file.
+If you wish to continue, please use a different name.
+Conflicting file found at:
+* /usr/local/src/easy-rsa/easyrsa3/pki/reqs/actmotech.local.req</code></pre><p id="b4169615-6179-4f42-8253-b46193573398" class="">削除後にもう一度コマンドを実行してみます。途中で回答を求められるところはyもしくはyesで回答します。</p><p id="d31476e7-e9ff-468b-a5fd-30eb2839a727" class="">そうすると新しい有効期限でサーバー証明書が発行することができます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="29c17ead-8e1e-4a79-8a75-5dae73fc9446" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">$ sudo ./easyrsa --days=365000 build-server-full actmotech.local nopass
+Using Easy-RSA &#x27;vars&#x27; configuration:
+* /usr/local/src/easy-rsa/easyrsa3/vars
+Warning!
+
+An inline file for name &#x27;actmotech.local&#x27; already exists:
+* /usr/local/src/easy-rsa/easyrsa3/pki/inline/actmotech.local.inline
+
+Type the word &#x27;y&#x27; to continue, or any other input to abort.
+  Confirm OVER-WRITE existing inline file ? y
+
+-----
+
+Notice
+------
+Private-Key and Public-Certificate-Request files created.
+Your files are:
+* req: /usr/local/src/easy-rsa/easyrsa3/pki/reqs/actmotech.local.req
+* key: /usr/local/src/easy-rsa/easyrsa3/pki/private/actmotech.local.key
+
+
+You are about to sign the following certificate:
+Request subject, to be signed as a server certificate
+for &#x27;365000&#x27; days:
+
+subject=
+    commonName                = actmotech.local
+
+Type the word &#x27;yes&#x27; to continue, or any other input to abort.
+  Confirm request details: yes
+
+Using configuration from /usr/local/src/easy-rsa/easyrsa3/pki/3d6852c1/temp.4.1
+Check that the request matches the signature
+Signature ok
+The Subject&#x27;s Distinguished Name is as follows
+commonName            :ASN.1 12:&#x27;actmotech.local&#x27;
+Certificate is to be certified until Sep  2 13:14:26 3023 GMT (365000 days)
+
+Write out database with 1 new entries
+Data Base Updated
+
+Notice
+------
+Certificate created at:
+* /usr/local/src/easy-rsa/easyrsa3/pki/issued/actmotech.local.crt
+
+
+Notice
+------
+Inline file created:
+* /usr/local/src/easy-rsa/easyrsa3/pki/inline/actmotech.local.inline</code></pre><p id="7fbcd54a-1031-4ca5-a924-623249a6caff" class="">作成した証明書をACMにインポートしてクライアントVPNエンドポイントのサーバ証明書を切り替えます。</p><p id="ab6d3e3a-1209-4523-a401-5f358220d4af" class="">なお、クライアントVPNのConfigはCAが含まれていますが初期構築時のCAを利用している場合には、</p><p id="54915d0b-04af-4c55-817e-6dcdb0e22b0c" class="">Configを再ダウンロードする必要がない為、既存のConfigで接続することができます。</p><p id="84345ec3-5453-4676-b17a-ca97cf628c90" class="">※サーバ証明書の期限が切れる前で実施している為、期限切れ後の場合はある程度時間が経過しないと接続ができないかもしれません。</p><h1 id="72c73a88-55c4-4833-80e6-fc5411ee7acc" class="">サーバー証明書の更新方法（CA更新を含む）</h1><hr id="f85b66dc-70c7-4b6b-b888-a216c4235274"/><p id="ba1907a8-e2db-4f36-b434-d0bf83e1fd67" class="">初期構築と同じことを実施します。</p><p id="89700490-c766-4ebf-9703-5eb732743a71" class="">作成した証明書をACMを再インポートを実施しクライアントVPNエンドポイントのサーバ証明書を切り替えます。</p><p id="19c9dc30-9f02-4ddb-a6bb-f9c8661641aa" class="">前述でも書いている通りクライアントVPNのConfigはCAが含まれているのでConfigをダウンロードし直し、</p><p id="3006d61a-7c49-4940-a0dc-8dfe3c588d08" class="">ClientVPNアプリから接続を実施しましたが即時接続できませんでした。</p><p id="fe55ba3c-d78e-4713-ac96-303164204cbc" class="">その為、即時で切り替えたい場合には新しくクライアントVPNエンドポイントを作成して接続し、</p><p id="e2a8ce87-14b5-4675-94da-7199df8c4828" class="">旧クライアントVPNエンドポイントを削除するやり方になってしまうかと思います。</p><p id="345b7102-a149-45e4-a725-aea42869d968" class="">※サーバ証明書の期限切れの場合も多分同じになるかと思います。（検証は未実施）</p><p id="ad4ee03f-989c-4707-978b-a6068f1d7866" class="">※初期構築時にインポートしたACMに新しい証明書を再インポートでも試してみましたが即時で繋げることはできませんでした。</p><p id="3d447868-feb9-4723-9676-464e4f590913" class="">（新しいACMが反映されるまでに最大24時間かかるとのことでした。）</p><h1 id="b1e79b38-3770-4799-8ee8-2340eeaac8e4" class="">Client VPN Endpoint の作成</h1><hr id="388a9c9b-68da-44b8-857f-0d955645fec1"/><p id="381670b1-7438-4cfc-84f9-669074ce45f4" class="">AWS Consoleにて、VPCサービスからClient VPN Endpointを作成します。</p><p id="71477c44-aad7-4c35-9d9a-ae2f7cdc6996" class="">名前タグには任意の名前をクライアント IPv4 CIDR*には接続時の NAT で払い出される IP アドレスの範囲を設定しますので、 </p><p id="ed336ecd-2c36-42ee-96c6-ed05d0df6e88" class="">クライアントネットワーク、接続するAWSネットワークと被らないようにしてください。 CIDRは/16-/22の範囲で設定が可能です。</p><p id="f8d73a1e-c01c-4dce-8e92-81735578ba34" class="">サーバ証明書ARNには、先ほどアップロードしたサーバー証明書を選択し、認証オプションには相互認証の使用にチェックを入れます。 </p><p id="ea47c35e-d02f-479e-bcff-6f5d272cdb0f" class="">クライアント証明書ARNには、先ほどアップロードしたサーバー証明書を選択し、認証オプションには相互認証の使用にチェックを入れます。 </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="6c09ed0d-b238-43b3-97fc-07c42d68a0b1" class="code"><code class="language-Bash">AWS公式ドキュメントより：
+サーバー証明書は AWS Certificate Manager (ACM) にアップロードし、クライアント VPN エンドポイントの作成時に指定する必要があります。
+サーバー証明書を ACM にアップロードするときは、認証局 (CA) も指定します。
+クライアント証明書を ACM にアップロードする必要があるのは、クライアント証明書の CA がサーバー証明書の CA と異なる場合だけです。
+ACM の詳細については、AWS Certificate Manager ユーザーガイドを参照してください。</code></pre><p id="847cacdc-2690-45be-9516-39dbc060051d" class="">ユーザーベースの認証も使用するので、事前に作っているActive DirectoryのディレクトリIDを使用しています。</p><p id="ac46f035-6b5d-4f19-bca6-86a9a3700f63" class="">クライアントログを保存したい場合にはCloudWatchLogsに保存ができます。 </p><figure id="2ff181f6-7ccd-4356-9a83-db4061bdcfdb" class="image" style="text-align:left"><a href="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled.png"><img style="width:672px" src="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled.png"/></a></figure><figure id="70d641ff-e380-4dfc-a444-b2491315611a" class="image" style="text-align:left"><a href="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%201.png"><img style="width:652px" src="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%201.png"/></a></figure><p id="9fb26f0f-7b2f-4768-b144-813e705eed71" class="">クライアント接続ハンドラは接続元IPによるアクセス制御を行いたい場合など有効にします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="5378ae6d-5f7b-434c-adba-b481b512413b" class="code"><code class="language-Bash">クライアント VPN エンドポイントのクライアント接続ハンドラーを設定できます。
+ハンドラーを使用すると、デバイス、ユーザー、接続属性に基づいて新しい接続を許可するカスタムロジックを実行できます。
+現在、サポートされているクライアント接続ハンドラーのタイプは AWS Lambda 関数のみです。
+クライアント VPN エンドポイントのクライアント接続ハンドラを設定するには、デバイス、ユーザー、接続属性を入力として受け取り、
+新しい接続を許可または拒否する決定をクライアント VPN サービスに返す AWS Lambda 関数を作成します。</code></pre><figure id="09f4f518-55f5-4576-bd15-9db3a3bf9961" class="image" style="text-align:left"><a href="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%202.png"><img style="width:648px" src="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%202.png"/></a></figure><p id="f46de186-7352-41ee-bdf2-ed004983ce19" class="">プロトコルはUDPとし、スプリットトンネルを有効にします。 </p><p id="e0b07fa1-65b7-42fa-97cd-14e54f604e9e" class="">スプリットトンネルとはインターネットをアクセスする際にVPNトンネルを経由せずに直接インターネットにアクセスします。 </p><p id="e78882ee-52c2-4d44-a388-935a8d1bd120" class="">最後に接続するVPCとクライアントから接続するために許可されたセキュリティグループを選択して残りはデフォルトのままとして、 </p><p id="9d72daf9-c557-48ce-a40d-184fca7ee613" class="">VPCエンドポイントを作成します。また今回ユーザーベース認証にしているのでMSADのDNSを指定します。</p><figure id="7fc1ea65-6e6a-430c-bbbe-4bf00dbc1b62" class="image" style="text-align:left"><a href="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%203.png"><img style="width:624px" src="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%203.png"/></a></figure><h1 id="9bf650b6-ba13-4688-920d-9c79d38005f6" class="">作成したVPNエンドポイントにサブネットを関連付け</h1><hr id="7f49826d-4173-4cb7-8b60-56d934759e37"/><p id="99302ccb-a814-4690-b008-2bc3a18f24dd" class="">今のままでは接続できないので、サブネットをVPCエンドポイントに紐付けします。</p><p id="a52a99a9-9d98-4a9d-8f12-f7f01fc56fa5" class=""><a href="https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-target.html#cvpn-working-target-associate">https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-target.html#cvpn-working-target-associate</a></p><p id="090bdcdd-fa4a-4003-8a8e-0cdcec54cd41" class="">作成したVPCエンドポイントを選択し、関連付けタブより関連付けをクリックして、 関連付けしたいVPCとサブネットを選択して、</p><p id="726e4861-9b4d-4f03-b80d-bac3ef2d82b7" class="">関連付けをクリックします。 関連付けした直後は黄色マークで関連受け中と表示され、少し待つと関連付け済みになります。</p><p id="cf16623e-a2fb-4f6e-9f39-e65384f73b46" class="">注意が必要なのは関連付けされているサブネット数が増えると費用も増えます。</p><p id="3c488b82-f3e6-4e93-9d3a-1301bcd1617e" class=""><a href="https://aws.amazon.com/jp/vpn/pricing/">https://aws.amazon.com/jp/vpn/pricing/</a></p><h1 id="dd447198-3546-4c32-9ee9-9cb30058b1b3" class="">作成したVPNエンドポイントに承認ルールを追加</h1><hr id="104a5feb-363b-4b00-b7db-b95f6b1f47d1"/><p id="924a5b2f-27fd-4eff-88d1-e2ac38087aeb" class="">作成したVPCエンドポイントを選択し、承認ルールタブより<strong>認証ルールを追加</strong>をクリックします。 </p><p id="e7968876-d9f6-4dca-b53f-8f40cad40ffb" class="">VPNクライアントからアクセスさせるIPアドレスの範囲をアクセスを有効にする送信先ネットに記載し、 </p><p id="27c113f6-1bc9-4e73-b4c3-2ac62a65640e" class="">アクセスを付与する対象を全てのユーザーにアクセスを許可するにします。 </p><p id="3dc48778-f8a6-40ad-b8f2-35e86edecfdd" class="">AD認証を使う場合には特定のアクセスグループのユーザーへのアクセスを許可するになります。</p><h1 id="019838cf-e549-4d75-86b7-b7f6d092b18e" class="">作成したVPNエンドポイントに接続元制限</h1><hr id="21b0e797-bc00-49e0-92ef-99788df35e0d"/><p id="23cc301b-0703-417c-9cc4-6b489d41383d" class="">接続元制限を行いたい場合には作成したVPCエンドポイントを選択し、 セキュリティグループを選択し、</p><p id="12de63f8-33f0-4ac1-aa37-b5cff7ad040a" class="">セキュリティグループの適用をクリックします。 セキュリティグループについては事前に作成をするようにしてください。</p><p id="bb898ee0-30c7-4696-8138-f17c718c58e9" class="">※セキュリティグループでインバウンドを絞ることはできません。ソースをどのように設定した場合でもClient VPN エンドポイントは通信を受け付けます。</p><h1 id="997cbfad-3a3d-4d98-95cf-7a6e5cc51370" class="">クライアント側の設定</h1><hr id="2a79e078-171c-48bc-9074-7f9a04a96d9d"/><p id="0a12cf9e-c62f-4a8d-9531-bdde101619b9" class="">クライアントソフトウェアはAWS公式のClientVPNを利用しています。</p><ul id="5a0e47fd-f352-43e2-a8a6-bea6d7c2778a" class="bulleted-list"><li style="list-style-type:disc"><a href="https://aws.amazon.com/jp/vpn/client-vpn-download/">https://aws.amazon.com/jp/vpn/client-vpn-download/</a></li></ul><p id="b651b25f-c229-4dfa-8732-bba40d09f05c" class="">インストールできたら、AWS Console から作成したVPNエンドポイントを選択して、クライアント設定のダウンロードをします。 </p><p id="052a43ae-9625-4bd3-96cf-698b56b6aef1" class="">また証明書による相互認証を行うためにクライアントの証明書とキーファイルもダウンロードします。 </p><p id="318a930d-c77a-4043-b6eb-40544f7e4d5c" class="">ダウンロードしたら.ovpnの拡張子ファイルをテキスト開き以下を修正します。 </p><ul id="c587a45a-7066-4f67-9925-c8da5b151da3" class="bulleted-list"><li style="list-style-type:disc"><a href="https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html">https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html</a></li></ul><p id="00423c79-af7f-4995-8297-843179a4f705" class="">クライアント証明書とキーファイルの情報を末尾に記載します。</p><p id="053ae07e-80d6-4ae9-9e18-db9e75fdcf0d" class="">パスの場合）</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="aa1466cb-ab02-4cd4-b521-6ab15b2fcb02" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">cert /path/*********.crt
+key /path/*********.key</code></pre><p id="a13f1011-df80-4bf0-a5ad-38ad25e2e5a6" class="">直接クライアント証明書とキーを記載する場合）</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="cb0f6c6d-c73e-4771-8d5e-612793d6fe83" class="code"><code class="language-Shell">&lt;cert&gt;
+-----BEGIN CERTIFICATE-----
+MIIDVjCCAj6gAwIBAgIRANCKzFQMReHHibib8hvEI78wDQYJKoZIhvcNAQELBQAw
+~ 省略 ~
+-----END CERTIFICATE-----
+&lt;/cert&gt;
+
+&lt;key&gt;
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCqbZ3LPi+Wr0pB
+~ 省略 ~
+-----END PRIVATE KEY-----
+&lt;/key&gt;</code></pre><p id="da08d5bf-7c04-43d7-a5e8-b71859f7c1b8" class="">修正が完了したらOpenVPNを立ち上げてプロファイルをインポートし、接続が成功すれば問題ありません。</p><p id="c9343f97-d6fe-461d-becd-2242a7dd8457" class="">また今回指定したActiveDirectoryは二要素認証もいれてあるので、ADの認証/証明書認証/多要素認証の3段構えになっております。</p><p id="7c7bf480-1ea4-4486-9681-dba3efe7adc0" class="">そのため接続する時には以下のような画面になります。</p><figure id="a9e5955a-db35-42a4-b6bd-a5553f9059d0" class="image" style="text-align:left"><a href="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/%25E3%2582%25B9%25E3%2582%25AF%25E3%2583%25AA%25E3%2583%25BC%25E3%2583%25B3%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%2583%25E3%2583%2588_2023-07-03_21.44.51.png"><img style="width:438px" src="AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/%25E3%2582%25B9%25E3%2582%25AF%25E3%2583%25AA%25E3%2583%25BC%25E3%2583%25B3%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%2583%25E3%2583%2588_2023-07-03_21.44.51.png"/></a></figure><p id="70ca4a3e-4310-4e4e-80fd-fd3403d9ce37" class="">接続できた後には、念の為AWS内にあるEC2などへPINGなど実施して疎通確認を行なってください。</p><h1 id="8165364f-1bcb-4a58-a23d-286eb029e73c" class="">最後に</h1><hr id="82b9cd64-07d2-4e7a-94f8-feb3c22cc02c"/><p id="66596ad4-e7f5-4708-9e9e-7267b1ead5d0" class="">今回オレオレ証明書をしていますが証明書の期限は必ずやってくるので更新を忘れずにしましょう。 </p><p id="096a1779-4158-456f-9624-d00c515644df" class="">更新期限を100年にするなどのやり方もあります。</p><p id="e2843747-7c72-4cb4-b3bc-c9d53334a5ec" class="">認証局の設定ファイルを見るとサーバ証明書はデフォルトで825日となっているようです。 </p><p id="49660707-ec0d-4d22-ac76-ae565bd1c869" class="">同じくCAの有効期限期限は3650日となっているようです。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1f086f60-7bd0-4df0-acd3-7b45cf7fac2a" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># grep default_days &quot;/home/ec2-user/easy-rsa/easyrsa3/openssl-easyrsa.cnf&quot;
+default_days= $ENV::EASYRSA_CERT_EXPIRE# how long to certify for
+
+# grep EASYRSA_CERT_EXPIRE &quot;/home/ec2-user/easy-rsa/easyrsa3/vars.example&quot;
+#set_var EASYRSA_CERT_EXPIRE  825
+
+# grep EASYRSA_CA_EXPIRE &quot;/home/ec2-user/easy-rsa/easyrsa3/vars.example&quot;
+#set_var EASYRSA_CA_EXPIRE  3650</code></pre><p id="38fcbf18-fff1-44d9-ba3b-27a40c9e4fd2" class="">上記を任意の日数に変更して./easyrsa init-pkiを実施することで初期化することができます。 </p><p id="481ddaef-b90c-4986-add8-8d0f2445b204" class="">事前に有効日数を指定したい場合にはこちらを実施した上で進めてください。 </p><p id="096aa440-2f70-4e88-8a3d-c7362fd31ca1" class="">期限を延ばすことで気をつけなきゃいけないのは使わないクライアント証明書は失効させるようにしましょう。 </p><p id="ea12430b-4ac1-4997-aa03-6f4ff68280ce" class="">あとここまでやって最後調べていて気づいたのですが、AWSのハンズオン内容があるんですね。。。 </p><ul id="bff23895-2820-4fd6-bf76-ca579a159b14" class="bulleted-list"><li style="list-style-type:disc"><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/be2b90c2-06a1-4ae6-84b3-c705049d2b6f/ja-JP">https://catalog.us-east-1.prod.workshops.aws/workshops/be2b90c2-06a1-4ae6-84b3-c705049d2b6f/ja-JP</a></li></ul><p id="bd5d8e28-7ae2-45b8-a3d4-5c723db38d04" class="">参考としてACM証明書を利用したやり方も見つけたのでクラスメソッド様のBLOG内容を引用させていただきます。</p><ul id="c571c084-1923-479a-b30c-0bf9249030eb" class="bulleted-list"><li style="list-style-type:disc"><a href="https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/">https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/</a></li></ul><figure id="3a537dca-8c57-464f-a76b-b7bb66f5e07e"><a href="https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">ACM で発行したパブリック証明書で Client VPN を構築してみた | DevelopersIO</div><div class="bookmark-description">みなさま Xin chao !</div></div><div class="bookmark-href"><img src="https://dev.classmethod.jp/_nuxt/icon_64x64.459039.png" class="icon bookmark-icon"/>https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/</div></div><img src="https://d1tlzifd8jdoy4.cloudfront.net/wp-content/uploads/2019/05/aws-client-vpn.png" class="bookmark-image"/></a></figure><p id="008b1bf8-cb50-45c9-8b78-0824825482d4" class="">
+</p><p id="7a2c2f76-c852-42a6-b819-dfcad6bf33fb" class="">
+</p><p id="5bcf57a2-1c6b-44a8-ac99-8eb2d916317c" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

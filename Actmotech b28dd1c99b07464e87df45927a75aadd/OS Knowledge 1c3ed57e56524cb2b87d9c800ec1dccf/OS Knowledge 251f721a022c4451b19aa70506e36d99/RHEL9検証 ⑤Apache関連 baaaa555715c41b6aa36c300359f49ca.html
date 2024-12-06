@@ -1,0 +1,1005 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>RHEL9検証 ⑤Apache関連</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="baaaa555-715c-41b6-aa36-c300359f49ca" class="page sans"><header><h1 class="page-title">RHEL9検証 ⑤Apache関連</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td><span class="selected-value select-value-color-blue">RHEL</span></td></tr></tbody></table></header><div class="page-body"><figure id="6ca0a6d7-3f67-40fc-a903-98f87ff8435f" class="image" style="text-align:left"><a href="RHEL9%E6%A4%9C%E8%A8%BC%20%E2%91%A6%20Cockpit%E5%B0%8E%E5%85%A5%201289da9f37308067a685deffd613c2bf/images.png"><img style="width:204px" src="RHEL9%E6%A4%9C%E8%A8%BC%20%E2%91%A6%20Cockpit%E5%B0%8E%E5%85%A5%201289da9f37308067a685deffd613c2bf/images.png"/></a></figure><p id="b4f4226f-c741-4549-aa68-52d4c5a6a4ce" class="">主な変更点は以下を参照してください。</p><figure id="0630f0c1-f6a7-48ab-b0ce-342ad803a561"><a href="https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/9/html/deploying_web_servers_and_reverse_proxies/apache-changes-rhel9_setting-apache-http-server" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">1.2. Apache HTTP Server への主な変更点 Red Hat Enterprise Linux 9 | Red Hat Customer Portal</div><div class="bookmark-description">Access Red Hat’s knowledge, guidance, and support through your subscription.</div></div><div class="bookmark-href"><img src="https://access.redhat.com/webassets/avalon/g/favicon.ico" class="icon bookmark-icon"/>https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/9/html/deploying_web_servers_and_reverse_proxies/apache-changes-rhel9_setting-apache-http-server</div></div><img src="https://access.redhat.com/webassets/avalon/g/shadowman-200.png" class="bookmark-image"/></a></figure><p id="7673b75a-3699-4873-bb9e-352cb8f6c923" class="">
+</p><p id="0ca3afef-3aad-445e-9529-d37161809884" class="">目次</p><nav id="31f38fae-2b0b-484c-9aec-40388c7ea861" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5f092b9e-5634-4cd6-9176-2c0c62aa1785">1. Apache インストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4126a52b-e554-48d2-a267-a5f232280663">3. Apacheの設定（主にセキュリティ周り）</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9bcdeb30-cbb4-4123-9298-5751197922a4">4.Apache起動</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e0f5ce83-3df7-420d-85fb-397147aa2c83">5.TestPage確認</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d4f4bf17-129e-4906-a6d9-bd61390b82d6">6.WebページのSSL化に伴い、mod_sslのインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4981be58-880d-4734-8c91-e3237d792848">7.Apache(mod_ssl)の設定（主にセキュリティ周り）</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#002df37e-49de-49f6-9a67-6eb95c5827ff">8.VirtualHost設定</a></div></nav><h1 id="5f092b9e-5634-4cd6-9176-2c0c62aa1785" class="">1. Apache インストール</h1><hr id="1289da9f-3730-8063-b5ff-ddb65b3e4f05"/><p id="9c6a05dc-018c-49cd-98d9-b74e9f746ba6" class="">Apacheのインストール</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="de432333-6ce6-44e6-a966-587dcb63aa9e" class="code"><code class="language-Bash"># dnf install httpd
+サブスクリプション管理リポジトリーを更新しています。
+メタデータの期限切れの最終確認: 2:41:09 時間前の 2023年04月18日 13時57分01秒 に実施しました。
+依存関係が解決しました。
+================================================================================================================================================================================================================
+ パッケージ                                        アーキテクチャー                      バージョン                                       リポジトリー                                                    サイズ
+================================================================================================================================================================================================================
+インストール:
+ httpd                                             x86_64                                2.4.53-7.el9_1.5                                 rhel-9-for-x86_64-appstream-rpms                                 53 k
+依存関係のインストール:
+ apr                                               x86_64                                1.7.0-11.el9                                     rhel-9-for-x86_64-appstream-rpms                                127 k
+ apr-util                                          x86_64                                1.6.1-20.el9                                     rhel-9-for-x86_64-appstream-rpms                                 98 k
+ apr-util-bdb                                      x86_64                                1.6.1-20.el9                                     rhel-9-for-x86_64-appstream-rpms                                 15 k
+ httpd-core                                        x86_64                                2.4.53-7.el9_1.5                                 rhel-9-for-x86_64-appstream-rpms                                1.5 M
+ httpd-filesystem                                  noarch                                2.4.53-7.el9_1.5                                 rhel-9-for-x86_64-appstream-rpms                                 17 k
+ httpd-tools                                       x86_64                                2.4.53-7.el9_1.5                                 rhel-9-for-x86_64-appstream-rpms                                 88 k
+ mailcap                                           noarch                                2.1.49-5.el9                                     rhel-9-for-x86_64-baseos-rpms                                    35 k
+ redhat-logos-httpd                                noarch                                90.4-1.el9                                       rhel-9-for-x86_64-appstream-rpms                                 18 k
+弱い依存関係のインストール:
+ apr-util-openssl                                  x86_64                                1.6.1-20.el9                                     rhel-9-for-x86_64-appstream-rpms                                 17 k
+ mod_http2                                         x86_64                                1.15.19-3.el9_1.5                                rhel-9-for-x86_64-appstream-rpms                                153 k
+ mod_lua                                           x86_64                                2.4.53-7.el9_1.5                                 rhel-9-for-x86_64-appstream-rpms                                 63 k
+
+トランザクションの概要
+================================================================================================================================================================================================================
+インストール  12 パッケージ
+
+ダウンロードサイズの合計: 2.2 M
+インストール後のサイズ: 6.0 M
+これでよろしいですか? [y/N]: y
+パッケージのダウンロード:
+(1/12): apr-util-openssl-1.6.1-20.el9.x86_64.rpm                                                                                                                                 40 kB/s |  17 kB     00:00    
+(2/12): apr-util-1.6.1-20.el9.x86_64.rpm                                                                                                                                        216 kB/s |  98 kB     00:00    
+(3/12): apr-1.7.0-11.el9.x86_64.rpm                                                                                                                                             254 kB/s | 127 kB     00:00    
+(4/12): redhat-logos-httpd-90.4-1.el9.noarch.rpm                                                                                                                                 90 kB/s |  18 kB     00:00    
+(5/12): apr-util-bdb-1.6.1-20.el9.x86_64.rpm                                                                                                                                     77 kB/s |  15 kB     00:00    
+(6/12): httpd-tools-2.4.53-7.el9_1.5.x86_64.rpm                                                                                                                                 502 kB/s |  88 kB     00:00    
+(7/12): httpd-2.4.53-7.el9_1.5.x86_64.rpm                                                                                                                                       281 kB/s |  53 kB     00:00    
+(8/12): mod_lua-2.4.53-7.el9_1.5.x86_64.rpm                                                                                                                                     356 kB/s |  63 kB     00:00    
+(9/12): httpd-filesystem-2.4.53-7.el9_1.5.noarch.rpm                                                                                                                             84 kB/s |  17 kB     00:00    
+(10/12): mod_http2-1.15.19-3.el9_1.5.x86_64.rpm                                                                                                                                 707 kB/s | 153 kB     00:00    
+(11/12): httpd-core-2.4.53-7.el9_1.5.x86_64.rpm                                                                                                                                 6.3 MB/s | 1.5 MB     00:00    
+(12/12): mailcap-2.1.49-5.el9.noarch.rpm                                                                                                                                        152 kB/s |  35 kB     00:00    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+合計                                                                                                                                                                            1.9 MB/s | 2.2 MB     00:01     
+トランザクションの確認を実行中
+トランザクションの確認に成功しました。
+トランザクションのテストを実行中
+トランザクションのテストに成功しました。
+トランザクションを実行中
+  準備             :                                                                                                                                                                                        1/1 
+  インストール中   : apr-1.7.0-11.el9.x86_64                                                                                                                                                               1/12 
+  インストール中   : apr-util-bdb-1.6.1-20.el9.x86_64                                                                                                                                                      2/12 
+  インストール中   : apr-util-1.6.1-20.el9.x86_64                                                                                                                                                          3/12 
+  インストール中   : apr-util-openssl-1.6.1-20.el9.x86_64                                                                                                                                                  4/12 
+  インストール中   : httpd-tools-2.4.53-7.el9_1.5.x86_64                                                                                                                                                   5/12 
+  インストール中   : mailcap-2.1.49-5.el9.noarch                                                                                                                                                           6/12 
+  scriptletの実行中: httpd-filesystem-2.4.53-7.el9_1.5.noarch                                                                                                                                              7/12 
+  インストール中   : httpd-filesystem-2.4.53-7.el9_1.5.noarch                                                                                                                                              7/12 
+  インストール中   : httpd-core-2.4.53-7.el9_1.5.x86_64                                                                                                                                                    8/12 
+  インストール中   : mod_lua-2.4.53-7.el9_1.5.x86_64                                                                                                                                                       9/12 
+  インストール中   : mod_http2-1.15.19-3.el9_1.5.x86_64                                                                                                                                                   10/12 
+  インストール中   : redhat-logos-httpd-90.4-1.el9.noarch                                                                                                                                                 11/12 
+  インストール中   : httpd-2.4.53-7.el9_1.5.x86_64                                                                                                                                                        12/12 
+  scriptletの実行中: httpd-2.4.53-7.el9_1.5.x86_64                                                                                                                                                        12/12 
+  検証             : apr-util-openssl-1.6.1-20.el9.x86_64                                                                                                                                                  1/12 
+  検証             : apr-util-1.6.1-20.el9.x86_64                                                                                                                                                          2/12 
+  検証             : apr-1.7.0-11.el9.x86_64                                                                                                                                                               3/12 
+  検証             : redhat-logos-httpd-90.4-1.el9.noarch                                                                                                                                                  4/12 
+  検証             : apr-util-bdb-1.6.1-20.el9.x86_64                                                                                                                                                      5/12 
+  検証             : httpd-tools-2.4.53-7.el9_1.5.x86_64                                                                                                                                                   6/12 
+  検証             : httpd-2.4.53-7.el9_1.5.x86_64                                                                                                                                                         7/12 
+  検証             : mod_lua-2.4.53-7.el9_1.5.x86_64                                                                                                                                                       8/12 
+  検証             : httpd-filesystem-2.4.53-7.el9_1.5.noarch                                                                                                                                              9/12 
+  検証             : mod_http2-1.15.19-3.el9_1.5.x86_64                                                                                                                                                   10/12 
+  検証             : httpd-core-2.4.53-7.el9_1.5.x86_64                                                                                                                                                   11/12 
+  検証             : mailcap-2.1.49-5.el9.noarch                                                                                                                                                          12/12 
+インストール済みの製品が更新されています。
+
+インストール済み:
+  apr-1.7.0-11.el9.x86_64                apr-util-1.6.1-20.el9.x86_64                 apr-util-bdb-1.6.1-20.el9.x86_64        apr-util-openssl-1.6.1-20.el9.x86_64     httpd-2.4.53-7.el9_1.5.x86_64         
+  httpd-core-2.4.53-7.el9_1.5.x86_64     httpd-filesystem-2.4.53-7.el9_1.5.noarch     httpd-tools-2.4.53-7.el9_1.5.x86_64     mailcap-2.1.49-5.el9.noarch              mod_http2-1.15.19-3.el9_1.5.x86_64    
+  mod_lua-2.4.53-7.el9_1.5.x86_64        redhat-logos-httpd-90.4-1.el9.noarch        
+
+完了しました!</code></pre><h1 id="4126a52b-e554-48d2-a267-a5f232280663" class="">3. Apacheの設定（主にセキュリティ周り）</h1><hr id="1289da9f-3730-80c1-bd38-e4c567aa53cc"/><ul id="b50d35a4-1302-4687-9614-00218f37b442" class="bulleted-list"><li style="list-style-type:disc">サーバ名の設定<ul id="28ddda56-df62-4e07-b23c-0fbfe186cdfe" class="bulleted-list"><li style="list-style-type:circle">Servername欄の修正</li></ul></li></ul><ul id="745ddc66-082f-4743-8f6d-c52d4c273b56" class="bulleted-list"><li style="list-style-type:disc">ドキュメントルートのインデックスを無効<ul id="a48bd9cb-4d1c-41ec-9046-92b5050bf54f" class="bulleted-list"><li style="list-style-type:circle">Options Indexes FollowSymLinksからOptions FollowSymLinksに変更</li></ul></li></ul><ul id="5dce797c-8daf-4808-b6eb-34d3bda4781f" class="bulleted-list"><li style="list-style-type:disc">Apacheバージョン表示の無効化<ul id="7800b5fc-3be9-48c7-8f32-331a453035b1" class="bulleted-list"><li style="list-style-type:circle">ServerSignature / ServerTokens Prodの追加</li></ul></li></ul><ul id="4e87542d-5a2b-4402-898a-6cfc11341977" class="bulleted-list"><li style="list-style-type:disc">TRACEメソッドを利用したHTTPリクエスヘッダの認証上などを盗み出す手法の無効化<ul id="559a2982-67af-4d25-8ad9-1622afd76914" class="bulleted-list"><li style="list-style-type:circle">TraceEnable offの追加</li></ul></li></ul><ul id="0630d197-2126-4ad7-8f12-eb0f8c8ab573" class="bulleted-list"><li style="list-style-type:disc">X-Frame-Optionsヘッダの設定（クリックジャッキング攻撃の対策）<ul id="e8fd42b9-9dad-4e45-a6bb-571b85cf64cf" class="bulleted-list"><li style="list-style-type:circle">自サーバのコンテンツを他のサイトに埋め込まれないようにして、意図しないサイトへ強制的に誘導してしまわないようにする</li></ul><ul id="97cca875-0eb8-4ba2-a442-c1cdaad5388a" class="bulleted-list"><li style="list-style-type:circle">00-base.conf内で、モジュール：LoadModule headers_module modules/mod_headers.soはデフォルトで有効化されている</li></ul><ul id="20a56882-6f34-4b1e-8957-5d68b63238d3" class="bulleted-list"><li style="list-style-type:circle">Header append X-FRAME-OPTIONS &quot;SAMEORIGIN”の追加（DENYにするとサイト表示に影響がある可能性あり）</li></ul></li></ul><ul id="727670a2-878f-4605-93e2-24819bde98bd" class="bulleted-list"><li style="list-style-type:disc">Header always unset X-Powered-By（PHPを導入している場合、PHPのバージョンを非表示）</li></ul><ul id="1a740508-c75f-4c85-bdcb-89741c88673d" class="bulleted-list"><li style="list-style-type:disc">PHPにはモジュール版のCGIがあるため、CGIの機能を利用せずにPHPを実行できるので無効化します。</li></ul><p id="7593acdd-5530-4aed-92ce-ac4c62aa8671" class="">
+</p><p id="f8a30d24-6f18-4720-b52a-122559df6e83" class="">設定した結果の差分</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="c975fcd4-1a93-461c-8d29-a78a796c5ce3" class="code"><code class="language-Bash"># cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.org
+# vi /etc/httpd/conf/httpd.conf
+# diff -U0 /etc/httpd/conf/httpd.conf.org /etc/httpd/conf/httpd.conf
+--- /etc/httpd/conf/httpd.conf.org      2023-03-30 00:01:45.000000000 +0900
++++ /etc/httpd/conf/httpd.conf  2023-05-01 16:20:55.117742879 +0900
+@@ -100 +100 @@
+-#ServerName www.example.com:80
++ServerName DomainName
+@@ -149 +149 @@
+-    Options Indexes FollowSymLinks
++    Options FollowSymLinks
+@@ -156 +156 @@
+-    AllowOverride None
++    AllowOverride All 
+@@ -260,5 +260,5 @@
+-&lt;Directory &quot;/var/www/cgi-bin&quot;&gt;
+-    AllowOverride None
+-    Options None
+-    Require all granted
+-&lt;/Directory&gt;
++#&lt;Directory &quot;/var/www/cgi-bin&quot;&gt;
++#    AllowOverride None
++#    Options None
++#    Require all granted
++#&lt;/Directory&gt;
+@@ -358,0 +359,6 @@
++
++ServerSignature Off
++ServerTokens Prod
++TraceEnable off
++Header append X-FRAME-OPTIONS &quot;SAMEORIGIN&quot;
++Header always unset X-Powered-By</code></pre><p id="78878f6e-ea18-4213-8bde-786d65a36079" class="">iconsフォルダはデフォルトコンテンツが利用する画像となり通常利用しないものなので無効化</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="84d774bc-b63e-48fd-9fac-04bb85409461" class="code"><code class="language-Bash"># cd /etc/httpd/conf.d/
+# mv autoindex.conf autoindex.conf.org</code></pre><p id="51a1f703-349a-460e-b63d-3afedb70dc69" class="">WelcomePageの削除</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="28de0875-4a60-442f-a5de-2b6ec29b9bf1" class="code"><code class="language-Bash"># mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.org</code></pre><h1 id="9bcdeb30-cbb4-4123-9298-5751197922a4" class="">4.Apache起動</h1><hr id="1289da9f-3730-8018-992d-cf0a2fb3e12e"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="c94ff867-6755-4b2d-93fc-21836d9a5c6d" class="code"><code class="language-Bash"># systemctl enable --now httpd
+Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /usr/lib/systemd/system/httpd.service.
+
+# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+     Active: active (running) since Tue 2023-04-18 17:08:44 JST; 12s ago
+       Docs: man:httpd.service(8)
+   Main PID: 2070 (httpd)
+     Status: &quot;Total requests: 0; Idle/Busy workers 100/0;Requests/sec: 0; Bytes served/sec:   0 B/sec&quot;
+      Tasks: 213 (limit: 24752)
+     Memory: 41.5M
+        CPU: 86ms
+     CGroup: /system.slice/httpd.service
+             ├─2070 /usr/sbin/httpd -DFOREGROUND
+             ├─2072 /usr/sbin/httpd -DFOREGROUND
+             ├─2073 /usr/sbin/httpd -DFOREGROUND
+             ├─2074 /usr/sbin/httpd -DFOREGROUND
+             └─2075 /usr/sbin/httpd -DFOREGROUND
+
+ 4月 18 17:08:44 ray-rhel9 systemd[1]: Starting The Apache HTTP Server...
+ 4月 18 17:08:44 ray-rhel9 httpd[2070]: Server configured, listening on: port 80
+ 4月 18 17:08:44 ray-rhel9 systemd[1]: Started The Apache HTTP Server.</code></pre><h1 id="e0f5ce83-3df7-420d-85fb-397147aa2c83" class="">5.TestPage確認</h1><hr id="1289da9f-3730-804a-8ad1-df6b28bd70a8"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="52fd2754-6c85-4e12-b4f7-894a86bda01f" class="code"><code class="language-Bash"># vi /var/www/html/index.html 
+&lt;html&gt;
+&lt;body&gt;
+&lt;div style=&quot;width: 100%; font-size: 40px; font-weight: bold; text-align: center;&quot;&gt;
+Web Test Page
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><p id="77cb4e56-bb0c-4a1c-b647-cdc6d6de5389" class="">
+</p><p id="7493762c-4db8-4e36-8f1b-e9afce321ce5" class="">Webページを開いてアクセスできること、ならびにTestPageが表示されていることを確認</p><figure id="c65eaa1d-ea74-486a-89a6-8157b91b6f0e" class="image" style="text-align:left"><a href="RHEL9%E6%A4%9C%E8%A8%BC%20%E2%91%A4Apache%E9%96%A2%E9%80%A3%20baaaa555715c41b6aa36c300359f49ca/Untitled.png"><img style="width:288px" src="RHEL9%E6%A4%9C%E8%A8%BC%20%E2%91%A4Apache%E9%96%A2%E9%80%A3%20baaaa555715c41b6aa36c300359f49ca/Untitled.png"/></a></figure><p id="e3b47aca-cff2-41b9-ae07-d5d4c66c2090" class="">
+</p><h1 id="d4f4bf17-129e-4906-a6d9-bd61390b82d6" class="">6.WebページのSSL化に伴い、mod_sslのインストール</h1><hr id="1289da9f-3730-8016-b8ad-e892ba4775ad"/><p id="67b7f85b-8bf5-4503-ab0c-ddc1ea48ad77" class="">mod_sslのインストール</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1c508425-679f-43d8-bb49-9aacdd22b469" class="code"><code class="language-Bash"># dnf install mod_ssl
+サブスクリプション管理リポジトリーを更新しています。
+メタデータの期限切れの最終確認: 3:59:01 時間前の 2023年04月18日 13時57分01秒 に実施しました。
+依存関係が解決しました。
+==========================================================================================================================================================================================================
+ パッケージ                              アーキテクチャー                       バージョン                                         リポジトリー                                                     サイズ
+==========================================================================================================================================================================================================
+インストール:
+ mod_ssl                                 x86_64                                 1:2.4.53-7.el9_1.5                                 rhel-9-for-x86_64-appstream-rpms                                 114 k
+依存関係のインストール:
+ sscg                                    x86_64                                 3.0.0-5.el9_0                                      rhel-9-for-x86_64-appstream-rpms                                  49 k
+
+トランザクションの概要
+==========================================================================================================================================================================================================
+インストール  2 パッケージ
+
+ダウンロードサイズの合計: 163 k
+インストール後のサイズ: 366 k
+これでよろしいですか? [y/N]: y
+パッケージのダウンロード:
+(1/2): sscg-3.0.0-5.el9_0.x86_64.rpm                                                                                                                                       91 kB/s |  49 kB     00:00    
+(2/2): mod_ssl-2.4.53-7.el9_1.5.x86_64.rpm                                                                                                                                200 kB/s | 114 kB     00:00    
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+合計                                                                                                                                                                      284 kB/s | 163 kB     00:00     
+トランザクションの確認を実行中
+トランザクションの確認に成功しました。
+トランザクションのテストを実行中
+トランザクションのテストに成功しました。
+トランザクションを実行中
+  準備             :                                                                                                                                                                                  1/1 
+  インストール中   : sscg-3.0.0-5.el9_0.x86_64                                                                                                                                                        1/2 
+  インストール中   : mod_ssl-1:2.4.53-7.el9_1.5.x86_64                                                                                                                                                2/2 
+  scriptletの実行中: mod_ssl-1:2.4.53-7.el9_1.5.x86_64                                                                                                                                                2/2 
+  検証             : sscg-3.0.0-5.el9_0.x86_64                                                                                                                                                        1/2 
+  検証             : mod_ssl-1:2.4.53-7.el9_1.5.x86_64                                                                                                                                                2/2 
+インストール済みの製品が更新されています。
+
+インストール済み:
+  mod_ssl-1:2.4.53-7.el9_1.5.x86_64                                                                       sscg-3.0.0-5.el9_0.x86_64                                                                      
+
+完了しました!</code></pre><h1 id="4981be58-880d-4734-8c91-e3237d792848" class="">7.Apache(mod_ssl)の設定（主にセキュリティ周り）</h1><hr id="1289da9f-3730-80f2-b09e-d14445ef8291"/><ul id="8f5460dd-c792-465c-a935-d49deec91a4b" class="bulleted-list"><li style="list-style-type:disc">安全性の低い暗号スイートのサポートの無効化<ul id="04c32cca-54ea-4089-8153-e197865d7940" class="bulleted-list"><li style="list-style-type:circle">SSLCipherSuite PROFILE=SYSTEMとなっており、crypto-policiesの仕組みが導入されている（RHEL8から導入されている）</li></ul><ul id="507237f0-3788-4700-9a5c-171f1672a969" class="bulleted-list"><li style="list-style-type:circle">openssl ciphers -v &#x27;PROFILE=SYSTEM’で確認することができる</li></ul><ul id="da8b1355-e6d4-4058-8600-6159eaafcd8a" class="bulleted-list"><li style="list-style-type:circle">LEGACY / DEFAULT / FUTURE / FIPSから指定が可能</li></ul><ul id="5844cca7-55c5-4602-8192-d2440701034a" class="bulleted-list"><li style="list-style-type:circle">試しにFETUREにしたら強度は上がったが、The policy is not supposed to be used for general purpose systemsとRedHatのドキュメントあり</li></ul><ul id="1063071d-9fe5-4879-a6d7-bae25162a605" class="bulleted-list"><li style="list-style-type:circle">ポリシー変更はupdate-crypto-policies —set Policyで可能</li></ul><ul id="c060a3e8-491a-4e51-8f75-d7e3e0d6409f" class="bulleted-list"><li style="list-style-type:circle">基本的にはDefaultをそのまま使うことを推奨しているが、SSLv3が存在している</li></ul><ul id="c62cf084-6ab5-4af2-b084-f95f88e8f897" class="bulleted-list"><li style="list-style-type:circle">MozillaのGeneratorで設定を作成することもできるみたい</li></ul><figure id="7a81b9a3-6571-4906-a412-73cf7f872853"><a href="https://ssl-config.mozilla.org/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Mozilla SSL Configuration Generator</div><div class="bookmark-description">An easy-to-use secure configuration generator for web, database, and mail software. Simply select the software you are using and receive a configuration file that is both safe and compatible.</div></div><div class="bookmark-href">https://ssl-config.mozilla.org/</div></div></a></figure><ul id="f4bb2c14-cb14-405c-b820-6de09eeb2428" class="bulleted-list"><li style="list-style-type:circle">踏襲したくないのであれば自分で暗号化スイートを設定をする必要あり（IPAが推奨を定義しているので参考にすると良い）</li></ul><figure id="0601a270-6f87-4766-b584-8e2713e615da"><a href="https://www.ipa.go.jp/security/crypto/guideline/ssl_crypt_config.html" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">TLS暗号設定ガイドライン　安全なウェブサイトのために（暗号設定対策編） | 情報セキュリティ | IPA 独立行政法人 情報処理推進機構</div><div class="bookmark-description">情報処理推進機構（IPA）の「TLS暗号設定ガイドライン　安全なウェブサイトのために（暗号設定対策編）」に関する情報です。</div></div><div class="bookmark-href"><img src="https://www.ipa.go.jp/apple-touch-icon-180x180.png" class="icon bookmark-icon"/>https://www.ipa.go.jp/security/crypto/guideline/ssl_crypt_config.html</div></div><img src="https://www.ipa.go.jp/k3q2q400000050d7-img/k3q2q400000050dg.png" class="bookmark-image"/></a></figure></li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="37108c28-190f-461d-af67-47aaaa5587bc" class="code"><code class="language-Bash"># openssl ciphers -v &#x27;PROFILE=SYSTEM&#x27;
+TLS_AES_256_GCM_SHA384         TLSv1.3 Kx=any      Au=any   Enc=AESGCM(256)            Mac=AEAD
+TLS_CHACHA20_POLY1305_SHA256   TLSv1.3 Kx=any      Au=any   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+TLS_AES_128_GCM_SHA256         TLSv1.3 Kx=any      Au=any   Enc=AESGCM(128)            Mac=AEAD
+TLS_AES_128_CCM_SHA256         TLSv1.3 Kx=any      Au=any   Enc=AESCCM(128)            Mac=AEAD
+ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AESGCM(256)            Mac=AEAD
+ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2 Kx=ECDH     Au=RSA   Enc=AESGCM(256)            Mac=AEAD
+ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2 Kx=ECDH     Au=ECDSA Enc=CHACHA20/POLY1305(256) Mac=AEAD
+ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2 Kx=ECDH     Au=RSA   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+ECDHE-ECDSA-AES256-CCM         TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AESCCM(256)            Mac=AEAD
+ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AESGCM(128)            Mac=AEAD
+ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2 Kx=ECDH     Au=RSA   Enc=AESGCM(128)            Mac=AEAD
+ECDHE-ECDSA-AES128-CCM         TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AESCCM(128)            Mac=AEAD
+ECDHE-ECDSA-AES128-SHA256      TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AES(128)               Mac=SHA256
+ECDHE-RSA-AES128-SHA256        TLSv1.2 Kx=ECDH     Au=RSA   Enc=AES(128)               Mac=SHA256
+ECDHE-ECDSA-AES256-SHA         TLSv1   Kx=ECDH     Au=ECDSA Enc=AES(256)               Mac=SHA1
+ECDHE-RSA-AES256-SHA           TLSv1   Kx=ECDH     Au=RSA   Enc=AES(256)               Mac=SHA1
+ECDHE-ECDSA-AES128-SHA         TLSv1   Kx=ECDH     Au=ECDSA Enc=AES(128)               Mac=SHA1
+ECDHE-RSA-AES128-SHA           TLSv1   Kx=ECDH     Au=RSA   Enc=AES(128)               Mac=SHA1
+AES256-GCM-SHA384              TLSv1.2 Kx=RSA      Au=RSA   Enc=AESGCM(256)            Mac=AEAD
+AES256-CCM                     TLSv1.2 Kx=RSA      Au=RSA   Enc=AESCCM(256)            Mac=AEAD
+AES128-GCM-SHA256              TLSv1.2 Kx=RSA      Au=RSA   Enc=AESGCM(128)            Mac=AEAD
+AES128-CCM                     TLSv1.2 Kx=RSA      Au=RSA   Enc=AESCCM(128)            Mac=AEAD
+AES256-SHA256                  TLSv1.2 Kx=RSA      Au=RSA   Enc=AES(256)               Mac=SHA256
+AES128-SHA256                  TLSv1.2 Kx=RSA      Au=RSA   Enc=AES(128)               Mac=SHA256
+AES256-SHA                     SSLv3   Kx=RSA      Au=RSA   Enc=AES(256)               Mac=SHA1
+AES128-SHA                     SSLv3   Kx=RSA      Au=RSA   Enc=AES(128)               Mac=SHA1
+DHE-RSA-AES256-GCM-SHA384      TLSv1.2 Kx=DH       Au=RSA   Enc=AESGCM(256)            Mac=AEAD
+DHE-RSA-CHACHA20-POLY1305      TLSv1.2 Kx=DH       Au=RSA   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+DHE-RSA-AES256-CCM             TLSv1.2 Kx=DH       Au=RSA   Enc=AESCCM(256)            Mac=AEAD
+DHE-RSA-AES128-GCM-SHA256      TLSv1.2 Kx=DH       Au=RSA   Enc=AESGCM(128)            Mac=AEAD
+DHE-RSA-AES128-CCM             TLSv1.2 Kx=DH       Au=RSA   Enc=AESCCM(128)            Mac=AEAD
+DHE-RSA-AES256-SHA256          TLSv1.2 Kx=DH       Au=RSA   Enc=AES(256)               Mac=SHA256
+DHE-RSA-AES128-SHA256          TLSv1.2 Kx=DH       Au=RSA   Enc=AES(128)               Mac=SHA256
+DHE-RSA-AES256-SHA             SSLv3   Kx=DH       Au=RSA   Enc=AES(256)               Mac=SHA1
+DHE-RSA-AES128-SHA             SSLv3   Kx=DH       Au=RSA   Enc=AES(128)               Mac=SHA1
+PSK-AES256-GCM-SHA384          TLSv1.2 Kx=PSK      Au=PSK   Enc=AESGCM(256)            Mac=AEAD
+PSK-CHACHA20-POLY1305          TLSv1.2 Kx=PSK      Au=PSK   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+PSK-AES256-CCM                 TLSv1.2 Kx=PSK      Au=PSK   Enc=AESCCM(256)            Mac=AEAD
+PSK-AES128-GCM-SHA256          TLSv1.2 Kx=PSK      Au=PSK   Enc=AESGCM(128)            Mac=AEAD
+PSK-AES128-CCM                 TLSv1.2 Kx=PSK      Au=PSK   Enc=AESCCM(128)            Mac=AEAD
+PSK-AES256-CBC-SHA             SSLv3   Kx=PSK      Au=PSK   Enc=AES(256)               Mac=SHA1
+PSK-AES128-CBC-SHA256          TLSv1   Kx=PSK      Au=PSK   Enc=AES(128)               Mac=SHA256
+PSK-AES128-CBC-SHA             SSLv3   Kx=PSK      Au=PSK   Enc=AES(128)               Mac=SHA1
+DHE-PSK-AES256-GCM-SHA384      TLSv1.2 Kx=DHEPSK   Au=PSK   Enc=AESGCM(256)            Mac=AEAD
+DHE-PSK-CHACHA20-POLY1305      TLSv1.2 Kx=DHEPSK   Au=PSK   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+DHE-PSK-AES256-CCM             TLSv1.2 Kx=DHEPSK   Au=PSK   Enc=AESCCM(256)            Mac=AEAD
+DHE-PSK-AES128-GCM-SHA256      TLSv1.2 Kx=DHEPSK   Au=PSK   Enc=AESGCM(128)            Mac=AEAD
+DHE-PSK-AES128-CCM             TLSv1.2 Kx=DHEPSK   Au=PSK   Enc=AESCCM(128)            Mac=AEAD
+DHE-PSK-AES256-CBC-SHA         SSLv3   Kx=DHEPSK   Au=PSK   Enc=AES(256)               Mac=SHA1
+DHE-PSK-AES128-CBC-SHA256      TLSv1   Kx=DHEPSK   Au=PSK   Enc=AES(128)               Mac=SHA256
+DHE-PSK-AES128-CBC-SHA         SSLv3   Kx=DHEPSK   Au=PSK   Enc=AES(128)               Mac=SHA1
+ECDHE-PSK-CHACHA20-POLY1305    TLSv1.2 Kx=ECDHEPSK Au=PSK   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+ECDHE-PSK-AES256-CBC-SHA       TLSv1   Kx=ECDHEPSK Au=PSK   Enc=AES(256)               Mac=SHA1
+ECDHE-PSK-AES128-CBC-SHA256    TLSv1   Kx=ECDHEPSK Au=PSK   Enc=AES(128)               Mac=SHA256
+ECDHE-PSK-AES128-CBC-SHA       TLSv1   Kx=ECDHEPSK Au=PSK   Enc=AES(128)               Mac=SHA1
+RSA-PSK-AES256-GCM-SHA384      TLSv1.2 Kx=RSAPSK   Au=RSA   Enc=AESGCM(256)            Mac=AEAD
+RSA-PSK-CHACHA20-POLY1305      TLSv1.2 Kx=RSAPSK   Au=RSA   Enc=CHACHA20/POLY1305(256) Mac=AEAD
+RSA-PSK-AES128-GCM-SHA256      TLSv1.2 Kx=RSAPSK   Au=RSA   Enc=AESGCM(128)            Mac=AEAD
+RSA-PSK-AES256-CBC-SHA         SSLv3   Kx=RSAPSK   Au=RSA   Enc=AES(256)               Mac=SHA1
+RSA-PSK-AES128-CBC-SHA256      TLSv1   Kx=RSAPSK   Au=RSA   Enc=AES(128)               Mac=SHA256
+RSA-PSK-AES128-CBC-SHA         SSLv3   Kx=RSAPSK   Au=RSA   Enc=AES(128)               Mac=SHA1</code></pre><p id="05e3504f-8da9-46d9-a98c-be9c2576685d" class="">SSL_PROTOCOLは、The SSL protocol version (SSLv3, TLSv1, TLSv1.1, TLSv1.2)から選択できる様子</p><p id="5ac3e0c5-75ff-446e-b529-046b4d27f9b3" class="">This module provides SSL v3 and TLS v1.x support for the Apache HTTP Server. SSL v2 is no longer supported.</p><figure id="31697ed7-5ea9-4e65-af3a-a06d5a416dec"><a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">mod_ssl - Apache HTTP Server Version 2.4</div></div><div class="bookmark-href"><img src="https://httpd.apache.org/docs/2.4/images/favicon.ico" class="icon bookmark-icon"/>https://httpd.apache.org/docs/2.4/mod/mod_ssl.html</div></div></a></figure><p id="404ef566-0dd5-45f6-b678-6cf718d560fd" class="">
+</p><p id="b2374657-4fb6-48a4-8c28-08cf5a338103" class="">調べた結果からの結論</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7d62a946-fba6-49ef-8dd2-441652c73be0" class="code"><code class="language-Bash">SSLProtocol all -SSLv3
+SSLProxyProtocol all -SSLv3　※mod_osslを利用している時のみ
+
+現代のセキュリティの推奨ステータスは以下となる。
+プロトコル名称	バージョン	公開年度	ステータス
+SSL	1.0	(非公開)	廃止
+SSL 2.0	1995年	廃止
+SSL 3.0	1996年	廃止
+TLS	1.0	1999年	非推奨 
+TLS 1.1	2006年	非推奨
+TLS 1.2	2008年	推奨
+TLS 1.3	2018年	推奨
+ので、推奨に合わせる形にするのであれば、SSLProtocol +TLSv1.2 +TLSv1.3が推奨パラメータになるかもしれない。
+ただし公開するWEBサイトの兼ね合いなのでユーザーと要相談事項になるかと思われる。
+
+また暗号化スイートに関しては
+SSLCipherSuite PROFILE=SYSTEM
+SSLProxyCipherSuite PROFILE=SYSTEM
+のままでも良いかもしれない</code></pre><p id="976f60a4-1aff-4593-ab2c-47fd2b5cba62" class="">追加で設定すべきと思われる内容</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d03f2e5b-f56c-4e52-84ef-d23f4a476f9f" class="code"><code class="language-Bash">SSL/TLSセッションキャッシュ：
+SSLSessionCacheTimeoutが300秒となっており短いと安全だが、一方で毎回鍵生成が走りパフォーマンスが悪くなる可能性がある。
+そのため1時間ぐらいが推奨とも言われているため、3600で設定
+※アクセスが多いサイトはキャッシュサイズをSSLSessionCacheを大きめにすることでWebページの改善が見込めるかもしれない
+
+サイドチャネル攻撃（暗号解読攻撃）：
+SSLCompressionはデフォルトでoffになっているので変更は必要なし
+
+OCSPステープリング：
+クライアントが SSL/TLS 通信を使うWEBサイトにアクセスすると、証明書の失効情報を確認するため、
+クライアントが直接 OCSPレスポンダ（一般的に認証局が運営しています）に問い合わせを行うためパフォーマンス的によろしくない。
+有効化することでOCSPレスポンダの問い合わせ結果をキャッシュしてくれるので、アクセスするたびにOCSPレスポンダへ問い合わせする必要がなくなる</code></pre><p id="e132961b-21d2-4f66-b5aa-a1d31f6e86cb" class="">設定した結果の差分</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a6055355-8259-427f-a5e4-aed6e75fe051" class="code"><code class="language-Bash"># cp -p /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.org
+# vi /etc/httpd/conf.d/ssl.conf
+# diff -U0 /etc/httpd/conf.d/ssl.conf.org /etc/httpd/conf.d/ssl.conf
+--- /etc/httpd/conf.d/ssl.conf.org      2023-03-30 00:01:45.000000000 +0900
++++ /etc/httpd/conf.d/ssl.conf  2023-05-01 16:29:58.824610827 +0900
+@@ -24 +24 @@
+-SSLSessionCacheTimeout  300
++SSLSessionCacheTimeout  3600
+@@ -43,2 +45,2 @@
+-#DocumentRoot &quot;/var/www/html&quot;
+-#ServerName www.example.com:443
++DocumentRoot &quot;/var/www/html&quot;
++ServerName DomainName:443
+@@ -59,2 +61,2 @@
+-#SSLProtocol all -SSLv3
+-#SSLProxyProtocol all -SSLv3
++SSLProtocol +TLSv1.2 +TLSv1.3 
++SSLProxyProtocol +TLSv1.2 +TLSv1.3
+@@ -164,3 +170,3 @@
+-&lt;Directory &quot;/var/www/cgi-bin&quot;&gt;
+-    SSLOptions +StdEnvVars
+-&lt;/Directory&gt;
++#&lt;Directory &quot;/var/www/cgi-bin&quot;&gt;
++#    SSLOptions +StdEnvVars
++#&lt;/Directory&gt;
+@@ -203,0 +210,3 @@
++SSLUseStapling On
++SSLStaplingReturnResponderErrors off
++SSLStaplingCache shmcb:/run/httpd/stapling_cache(128000)
+</code></pre><p id="f17c19a2-8627-4593-b5fe-c44c3d0ae4d6" class="">他にも</p><p id="5581e029-2b7f-42fd-b9e6-17063c670a52" class="">Content-Security-Policy：クロスサイトスクリプティングやデータインジェクション等の攻撃を検知し、影響を軽減するための設定</p><p id="1f662f6c-7523-4ef3-9789-12f5c927125b" class="">X-Content-Type-Options：ブラウザが <em>Content-type</em> を検査（sniffing）することを無効にします。</p><p id="2e340e13-a8a9-4588-a605-45c005986eab" class="">X-Frame-Options：iframeタグによるクリックジャッキングを防止するための設定</p><p id="7471f1db-e657-4055-800d-25889d619bde" class="">などの設定するとよりセキュアになるのかもしれない。</p><h1 id="002df37e-49de-49f6-9a67-6eb95c5827ff" class="">8.VirtualHost設定</h1><hr id="1289da9f-3730-806a-864a-dabe29d00592"/><p id="9690d8e2-fea0-4f84-a36c-1c2287878cfe" class="">/etc/httpd/conf.d/vhost.confを作成して、複数のドメイン名を利用できるようにします。</p><p id="3c5e5647-e3be-477c-938f-29b1c2e85eb7" class="">※この時点ではSSL証明書の適用は実施しておりません。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="cdc75cb8-3f2e-49db-a896-9444bc69eb35" class="code"><code class="language-Bash"># cat /etc/httpd/conf.d/vhost.conf
+&lt;VirtualHost *:443&gt;
+    DocumentRoot /var/www/test2
+    ServerName DomainName
+    ErrorLog logs/virtual.host-error_log
+    CustomLog logs/virtual.host-access_log combined
+&lt;/VirtualHost&gt;
+
+&lt;Directory &quot;/var/www/test2&quot;&gt;
+    Options FollowSymLinks
+    AllowOverride All
+&lt;/Directory&gt;</code></pre><p id="a769bb31-4a95-45c0-b20e-3b45bf18df61" class="">ディレクトリ（/var/www/test2）を作成して、indexファイルを作成して表示ができればOKです。</p><figure id="c5c0ef8b-4881-49d6-ae9d-f6dd630804c8" class="image" style="text-align:left"><a href="RHEL9%E6%A4%9C%E8%A8%BC%20%E2%91%A4Apache%E9%96%A2%E9%80%A3%20baaaa555715c41b6aa36c300359f49ca/Untitled%201.png"><img style="width:454px" src="RHEL9%E6%A4%9C%E8%A8%BC%20%E2%91%A4Apache%E9%96%A2%E9%80%A3%20baaaa555715c41b6aa36c300359f49ca/Untitled%201.png"/></a></figure><p id="9eb24e1a-c5ab-42fb-b32d-1fdd86b95fd3" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

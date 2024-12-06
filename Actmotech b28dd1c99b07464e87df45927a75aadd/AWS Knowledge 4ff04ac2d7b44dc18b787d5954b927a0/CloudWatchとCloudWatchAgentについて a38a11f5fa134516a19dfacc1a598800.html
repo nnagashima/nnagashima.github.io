@@ -1,0 +1,1069 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>CloudWatchとCloudWatchAgentについて</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="a38a11f5-fa13-4516-a19d-facc1a598800" class="page sans"><header><h1 class="page-title">CloudWatchとCloudWatchAgentについて</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="33be486a-ed79-4c37-b4b9-962d15a35b63" class="image" style="text-align:left"><a href="CloudWatch%E3%81%A8CloudWatchAgent%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%20a38a11f5fa134516a19dfacc1a598800/TlsRyxEKT72uml6jDohzyTMKrSqx0GoRWETHEO4G.webp"><img style="width:240px" src="CloudWatch%E3%81%A8CloudWatchAgent%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%20a38a11f5fa134516a19dfacc1a598800/TlsRyxEKT72uml6jDohzyTMKrSqx0GoRWETHEO4G.webp"/></a></figure><h1 id="44e82b78-8203-4f6a-a4e4-b6d80318313b" class="">目次</h1><hr id="a2afbcba-5954-4a67-85cb-1a3f1302f3da"/><nav id="2f7feda0-f7cd-462b-a2b2-4fbadf2d9929" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#44e82b78-8203-4f6a-a4e4-b6d80318313b">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#fafa1b62-9d7a-49c5-b75f-4e6e25d3a110">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#134b0bf7-7ee7-4221-9926-f380a625d948">CloudWatchとは</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9dd22fa4-fee3-4c82-9064-4549e430df15">リソースをモニタリングするCloudWatchとCloudWatchAgent</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#48cd037a-8188-4f92-b211-97fce95486e8">CloudWatchAgentのパラメータ作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f5033b9d-5151-439f-8c90-0a46ca1a9b1d">CloudWatchAgentの起動</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7f92c670-0fb8-488d-82bd-d1f5e032faf2">CloudWatchAgentを使ってプロセスモニタリング</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#2f93ff8b-38e0-4c40-8595-feae6311fa00">アラーム設定について</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1f0ee650-b673-4323-ba29-03b2a47d0761">CloudWatchAgentの料金について</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5db1f5cf-dc8f-4b94-be9d-e6a5de5ddb0a">最後に</a></div></nav><h1 id="fafa1b62-9d7a-49c5-b75f-4e6e25d3a110" class="">はじめに</h1><hr id="24b630a5-2623-444a-af03-1f4c1d2d74cb"/><p id="6ae7dc09-f45c-4b8d-839f-898cde8561e4" class="">AWS CloudWatchについて公式ドキュメント見れば分かりますが、</p><p id="a5790133-b04e-4355-8b38-6e2c50629f40" class=""> 今まで調べてきたものを忘れないようにするために自分の備忘録として記載します。</p><h1 id="134b0bf7-7ee7-4221-9926-f380a625d948" class="">CloudWatchとは</h1><hr id="724f451d-b214-46ed-a52a-c6661cac4b52"/><p id="c9a7b459-d6a1-4680-a5a8-80c2d6546b6a" class="">AWSリソースとAWSで実行されているアプリケーションをリアルタイムでモニタリングします。</p><p id="6f86a8a6-42bc-45ed-a639-e677345ddd54" class=""> AWSのサービスをデプロイするとメトリクスが自動的に表示されるのでメトリクスをモニタリングして、 </p><p id="d3ca5734-48de-4a05-8639-3023b9d2e360" class="">閾値を超えたら通知を実施したり、リソースを自動的に変更するアラームを作ったりすることができます。</p><p id="5eb3004f-e844-4580-bc1b-a30974ba4f33" class="">
+</p><p id="dae6b91d-79c8-4d2c-8cda-3d00f30b8101" class="">CloudWatchには以下の機能があります。 </p><ol type="1" id="d6e25c0d-5627-40ec-ab9d-b63fd51c2266" class="numbered-list" start="1"><li>リソースをモニタリングするCloudWatch </li></ol><ol type="1" id="9a5729d1-8291-4ced-8ebd-4f2fc4a3ed83" class="numbered-list" start="2"><li>ログ集めて監視するCloudWatch Logs </li></ol><ol type="1" id="db372c38-a36e-4d01-9e91-5244439e9357" class="numbered-list" start="3"><li>メールなどで通知を行うCloudWatch Alerm </li></ol><ol type="1" id="c1c6444d-8956-40b5-9d07-c80364716a23" class="numbered-list" start="4"><li>イベントをトリガーとして別のアクションを実行するCloudWatch Events （今はEventBridge）</li></ol><ol type="1" id="6aa52cd0-8239-4f27-9e7d-e7abafe8d096" class="numbered-list" start="5"><li>WebページやAPIエンドポイントに対してモニタリングするSynthetic Monitoring </li></ol><ol type="1" id="fe8be9e8-aeb4-4108-8643-35fe095f4dc2" class="numbered-list" start="6"><li>リアルユーザーモニタリング機能のCloudWatch RUM（Real-User Monitoring）</li></ol><p id="8baee755-54b5-4d4f-ac53-224af5677d41" class="">今回は1から3について触れていきたいと思います。</p><h1 id="9dd22fa4-fee3-4c82-9064-4549e430df15" class="">リソースをモニタリングするCloudWatchとCloudWatchAgent</h1><hr id="ea463e45-fae6-48e1-9d5b-1a6d339149c3"/><p id="9695abf8-5ab9-4303-a16d-7da88923e67e" class="">先ほど記載したようにリソースをデプロイすると自動的にCloudWatchにメトリクスが生成されます。 </p><p id="b1aad89a-af44-4da8-a43e-08f7a7374221" class="">このメトリクスはAWSにて決まっており、値のモニタリング方法については各メトリクスによって統計が変わってきますので、</p><p id="b897604c-0f8a-49f0-94c1-7d9a75bec9fc" class=""><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html">ドキュメント</a>からサービス毎に適切なモニタリングでアラート通知をするようにしましょう。</p><p id="225d65ec-85a2-4dcb-9184-218b9d86cc53" class="">
+</p><p id="5f272711-63fc-4400-9b39-d24b7f571f8f" class="">EC2に関しては標準のメトリクスだとメモリ、ディスク、プロセス、ログといったものは監視することができません。 </p><p id="3a7c283e-b5ba-4fc3-86de-1ae7c0d4845d" class="">そこを補うのがCloudWatch Agentになり、インストールすることで足りない部分のメトリクスを補うことができます。 </p><p id="3033d446-e2ee-486d-a137-0a70f62e3312" class="">
+</p><p id="52137a37-6b4b-49a1-9821-c1bff21b2455" class="">CloudWatchAgentはインターネットへアウトバンドでアクセスできる必要もしくはVPCエンドポイント経由でアクセスできる必要があります。</p><p id="db15486f-81fb-4a25-9792-dc0031ebec0b" class=""> CloudWatchAgentをインストールする前にEC2にはCloudWatchAgentServerPolicyが割り当てられたIAMロールを適用するようにしてください。</p><p id="c408d4d5-a550-45ad-845d-b3cfddd379de" class=""> 似たようなポリシーでCloudWatchAgentAdminPolicyがありますが、</p><p id="05fa3f09-f0d5-429d-a348-7e241ae6ba4b" class="">Agentの設定をSystems Manager のパラメータストアに格納する際にはこちらを使用します。</p><p id="13517f37-89ba-43f2-a18f-9c3bf3f0a226" class="">
+</p><p id="b4ea44b8-a031-41e4-a86f-c4e06b2f07da" class="">インストール方法は2種類あり、コマンドライン経由で実施するかSSM Agentが導入されていればSSM経由でインストールすることができます。</p><ul id="11bd8788-6269-400d-a796-1b5f95515889" class="bulleted-list"><li style="list-style-type:disc"><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html">https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html</a></li></ul><ul id="d722acca-d48f-4726-a3b6-14cb9219dd1f" class="bulleted-list"><li style="list-style-type:disc"><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html">https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html</a></li></ul><h1 id="48cd037a-8188-4f92-b211-97fce95486e8" class="">CloudWatchAgentのパラメータ作成</h1><hr id="f3764f3b-ad70-45f5-973b-89278bb1cad9"/><p id="19741426-e410-4a61-852d-bd289b61fa0d" class="">前述でAgentのインストールが完了したら設定ファイルを作成します。</p><p id="d2e4d366-2d3b-4d0e-87f8-fc89d8a6124a" class=""> 実施する方法はCloudWatchAgentをインストールした対象でウィーザードを使って実施するか、 </p><p id="16e96880-9243-4f4a-ba1b-8c19baef61cb" class="">Systems Mangerのパラメータストアにて直接パラメータを作成するかのどちらかになります。 </p><p id="f36ee48e-cad2-4400-be44-3015077c7aab" class="">今回ははウィーザードを利用したパターンを記載したいと思います。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="05aea039-44ac-454c-b050-595c053f3810" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+
+#OSの種別はなんですか？
+On which OS are you planning to use the agent?
+1. linux
+2. windows
+3. darwin
+default choice: [1]:
+
+#使うのはEC2ですか？オンプレミスですか？
+Trying to fetch the default region based on ec2 metadata...
+Are you using EC2 or On-Premises hosts?
+1. EC2
+2. On-Premises
+default choice: [1]:
+
+#Agentを稼働させるユーザーはなんですか？
+Which user are you planning to run the agent?
+1. root
+2. cwagent
+3. others
+default choice: [1]:
+
+#StatsD daemonは起動させますか？
+#https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file-wizard.html
+Do you want to turn on StatsD daemon?
+1. yes
+2. no
+default choice: [1]:
+
+#StatsDの起動ポートは？
+Which port do you want StatsD daemon to listen to?
+default choice: [8125]
+
+#StatsDのデータ取得間隔は？
+What is the collect interval for StatsD daemon?
+1. 10s
+2. 30s
+3. 60s
+default choice: [1]:
+3
+
+#StatsDが収集したデータを集計する感覚は？
+What is the aggregation interval for metrics collected by StatsD daemon?
+1. Do not aggregate
+2. 10s
+3. 30s
+4. 60s
+default choice: [4]:
+
+#StatsDが収集したメトリクスを監視する？
+Do you want to monitor metrics from CollectD? WARNING: CollectD must be installed or the Agent will fail to start
+1. yes
+2. no
+default choice: [1]:
+
+#CPUやメモリ監視する？
+Do you want to monitor any host metrics? e.g. CPU, memory, etc.
+1. yes
+2. no
+default choice: [1]:
+
+#CPUをコア当たりで監視する？
+Do you want to monitor cpu metrics per core?
+1. yes
+2. no
+default choice: [1]:
+
+#CloudWatchのメトリクスに利用可能なDimensionを追加する？
+Do you want to add ec2 dimensions (ImageId, InstanceId, InstanceType, AutoScalingGroupName) into all of your metrics if the info is available?
+1. yes
+2. no
+default choice: [1]:
+
+#EC2のDimansionを集約しますか？
+Do you want to aggregate ec2 dimensions (InstanceId)?
+1. yes
+2. no
+default choice: [1]:
+
+#メトリクスを高頻度で取得しますか？
+Would you like to collect your metrics at high resolution (sub-minute resolution)? This enables sub-minute resolution for all metrics, but you can customize for specific metrics in the output json file.
+1. 1s
+2. 10s
+3. 30s
+4. 60s
+default choice: [4]:
+
+#取得するメトリクスの種類
+#以下を参照してください
+#https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file-wizard.html
+
+Which default metrics config do you want?
+1. Basic
+2. Standard
+3. Advanced
+4. None
+default choice: [1]:
+3
+
+#作成されたConfig
+Current config as follows:
+{
+        &quot;agent&quot;: {
+                &quot;metrics_collection_interval&quot;: 60,
+                &quot;run_as_user&quot;: &quot;root&quot;
+        },
+        &quot;metrics&quot;: {
+                &quot;aggregation_dimensions&quot;: [
+                        [
+                                &quot;InstanceId&quot;
+                        ]
+                ],
+                &quot;append_dimensions&quot;: {
+                        &quot;AutoScalingGroupName&quot;: &quot;${aws:AutoScalingGroupName}&quot;,
+                        &quot;ImageId&quot;: &quot;${aws:ImageId}&quot;,
+                        &quot;InstanceId&quot;: &quot;${aws:InstanceId}&quot;,
+                        &quot;InstanceType&quot;: &quot;${aws:InstanceType}&quot;
+                },
+                &quot;metrics_collected&quot;: {
+                        &quot;collectd&quot;: {
+                                &quot;metrics_aggregation_interval&quot;: 60
+                        },
+                        &quot;cpu&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;cpu_usage_idle&quot;,
+                                        &quot;cpu_usage_iowait&quot;,
+                                        &quot;cpu_usage_user&quot;,
+                                        &quot;cpu_usage_system&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;resources&quot;: [
+                                        &quot;*&quot;
+                                ],
+                                &quot;totalcpu&quot;: false
+                        },
+                        &quot;disk&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;used_percent&quot;,
+                                        &quot;inodes_free&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;resources&quot;: [
+                                        &quot;*&quot;
+                                ]
+                        },
+                        &quot;diskio&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;io_time&quot;,
+                                        &quot;write_bytes&quot;,
+                                        &quot;read_bytes&quot;,
+                                        &quot;writes&quot;,
+                                        &quot;reads&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;resources&quot;: [
+                                        &quot;*&quot;
+                                ]
+                        },
+                        &quot;mem&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;mem_used_percent&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60
+                        },
+                        &quot;netstat&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;tcp_established&quot;,
+                                        &quot;tcp_time_wait&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60
+                        },
+                        &quot;statsd&quot;: {
+                                &quot;metrics_aggregation_interval&quot;: 60,
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;service_address&quot;: &quot;:8125&quot;
+                        },
+                        &quot;swap&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;swap_used_percent&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60
+                        }
+                }
+        }
+}
+
+#設定内容に問題ありませんか？
+Are you satisfied with the above config? Note: it can be manually customized after the wizard completes to add additional items.
+1. yes
+2. no
+default choice: [1]:
+
+#以前の設定ファイルを移行するためにインポートファイルはありますか？
+Do you have any existing CloudWatch Log Agent (http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AgentReference.html) configuration file to import for migration?
+1. yes
+2. no
+default choice: [2]:
+
+#ログ監視はしますか？
+Do you want to monitor any log files?
+1. yes
+2. no
+default choice: [1]:
+1
+
+#監視するログファイルパスを記載してください
+Log file path:
+/var/log/messages
+
+#CloudWatchLogsのLogGroup名を設定してください
+Log group name:
+default choice: [messages]
+
+#CloudWatchLogsのStream名を設定してください
+Log stream name:
+default choice: [{instance_id}]
+
+#ログ保持日数を選択してください
+Log Group Retention in days
+1. -1
+2. 1
+3. 3
+4. 5
+5. 7
+6. 14
+7. 30
+8. 60
+9. 90
+10. 120
+11. 150
+12. 180
+13. 365
+14. 400
+15. 545
+16. 731
+17. 1827
+18. 3653
+default choice: [1]:
+3
+
+#追加するログファイルはありますか？
+Do you want to specify any additional log files to monitor?
+1. yes
+2. no
+default choice: [1]:
+2
+
+#作成されたConfig
+Saved config file to /opt/aws/amazon-cloudwatch-agent/bin/config.json successfully.
+Current config as follows:
+{
+        &quot;agent&quot;: {
+                &quot;metrics_collection_interval&quot;: 60,
+                &quot;run_as_user&quot;: &quot;root&quot;
+        },
+        &quot;logs&quot;: {
+                &quot;logs_collected&quot;: {
+                        &quot;files&quot;: {
+                                &quot;collect_list&quot;: [
+                                        {
+                                                &quot;file_path&quot;: &quot;/var/log/messages&quot;,
+                                                &quot;log_group_name&quot;: &quot;messages&quot;,
+                                                &quot;log_stream_name&quot;: &quot;{instance_id}&quot;,
+                                                &quot;retention_in_days&quot;: 3
+                                        }
+                                ]
+                        }
+                }
+        },
+        &quot;metrics&quot;: {
+                &quot;aggregation_dimensions&quot;: [
+                        [
+                                &quot;InstanceId&quot;
+                        ]
+                ],
+                &quot;append_dimensions&quot;: {
+                        &quot;AutoScalingGroupName&quot;: &quot;${aws:AutoScalingGroupName}&quot;,
+                        &quot;ImageId&quot;: &quot;${aws:ImageId}&quot;,
+                        &quot;InstanceId&quot;: &quot;${aws:InstanceId}&quot;,
+                        &quot;InstanceType&quot;: &quot;${aws:InstanceType}&quot;
+                },
+                &quot;metrics_collected&quot;: {
+                        &quot;collectd&quot;: {
+                                &quot;metrics_aggregation_interval&quot;: 60
+                        },
+                        &quot;cpu&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;cpu_usage_idle&quot;,
+                                        &quot;cpu_usage_iowait&quot;,
+                                        &quot;cpu_usage_user&quot;,
+                                        &quot;cpu_usage_system&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;resources&quot;: [
+                                        &quot;*&quot;
+                                ],
+                                &quot;totalcpu&quot;: false
+                        },
+                        &quot;disk&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;used_percent&quot;,
+                                        &quot;inodes_free&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;resources&quot;: [
+                                        &quot;*&quot;
+                                ]
+                        },
+                        &quot;diskio&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;io_time&quot;,
+                                        &quot;write_bytes&quot;,
+                                        &quot;read_bytes&quot;,
+                                        &quot;writes&quot;,
+                                        &quot;reads&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;resources&quot;: [
+                                        &quot;*&quot;
+                                ]
+                        },
+                        &quot;mem&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;mem_used_percent&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60
+                        },
+                        &quot;netstat&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;tcp_established&quot;,
+                                        &quot;tcp_time_wait&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60
+                        },
+                        &quot;statsd&quot;: {
+                                &quot;metrics_aggregation_interval&quot;: 60,
+                                &quot;metrics_collection_interval&quot;: 60,
+                                &quot;service_address&quot;: &quot;:8125&quot;
+                        },
+                        &quot;swap&quot;: {
+                                &quot;measurement&quot;: [
+                                        &quot;swap_used_percent&quot;
+                                ],
+                                &quot;metrics_collection_interval&quot;: 60
+                        }
+                }
+        }
+}
+Please check the above content of the config.
+The config file is also located at /opt/aws/amazon-cloudwatch-agent/bin/config.json.
+Edit it manually if needed.
+
+#SSMパラメータストアに保存しますか？
+Do you want to store the config in the SSM parameter store?
+1. yes
+2. no
+default choice: [1]:
+2
+Program exits now.</code></pre><h1 id="f5033b9d-5151-439f-8c90-0a46ca1a9b1d" class="">CloudWatchAgentの起動</h1><hr id="d0e3f3a3-5799-4ccd-b4e1-f61bf0ef53b8"/><p id="3dba1671-09f6-4289-9327-637253d0b4e4" class="">設定が終わったらCloudWatchAgentが起動するために必要なcollectdをインストールし、CloudWatchAgentを起動します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="08e99f1e-4715-4fa6-bc39-86f8154c6538" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># amazon-linux-extras install collectd
+# /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
+# systemctl status amazon-cloudwatch-agent.service
+● amazon-cloudwatch-agent.service - Amazon CloudWatch Agent
+   Loaded: loaded (/etc/systemd/system/amazon-cloudwatch-agent.service; enabled; vendor preset: disabled)
+   Active: active (running) since 金 2022-04-22 13:51:26 UTC; 35min ago</code></pre><p id="92d00dd1-c6fe-4825-b5de-5619403c571d" class="">起動するとCloudWatchのCWAgentというNamespacesにメトリクスが取り込まれています。 </p><p id="3df94472-26c3-4b99-9ed2-2988de469354" class="">同じくCloudWatchLogsにも/var/log/messagesのログが取り込まれています。</p><h1 id="7f92c670-0fb8-488d-82bd-d1f5e032faf2" class="">CloudWatchAgentを使ってプロセスモニタリング</h1><hr id="26fe6249-08b8-4aeb-a5d0-a9edca1d1ff1"/><p id="60d3069a-b2a7-4dc6-947f-6f40a7e9bd46" class="">CloudWatchAgentでプロセスモニタリングはprocstatを使います。</p><p id="2d1e84a4-d6e8-426c-bf1e-670a29562bb9" class=""> /opt/aws/amazon-cloudwatch-agent/bin/配下でconfig2.jsonを作成します。</p><p id="4d874737-29df-4db7-a37e-ced45ed6a4e7" class="">config2.jsonの中身 </p><p id="d7f63b8f-9ef2-45f7-bb32-cd0ff6082e17" class="">※今回はDockerプロセスをモニタリングします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="322e86c5-8733-4fe6-8bbc-5b0ab517c8a4" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">{
+    &quot;metrics&quot;: {
+        &quot;metrics_collected&quot;: {
+            &quot;procstat&quot;: [
+                {
+                    &quot;exe&quot;: &quot;docker&quot;,
+                    &quot;measurement&quot;: [
+                        &quot;pid_count&quot;
+                    ],
+                    &quot;metrics_collection_interval&quot;: 60
+                }
+            ]
+        }
+    }
+}</code></pre><p id="0b3678e2-f965-4ca5-870a-1a37d30624b9" class="">configが記載できたら以下コマンドでコンフィグを読み込みます。 </p><p id="505fce71-14d6-4e46-8957-9ca943dbaaf3" class="">最初に起動した時は fetch-configを使っていますが、追加でConfigを読み込みたい場合はappend-configを使ってください。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="3a26ca61-e6ed-43c8-b2e1-8c40cc70772f" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a append-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config2.json</code></pre><p id="0359ef65-c376-4c37-b541-0abe417b58c2" class="">しばらくするとCloudWatchにメトリクスが生成されます。</p><h1 id="2f93ff8b-38e0-4c40-8595-feae6311fa00" class="">アラーム設定について</h1><hr id="67c764fc-907e-4ca0-8318-419780f467f9"/><p id="6094ca45-be3c-41ca-adc2-8518e82ed454" class="">メトリクスについては適切な統計情報のもとで設定をしていけば良いですが、 </p><p id="63095bec-d8d5-4562-9f43-2dd436d276e4" class="">ログについては事前にメトリックフィルターでフィルターパターンを作るようにしてください。 </p><p id="7de09878-8865-4d4d-9b39-5742c21c7712" class="">フィルターパターンを作るとマッチしたログの数のカウント情報が生成されます。</p><h1 id="1f0ee650-b673-4323-ba29-03b2a47d0761" class="">CloudWatchAgentの料金について</h1><hr id="fd2d4ac2-9a94-4c3b-a1b0-8edecfc79b95"/><p id="bad1ff1e-2526-416c-acae-53952c118e28" class="">無料枠と有料枠があるので注意してください。 </p><p id="3126b47b-fae1-4420-b146-c1ff9300e5e4" class=""><a href="https://aws.amazon.com/jp/cloudwatch/pricing/">https://aws.amazon.com/jp/cloudwatch/pricing/</a></p><h1 id="5db1f5cf-dc8f-4b94-be9d-e6a5de5ddb0a" class="">最後に</h1><hr id="d8ebb33b-7015-4088-b51e-880b75d11611"/><p id="55fe2857-bcdd-4e30-a096-aaf20be572e8" class="">Windowsの場合は触れていませんが、イベントログをレベルと対象ログごとにモニタリングすることができます。</p><p id="04903579-8e32-465a-8d00-c7baf308e403" class=""> プロセスも同様にpid_file形式でモニタリングすることができます。 </p><p id="37455bc8-d2b1-469c-819d-606d3d1b4d8d" class="">CloudWatchここまでできるのはいいですが、Apacheのステータスページのモニタリングとかミドルウェア周りが弱いので、</p><p id="ece990df-9734-4f23-b407-7d09c6ae8f6a" class="">他のツールで補う必要があるかなと思います。</p><p id="0361dd6d-bc95-4c19-8505-8c3ee70402ad" class="">
+</p><p id="9f0170c8-f2cc-4e25-9392-a8980abd2a7f" class="">
+</p><p id="6cae7461-c373-4d73-9856-484627952d7e" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

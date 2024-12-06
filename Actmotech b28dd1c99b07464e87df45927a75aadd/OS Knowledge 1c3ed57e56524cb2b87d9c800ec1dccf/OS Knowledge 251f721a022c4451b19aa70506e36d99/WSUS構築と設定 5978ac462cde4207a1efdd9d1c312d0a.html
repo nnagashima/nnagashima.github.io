@@ -1,0 +1,716 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>WSUS構築と設定</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="5978ac46-2cde-4207-a1ef-dd9d1c312d0a" class="page sans"><header><h1 class="page-title">WSUS構築と設定</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="11e97136-16a3-4137-aaeb-f998316d114a" class="image" style="text-align:left"><a href="../../AWS%20Knowledge%204ff04ac2d7b44dc18b787d5954b927a0/Onpremiss%20Active%20Directory%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6AWS%20ADConnector%E3%81%A8%E6%8E%A5%E7%B6%9A%204825963019724601b93adaba7ad1b8d2/Windows_icon-icons.com_56585.png"><img style="width:240px" src="../../AWS%20Knowledge%204ff04ac2d7b44dc18b787d5954b927a0/Onpremiss%20Active%20Directory%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6AWS%20ADConnector%E3%81%A8%E6%8E%A5%E7%B6%9A%204825963019724601b93adaba7ad1b8d2/Windows_icon-icons.com_56585.png"/></a></figure><p id="067e5909-a145-4ba2-bf21-d66f6f11a26c" class="">目次</p><nav id="d9f8791e-55f4-4b51-bde3-0a683def0bf0" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#95c4f6fa-ff1e-4d45-90f0-b239b577e3ed">WSUSとは</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#6029aecd-8469-4a33-8519-f78af58378e1">WSUS機能の追加</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#780c91b4-eaea-4c58-9591-6457a556b737">WSUSの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#c7faf60c-faf1-4dd3-9ebc-bb2ef2fb146d">IISの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#89cf0c81-c9df-468b-8381-d678186e4811">ウィルス対策ソフトを導入している場合</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#94f49d70-9a87-44f3-bd3b-20b73a52fe27">WSUSを利用するGPOを作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4bd7dc27-ce8c-4c85-8126-9e9166fb7522">OSのパッチ適用状況確認</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#ab0f66ab-9719-4392-9f88-ff1d79d70035">ドメインに属していないWindowsマシンもWSUSで管理したい場合は？？</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#7e054eca-01d2-41c7-9827-990e46f7299a">クリーンアップについて</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1289da9f-3730-8096-8ca3-c12c0f869425">最後に</a></div></nav><h1 id="95c4f6fa-ff1e-4d45-90f0-b239b577e3ed" class="">WSUSとは</h1><hr id="1289da9f-3730-80cb-8d02-ddf5ff8e4cf7"/><p id="4eb6e03b-abcd-4a64-b947-63f8a519e241" class="">Windows Security Update  Serviceの略になります。</p><p id="4fe2f6b6-8fbf-4041-a3f1-79b70802b395" class="">Microsoft社が提供するWindowsの更新プログラムをいったんWSUSサーバへダウンロードすることで、</p><p id="0e2ce90c-d75c-47b6-96b4-33d474bdb578" class="">各パソコンはそこから更新プログラムをダウンロードすることができます。</p><h1 id="6029aecd-8469-4a33-8519-f78af58378e1" class="">WSUS機能の追加</h1><hr id="1289da9f-3730-802b-bd7c-e43a260f07b2"/><p id="f8062d1e-089e-4e88-96c3-95945dd70d84" class="">作成したWindowsサーバでサーバマネージャーを開き、サーバの役割でWindows Security Update Serviceを選択します。</p><p id="fa8a65e0-8bdd-4e12-9201-127cc4a11da8" class="">WSUSの役割とサービスで「WID Connectivity」と「WSUS Service」を選択します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="bc44091e-2365-4f16-837c-caf828c4b73b" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">※WID Connectivity
+Windows Internal Database Connectivity. WSUSインストール時にインストールされるSQL Server Embedded Editionとその接続
+
+※WSUS Service
+Windows Security Update Service本体
+
+※SQL Server Connectivity
+WIDと別にSQLServerをインストールしてWSUS管理DBとする場合のConnectivity</code></pre><figure id="68cefcaa-1552-489d-bfd7-5f7e88b2ffd1" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled.png"><img style="width:720px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled.png"/></a></figure><p id="edfa776a-51d2-42bb-a351-3d200cbb013a" class="">コンテンツの場所の選択にて「次の場所に更新プログラムを配置します」に任意のディレクトリを指定して次に進みます。</p><p id="f31ff256-4f8b-4ce7-b356-ec3b13d56b6c" class="">WSUSのデータは大きくなりやすいので、可能であればCドライブとは別の場所に保管するようにした方がよいかと思います。</p><figure id="a9f44d63-d127-4f81-94a6-b81937e161a0" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%201.png"><img style="width:720px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%201.png"/></a></figure><p id="f5f533ca-3ae4-48f1-a369-4c81f6ed540b" class="">WSUSではIISも利用するので、IISもインストールされます。</p><p id="b3df6ba0-765c-4161-812f-0fac8bc35cc5" class="">IISの役割はデフォルトのまま次へ進みます。</p><figure id="88d6bd82-20a4-44dd-a9c5-bb2d82ef69cc" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%202.png"><img style="width:720px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%202.png"/></a></figure><p id="a39a7bd5-66b6-434b-80cf-df9920a7817f" class="">最後にインストールボタンが表示されるので、インストールしていきます。</p><figure id="af14850b-080d-4190-90c7-21cf656f29cc" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%203.png"><img style="width:720px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%203.png"/></a></figure><h1 id="780c91b4-eaea-4c58-9591-6457a556b737" class="">WSUSの設定</h1><hr id="1289da9f-3730-807e-a26b-c9efe2f43eb2"/><p id="0bfc75ee-88f5-4253-9c5f-ec4ec8a5cec0" class="">インストールが完了するとサーバマネージャーのツールからWSUSがあるのでクリックして設定ウィーザードを起動します。</p><figure id="8b88e030-b5b8-40d0-b951-538138841738" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%204.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%204.png"/></a></figure><figure id="a60aa2ae-b480-49ed-af05-11ce5b692c2a" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%205.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%205.png"/></a></figure><p id="7c1b085a-05d6-49ea-90e1-b8181501313d" class="">MicrosoftUpdateから同期するを選択します。</p><figure id="894e5126-9889-4677-a6d0-798d147051ff" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%206.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%206.png"/></a></figure><p id="932b5e4a-ba10-4c29-98b3-f656c89a0979" class="">インターネットに出る際にプロキシを利用している場合はプロキシ設定をいれます。</p><figure id="91c9d1a0-4cc3-4b43-abc5-a2183f16e386" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%207.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%207.png"/></a></figure><p id="4a5f8043-021d-43ce-9b4b-d6842948cd15" class="">アップストリームサーバに接続にて接続の開始をクリックします。</p><p id="f673ec1e-99a7-435c-8c2a-3ca89bdb8ef1" class="">ネットワーク環境によるかと思いますが、私の環境では約1時間かかりました。</p><figure id="4cd55a6f-0467-416a-a782-7ae23608794a" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%208.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%208.png"/></a></figure><p id="cc12b5c6-c3cc-49cf-828e-0dc7101eefdb" class="">言語の設定では必要な言語に加えて必ず英語を含めてください。</p><p id="f962b7ca-6b8a-425d-9040-a52ff4d011e6" class="">Microsoftの公式に以下のように記載されています。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="f00ef6c1-00a3-4290-ba95-1e24f264a976" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">組織全体で必要な言語に加え、必ず英語を含めます。 すべての更新プログラムは英語の言語パックに基づいているためです。
+参考URL：https://learn.microsoft.com/ja-jp/windows-server/administration/windows-server-update-services/plan/plan-your-wsus-deployment</code></pre><figure id="15a411f4-62c5-4515-bc4b-ae7151a964a2" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%209.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%209.png"/></a></figure><p id="525fee72-0840-4714-9510-b96828e5a972" class="">製品の選択ではWindowsServer 2019と2022が稼働している環境のため</p><p id="0650a6a1-1cf0-411b-a82d-5285b611b39c" class="">「Microsoft Server Operationg System 21H2」</p><p id="fe6bdcce-e445-496c-bf43-76981b1f6a31" class="">「Windows Server2019 and later,Servicing Drivers」「Windows Server 2019」</p><p id="f01e94e8-db4e-4052-bca3-3ce6466f4977" class="">にチェックを入れます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="22e10ba9-e907-48c6-87dd-c2bf7b031bff" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">Windows Server 2022 向けの更新プログラムを WSUSへ 同期するためには、同期対象に以下の “製品” を追加する必要があります。
+製品「Microsoft Server operating system-21H2」
+参考URL：https://jpmem.github.io/blog/wsus/2022-03-11_01/</code></pre><figure id="e96e3687-1e30-416d-9285-7eb43c60f9d7" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2010.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2010.png"/></a></figure><p id="da091ab0-90e9-432c-a525-a886551a7b9c" class="">分類の選択では、ツール、ドライバーとドライバーセットを除くものにチェックをいれます。</p><p id="8c62f856-9a5c-4cd9-ab7a-aee86067834a" class="">特にドライバー関連はデータが多くWSUSの機能に影響を及ぼす可能性があるため除外しています。</p><table id="654b43ac-25cb-49c7-aa5d-af5236380f61" class="simple-table"><tbody><tr id="a4ab6cfb-4d34-4c5b-bd33-ac011c2b8bc9"><td id="p_U&lt;" class="" style="width:134.5px">Feature Packs</td><td id="~xQ=" class="" style="width:860.5px">新しく公開された機能で、製品の次期リリースに含まれるような内容となります。</td></tr><tr id="e0d78c8c-81f4-4bc3-91b1-baf24e28b198"><td id="p_U&lt;" class="" style="width:134.5px">Service Packs</td><td id="~xQ=" class="" style="width:860.5px">これまでに作成されたすべてのホットフィックス、セキュリティ問題の修正プログラム、重要な更新、および更新をまとめたものと、製品の公開以後に内部で発見された不具合に対する修正が含まれます。Service Pack には、一部のお客様から要望された設計上の変更や機能が含まれることもあります。</td></tr><tr id="e315cd7d-a39c-4398-aa6e-25dee4e27f48"><td id="p_U&lt;" class="" style="width:134.5px">Upgrades</td><td id="~xQ=" class="" style="width:860.5px">Windows 10 の機能更新プログラム (Feature Update) となります。</td></tr><tr id="fb115c06-9bb3-4d0c-8bfa-5d10fb4e2761"><td id="p_U&lt;" class="" style="width:134.5px">セキュリティ問題の修正プログラム</td><td id="~xQ=" class="" style="width:860.5px">セキュリティ上の脆弱性を修正するために、特定の製品に対して公開される修正プログラムです。「セキュリティのみの品質更新プログラム」や「セキュリティ マンスリー品質ロールアップ」も、この分類でリリースされております。</td></tr><tr id="781d8045-b85e-477c-96c2-246da6da5cdc"><td id="p_U&lt;" class="" style="width:134.5px">ツール</td><td id="~xQ=" class="" style="width:860.5px">あるタスク、または一連のタスクの実現を支援する、ユーティリティまたは機能です。</td></tr><tr id="146f1134-ba63-4833-b439-90a4bb14dc56"><td id="p_U&lt;" class="" style="width:134.5px">ドライバ</td><td id="~xQ=" class="" style="width:860.5px">ドライバーの更新となります。各ハードウェアベンダーにてWSUS に公開した更新が公開されております。</td></tr><tr id="5e3a6974-0265-4fff-ac0c-5c5c48c79bf1"><td id="p_U&lt;" class="" style="width:134.5px">ドライバーセット</td><td id="~xQ=" class="" style="width:860.5px">特定のモデルのコンピューターのハードウェアをサポートするドライバー郡となります。<br/>Windows Server 2016 以降の WSUS でのみ、本分類は表示・選択できます。<br/></td></tr><tr id="426cf79a-10f2-4f47-a48a-48ff39f7b677"><td id="p_U&lt;" class="" style="width:134.5px">更新</td><td id="~xQ=" class="" style="width:860.5px">重要性が低く、セキュリティに関連しない不具合を修正するために、特定のプログラムに対して公開される修正プログラムです。「マンスリー品質ロールアップのプレビュー」もこの分類にてリリースされております。</td></tr><tr id="34576795-decf-4527-81f1-5de93382df0f"><td id="p_U&lt;" class="" style="width:134.5px">修正プログラム集</td><td id="~xQ=" class="" style="width:860.5px">ホットフィックス、セキュリティ問題の修正プログラム、重要な更新、および更新を 1 つのパッケージにまとめ、展開したものです。修正プログラム集は通常、“セキュリティ”などの特定の分野、または “インターネット インフォメーション サービス (IIS)” などの製品のコンポーネントに対して用意されます。</td></tr><tr id="bf8227d3-8357-405b-bbcc-8ec72bcc544c"><td id="p_U&lt;" class="" style="width:134.5px">重要な更新</td><td id="~xQ=" class="" style="width:860.5px">重要性が高く、セキュリティに関連しない不具合を修正するために、特定の問題に対して公開される修正プログラムです。</td></tr><tr id="79406ec4-ce82-4b16-b3b2-cb710a615ba1"><td id="p_U&lt;" class="" style="width:134.5px">定義更新プログラム</td><td id="~xQ=" class="" style="width:860.5px">製品の定義データベースへの追加を含む、広範かつ頻繁にリリースされるソフトウェア更新プログラムです。<br/>定義データベースは、悪意のあるコード、フィッシングWebサイト、ジャンク電子メールなど、特定の属性を含むオブジェクトを検出するために、頻繁に使用されます。<br/>Windows Defender や Office をお使いの場合に設定することが多いものとなります。<br/></td></tr></tbody></table><figure id="ad05f360-8c11-4f41-992c-fa8a0a10e96e" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2011.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2011.png"/></a></figure><p id="cb6a847f-3ab5-42f0-b818-fa7c50844b83" class="">同期のスケジュールではネットワークに負荷のかからない時間帯に同期をとるのがよいかと思います。</p><figure id="ee729261-d7b9-417a-8430-2a5dd3ca5f85" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2012.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2012.png"/></a></figure><p id="6bb4a6d4-09e5-441c-8bd3-3b1504623d4a" class="">初回同期を実施するか問われているので、チェックを入れて初回同期を実施します。</p><figure id="60a72813-023d-4739-ab4d-3b2b3b22e931" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2013.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2013.png"/></a></figure><p id="003e97cf-c7ad-4149-8ba4-0472c8f79f57" class="">WSUSの管理コンソールが表示されて、同期の進行状況を確認します。</p><figure id="dbe27e7c-663d-49b1-890e-d78b4f30b2eb" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2014.png"><img style="width:864px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2014.png"/></a></figure><p id="86c8816d-517f-47b4-ab56-ba7c494cd818" class="">WSUSのオプションをクリックし、コンピューターをクリックします。</p><p id="8fe4edbd-5fb9-4d41-9835-bd11ca210de9" class="">コンピューターのグループポリシーまたはレジストリ設定を使用しますを選択して適用します。</p><figure id="202b5259-8ba5-4b0d-8e0b-c354f562b64e" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2015.png"><img style="width:528px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2015.png"/></a></figure><p id="926cc9bf-65c7-471c-8980-8e4cedaac929" class="">WindowsUpdateパッチは承認しないとクライアント端末に配布されないので、自動承認するように設定を変えます。</p><p id="eab2397c-f6e5-46f6-b866-d1b71aee656a" class="">オプションの自動承認から新しい規則をクリックします。</p><p id="36c9cc03-1dd1-4478-b50c-a8b731a2219f" class="">更新が特定の分類に含まれる場合をクリックして、ツール、ドライバ、ドライバーセットを除くルールを作成します。</p><figure id="d26d0ef5-9e8a-4aa2-9a50-f0be3361ac84" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2016.png"><img style="width:472px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2016.png"/></a></figure><p id="f06783a2-1e43-43f8-8314-9b3d4cb62957" class="">サーバ系はServesのグループにまとめたいので、コンピューターの全てのコンピューターを右クリックしてグループを追加します。</p><figure id="ee89d716-71f9-498d-80d5-f0f762b35427" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2017.png"><img style="width:314px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2017.png"/></a></figure><h1 id="c7faf60c-faf1-4dd3-9ebc-bb2ef2fb146d" class="">IISの設定</h1><hr id="1289da9f-3730-808b-81ec-f755c8b04318"/><p id="47ac71e9-68b2-4da4-9b01-5283f9931481" class="">WSUSが利用するキャッシュメモリが既定値を超過すると、WSUSをホストするIISアプリケーション(WsusPool)がリサイクルする挙動するため、</p><p id="7de95020-7f54-4c66-a88b-36d43bffd055" class="">自動リサイクルによるWSUS機能停止期間を発生させないためにも、WsusPoolのチューニングをMSのベストプラクティスに従って実施します。</p><p id="82af6c38-ea49-4b9b-8680-523f34e2f145" class="">参考URL：</p><figure id="0c21ad07-172f-421f-9c9a-94dd9f4e146d"><a href="https://learn.microsoft.com/ja-jp/troubleshoot/mem/configmgr/update-management/windows-server-update-services-best-practices" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Windows Server Update Services (WSUS) のベスト プラクティス - Configuration Manager</div><div class="bookmark-description">パフォーマンスが低下する構成を回避するための WSUS のベスト プラクティスについて説明します。</div></div><div class="bookmark-href"><img src="https://learn.microsoft.com/favicon.ico" class="icon bookmark-icon"/>https://learn.microsoft.com/ja-jp/troubleshoot/mem/configmgr/update-management/windows-server-update-services-best-practices</div></div><img src="https://learn.microsoft.com/en-us/media/open-graph-image.png" class="bookmark-image"/></a></figure><p id="80538c84-dc08-4373-834c-2df24ad506ae" class="">IISの管理コンソールのアプリケーションプールからWsusPoolを選択して、右クリックで詳細設定を開き、以下項目を設定します。</p><table id="368afc92-4f28-42ee-94b3-b0655d14ccfa" class="simple-table"><tbody><tr id="c8cb95b6-ee51-474c-bd6b-a0ee732e1c0b"><td id="PYRE" class="" style="width:216.75px">設定名</td><td id="BM\W" class="" style="width:102.453125px">デフォルト値</td><td id=";&lt;r@" class="" style="width:61px">設定値</td></tr><tr id="aad0116d-2aa1-4baa-a42b-74cd2c89234d"><td id="PYRE" class="" style="width:216.75px">プライベートメモリ制限（KB）</td><td id="BM\W" class="" style="width:102.453125px">1,843,200</td><td id=";&lt;r@" class="" style="width:61px">0</td></tr><tr id="593ebcc7-b01a-4600-90b9-4e150662cf0b"><td id="PYRE" class="" style="width:216.75px">キューの長さ</td><td id="BM\W" class="" style="width:102.453125px">1,000</td><td id=";&lt;r@" class="" style="width:61px">2,000</td></tr><tr id="cdb5bdec-c802-4a28-86cb-2692b1eee503"><td id="PYRE" class="" style="width:216.75px">アイドル タイムアウト (分)</td><td id="BM\W" class="" style="width:102.453125px">20</td><td id=";&lt;r@" class="" style="width:61px">0</td></tr><tr id="b7d20404-9797-412e-b9e3-91c87c522bca"><td id="PYRE" class="" style="width:216.75px">Ping が有効になっている</td><td id="BM\W" class="" style="width:102.453125px">True</td><td id=";&lt;r@" class="" style="width:61px">False</td></tr><tr id="c49fc240-9570-4a5f-ba9d-3ac6cd90215c"><td id="PYRE" class="" style="width:216.75px">通常の時間間隔 (分)</td><td id="BM\W" class="" style="width:102.453125px">1740</td><td id=";&lt;r@" class="" style="width:61px">0</td></tr></tbody></table><h1 id="89cf0c81-c9df-468b-8381-d678186e4811" class="">ウィルス対策ソフトを導入している場合</h1><hr id="1289da9f-3730-8079-8c2c-da2b6bdcb026"/><p id="804c0478-ea68-45ad-b06e-5f80c1eeffac" class="">以下ディレクトリの除外が必要になります。</p><p id="99f2826a-6eb9-41f5-9277-609f3186715b" class="">参考URL</p><figure id="ebd8555b-0648-4f21-a2fb-b725984ded13"><a href="https://learn.microsoft.com/ja-jp/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939908(v=ws.10)#antivirus-scans" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Design for Optimized Performance</div><div class="bookmark-description">Microsoft Edge にアップグレードすると、最新の機能、セキュリティ更新プログラム、およびテクニカル サポートを利用できます。</div></div><div class="bookmark-href"><img src="https://learn.microsoft.com/favicon.ico" class="icon bookmark-icon"/>https://learn.microsoft.com/ja-jp/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939908(v=ws.10)#antivirus-scans</div></div><img src="https://learn.microsoft.com/en-us/media/open-graph-image.png" class="bookmark-image"/></a></figure><ul id="bfcfab19-dfc6-4bf2-85aa-c00877f70bae" class="bulleted-list"><li style="list-style-type:disc">WSUSのデータフォルダ配下のWSUSContent</li></ul><ul id="ffdd42ec-2f43-4fd7-8c42-79e4096f0392" class="bulleted-list"><li style="list-style-type:disc">WSUSのデータフォルダ配下のUpdateServicesDBFiles(MSSQLを利用している場合)</li></ul><ul id="8a084ad1-6f10-4a97-b3f6-1e9efcf1f818" class="bulleted-list"><li style="list-style-type:disc">C:\Windows\SoftwareDistribution\DataStore</li></ul><ul id="79fa71d0-b629-4833-a6ee-ca7387ebf56d" class="bulleted-list"><li style="list-style-type:disc">C:\Windows\SoftwareDistribution\Download</li></ul><h1 id="94f49d70-9a87-44f3-bd3b-20b73a52fe27" class="">WSUSを利用するGPOを作成</h1><hr id="1289da9f-3730-8026-9096-f5ec1ee4b21b"/><p id="6d772224-eeed-4b47-a926-47dbd1d1536f" class="">GPOの条件としてWindowsUpdateは自動でインストールまで実施したいですが、</p><p id="f6d03fdd-4628-4e94-924f-651a25a3c198" class="">自動インストールにしてしまうと任意のタイミングで自動でOS再起動がかかってしまいます。</p><p id="d5a113d3-4e35-4765-87bd-fafe6d15c93c" class="">そのためメンテナンスしてもよい時間帯にOS再起動がかかるようにセットアップします。</p><p id="92e68139-a24f-4f6b-a382-7950f419cbf9" class="">かつ、OS再起動はタスクスケジューラーで再起動するようにします。</p><table id="36fad6dd-2f9c-45e9-b2ba-97cebed8f7da" class="simple-table"><tbody><tr id="895f181e-2fc9-425e-acb7-f509ed6be7da"><td id="|DH~" class="" style="width:389px">アクティブ時間ないの更新プログラムの自動再起動をオフにします。</td><td id="W=RC" class="" style="width:647.265625px">有効<br/>アクティブ時間開始：5AM<br/>アクティブ時間開始：11PM<br/></td></tr><tr id="b684ea85-c10b-480d-93ea-a1bd0eb32c6a"><td id="|DH~" class="" style="width:389px">インターネット上のWindowsUpdateに接続しない</td><td id="W=RC" class="" style="width:647.265625px">有効</td></tr><tr id="3abcccc0-074c-4ac4-9b79-8d74029342a7"><td id="|DH~" class="" style="width:389px">イントラネットのMicrosoft更新サービスの場所を指定する</td><td id="W=RC" class="" style="width:647.265625px">有効<br/>更新を検出するためのイントラネットの更新サービスを設定する：http://xxx.xxx.xxx.xxx:8530<br/>イントラネット統計サーバーの設定：http://xxx.xxx.xxx.xxx:8530<br/></td></tr><tr id="8287766c-b69c-46bf-9ba4-c09e15ce2a97"><td id="|DH~" class="" style="width:389px">自動更新を構成する</td><td id="W=RC" class="" style="width:647.265625px">4-自動ダウンロードしインストール日時を指定<br/>自動メンテナンス時にインストールする：無効<br/>インストールを実行する日：3-毎週火曜<br/>インストールを実行する時間：06:00<br/>毎週：有効<br/></td></tr><tr id="a1dc94b1-b207-4db7-8e30-cd94c4b1d667"><td id="|DH~" class="" style="width:389px">クライアント側のターゲットを有効にする</td><td id="W=RC" class="" style="width:647.265625px">有効<br/>コンピューターグループの名前：Servers<br/></td></tr></tbody></table><p id="22749dd8-848a-4b3d-ad76-0844d1c6d065" class="">こうすることでアクティブ時間帯はWindowsOSは再起動されません。</p><p id="46ae4dd8-32e6-486f-adb1-aabb72308ca4" class="">またアクティブ時間内でWindowsUpdateがWSUS経由で実施がされます。</p><p id="cf61886f-be37-4def-bac0-323ad0bf3e13" class="">この作成したGPOを対象のグループにリンクしてください。適用したGPOはOS再起動ないしはgpupdateコマンドで適用されます。</p><p id="8dce9dbc-5ada-410b-9d87-995872e46742" class="">あとは22時頃にWindowsUpdateが終わっているだろうと考えて、22時にOS再起動されるようにタスクスケジューラーを設定してください。</p><p id="65398b8f-6346-42ca-85fc-b43f98791bfc" class="">ちゃんと動作確認も忘れずに！</p><h1 id="4bd7dc27-ce8c-4c85-8126-9e9166fb7522" class="">OSのパッチ適用状況確認</h1><hr id="1289da9f-3730-802c-88b0-f0ba72f1dc76"/><p id="88ae8865-93ea-4cd3-bca6-e274720cf1e9" class="">コンピューターを一覧で表示してパーセンテージを確認することで割り当てが問題ないか確認することができます。</p><p id="bd994d9e-6ac8-4b20-b205-6b9f5e84134c" class="">※グループ化は後から実施しているので、あしからず。。。</p><figure id="5b90507f-48b2-4de2-95ae-b3c2890b8576" class="image" style="text-align:left"><a href="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2018.png"><img style="width:768px" src="WSUS%E6%A7%8B%E7%AF%89%E3%81%A8%E8%A8%AD%E5%AE%9A%205978ac462cde4207a1efdd9d1c312d0a/Untitled%2018.png"/></a></figure><h1 id="ab0f66ab-9719-4392-9f88-ff1d79d70035" class="">ドメインに属していないWindowsマシンもWSUSで管理したい場合は？？</h1><hr id="1289da9f-3730-80a0-a2b9-dbc0659d46f5"/><p id="8e7799e6-3034-45b0-a98a-76698f3d6bf4" class="">Microsoftの記事にもありますが、ローカルポリシーを設定するもしくは、レジストリを直接いじることで可能となります。</p><figure id="466b61df-1667-429d-b623-a1e94fdb9b02"><a href="https://jpmem.github.io/blog/wsus/2019-04-16_01/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">WSUS クライアントのグループ ポリシー:その 1 – 基本編</div><div class="bookmark-description">こんにちは。WSUS サポートチームです。 今回は、WSUS をご利用いただく環境において、クライアントに対し必須構成となる下記の 2 つのグループ ポリシーについてご紹介します。WSUS クライアントのグループ ポリシーを構成する際に、参考にしてみてください。  [イントラネットの Microsoft 更新サービスの場所を指定する] [自動更新を構成する]  ※ 今回ご案内する WSUS や W</div></div><div class="bookmark-href"><img src="https://jpmem.github.io/blog/icons/apple-touch-icon.png" class="icon bookmark-icon"/>https://jpmem.github.io/blog/wsus/2019-04-16_01/</div></div><img src="https://jpmem.github.io/blog/wsus/2019-04-16_01/image1.png" class="bookmark-image"/></a></figure><h1 id="7e054eca-01d2-41c7-9827-990e46f7299a" class="">クリーンアップについて</h1><hr id="1289da9f-3730-8085-9b71-e4679751ce29"/><p id="13c30042-189b-4552-87ea-59b88282834e" class="">定期的にクリーンアップを実施しないとディスク容量が逼迫します。</p><p id="a6047dd6-9a8d-4a12-8525-62493eeb9318" class="">スクリプトをPowershellで作成し、タスクスケジューラーで毎日実行させます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="ba9be0e9-c5d6-461c-b104-f16cf07f5e4c" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">▪️プログラム/スクリプト
+%Systemroot%\System32\WindowsPowerShell\v1.0\powershell.exe
+
+▪️引数の追加
+-ExecutionPolicy Bypass WSUS-CleanUp.ps1の場所</code></pre><p id="e019a5f9-68cc-497c-b864-4e112a586caf" class="">WSUS-CleanUp.ps1</p><p id="1afe1deb-a4f0-41b6-bb7a-5c82fc21e477" class="">※プログラムを実行する前に必ず「New-EventLog -LogName Application -Source &quot;WSUS Cleanup Task”」を実行してください。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="0e76aaeb-9409-482e-898f-6c1a0071585f" class="code"><code class="language-PowerShell" style="white-space:pre-wrap;word-break:break-all">$message = &quot;WSUSクリーンアップ処理を開始します。&quot;
+
+Write-EventLog -LogName System -Source &quot;WSUS Cleanup Task&quot; -EventID 65000 -EntryType INFORMATION -Message $message
+
+try{
+	$result = (Invoke-WsusServerCleanup -CompressUpdates -CleanupObsoleteUpdates -CleanupObsoleteComputers -CleanupUnneededContentFiles -DeclineExpiredUpdates -DeclineSupersededUpdates)
+	if($result -ne $null){
+		$message = &quot;WSUSクリーンアップ処理が正常終了しました。`r`n`r`n&quot;+$result
+		Write-EventLog -LogName System -Source &quot;WSUS Cleanup Task&quot; -EventID 65001 -EntryType INFORMATION -Message $message
+	}else{
+		$message = &quot;WSUSクリーンアップ処理が正常終了しましたが結果が空です。&quot;
+		Write-EventLog -LogName System -Source &quot;WSUS Cleanup Task&quot; -EventID 65002 -EntryType WARNING -Message $message
+	}
+}
+catch{
+	$message = $error[0].Exception.Message
+	$message = &quot;WSUSクリーンアップ処理がエラー終了しました。`r`n`r`n&quot;+$message
+	Write-EventLog -LogName System -Source &quot;WSUS Cleanup Task&quot; -EventID 65003 -EntryType ERROR -Message $message
+}</code></pre><h1 id="1289da9f-3730-8096-8ca3-c12c0f869425" class="">最後に</h1><p id="1289da9f-3730-8046-b51d-fb0757e2ffba" class="">そういえばWSUSが非推奨になりましたね。。。</p><p id="1289da9f-3730-8099-8da6-cb468d4654e8" class="">今後はSaaSサービスやプロダクトを利用することも考えないといけないね。</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

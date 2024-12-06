@@ -1,0 +1,940 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>WorkSpacesのログをCloudWatchLogsに転送</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="b32c0a9b-1c47-4216-963a-ed67c8e3b2ff" class="page sans"><header><h1 class="page-title">WorkSpacesのログをCloudWatchLogsに転送</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="83d8471e-b313-4ba3-9ef6-9e5070139aa6" class="image" style="text-align:left"><a href="WorkSpaces%E3%81%AE%E3%83%AD%E3%82%AF%E3%82%99%E3%82%92CloudWatchLogs%E3%81%AB%E8%BB%A2%E9%80%81%20b32c0a9b1c474216963aed67c8e3b2ff/desktopappstreaming-amazonworkspaces-icon-1783x2048-s67ycgjv.png"><img style="width:192px" src="WorkSpaces%E3%81%AE%E3%83%AD%E3%82%AF%E3%82%99%E3%82%92CloudWatchLogs%E3%81%AB%E8%BB%A2%E9%80%81%20b32c0a9b1c474216963aed67c8e3b2ff/desktopappstreaming-amazonworkspaces-icon-1783x2048-s67ycgjv.png"/></a></figure><h1 id="a12b0d76-0604-4ab8-bcdb-ed6cafd2c687" class="">目次</h1><hr id="8e55d87a-af62-41be-96f6-d7df3703aab0"/><nav id="c3381dea-3c47-4944-828d-7ebbd53a9d3e" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a12b0d76-0604-4ab8-bcdb-ed6cafd2c687">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#00af31fe-484a-4f52-b79e-773a39030b15">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#20a1d2ba-79b0-4ccc-9838-e4f5c6706da2">VPCエンドポイントの作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3c4a4cf6-a9c0-425c-92d0-4074023d3a7e">CloudWatchAgentのインストール</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#683f4f9d-cdb3-411c-a6ee-90311fdc8dfd">IAMグループ、ユーザー、ポリシーを作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#1166fd4e-a87f-4991-b27e-48cb6ad21188">WorkSpacesの環境変数を編集</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#ce9d8c9d-2b13-4236-8728-0133bc3bc275">Powershellの実行権限変更</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b56efcac-d03d-4010-b038-15d2eae67f13">CloudWatchAgentのConfig作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#073a3cce-8c27-4b7e-a3c7-69bd21b328a3">CloudWatchAgentの実行</a></div></nav><h1 id="00af31fe-484a-4f52-b79e-773a39030b15" class="">はじめに</h1><hr id="8ba5507d-26de-4142-8873-25a133555da0"/><p id="033f3bfe-c0c8-4013-8801-5f41d10699ea" class="">CloudWatchLogsにWorkSpacesにアップロードすることをやったので、備忘録に残します。</p><h1 id="20a1d2ba-79b0-4ccc-9838-e4f5c6706da2" class="">VPCエンドポイントの作成</h1><hr id="8e2e1ade-7d82-4333-8929-562ba4546b5d"/><p id="84f4fe24-3d27-4c92-80db-7c9c77ee3e78" class="">今回説明に利用している環境はプライベートサブネットですが、パブリックサブネットにNATゲートウェイを配置しているため、</p><p id="b3b6de7c-cdbd-4d19-a144-6a1cfeb9ae16" class="">NATゲートウェイ経由でCloudWatchLogsへログ転送しています。</p><p id="ea4a3b31-2ec9-4e4c-905f-38d343bb9609" class="">セキュアに実施するのが一般的だと思いますが、その際には以下のVPCエンドポイントを作成してください。</p><ul id="4908b7ed-53ea-492c-a18c-f37ecc5e8681" class="bulleted-list"><li style="list-style-type:disc"><strong>com.amazonaws.ap-northeast-1.logs</strong></li></ul><p id="a6f491bb-3c2e-41bc-b5b4-74d69a421a42" class="">
+</p><p id="44d9bbd3-7c17-4fb9-9761-fc3298cb44b5" class="">VPCエンドポイントに紐づけるセキュリティグループはインバウンド443で開放をしてください。</p><p id="986e5b8e-5dda-44f1-a899-5eb42c2b98a1" class="">ソースも絞りたい場合にはエンドポイントを利用するサブネットのIPアドレス範囲を記載してください。</p><p id="07f5683b-fdaf-4314-9b76-6c09ec9f5d88" class="">エンドポイントポリシーを利用して制限をかけたい場合の例も記載します。（特定のARNに対してCloudWatchLogsへの書き込みを許可）</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="284019f2-22b7-4f5e-bb88-f09ee720b0c6" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">{
+  &quot;Statement&quot;: [
+    {
+      &quot;Sid&quot;: &quot;PutOnly&quot;,
+      &quot;Principal&quot;: &quot;*&quot;,
+      &quot;Action&quot;: [
+				&quot;logs:CreateLogGroup&quot;,
+        &quot;logs:CreateLogStream&quot;,
+				&quot;logs:PutRetentionPolicy&quot;,
+        &quot;logs:PutLogEvents&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;arn:aws:logs:ap-northeast-1:AWSアカウントID:log-group:workspaces-system-eventlog:*&quot;
+    }
+  ]
+}</code></pre><h1 id="3c4a4cf6-a9c0-425c-92d0-4074023d3a7e" class="">CloudWatchAgentのインストール</h1><hr id="f1cedcfe-2ed7-49bf-9941-658437d5b584"/><p id="48932e80-46f9-4d88-aaf3-2f8c3822609b" class="">SSMでもできますが、今回は事前にダウンロードしてきたCloudWatchAgentのMSIを使ってインストールします。</p><p id="b2af5e6d-bb26-4f31-868b-01548bd5a85f" class="">WorkSpacesで管理者モードでPowershellを実行し、CloudWatchAgentのMSIファイルがある場所に移動してインストールを実行します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="cac63a45-4fde-4695-ae47-a60583236474" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">msiexec /i amazon-cloudwatch-agent.msi</code></pre><h1 id="683f4f9d-cdb3-411c-a6ee-90311fdc8dfd" class="">IAMグループ、ユーザー、ポリシーを作成</h1><hr id="455b1b5c-e78b-425f-84d4-676bf1cadc99"/><p id="dc47b77b-bb41-4f62-a169-62fb4f514fe2" class="">IAMグループを作成します。IAMグループを作成してユーザーをどうして所属させるかというとSecurityHubで検査した時に引っかかるからです。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="9281e9ab-4815-4cb3-a001-41918af42d98" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">グループ名：
+wslogs-to-cwlogs-grp01</code></pre><p id="fd6d29d1-89c3-43dc-8083-877f5f1700c6" class="">IAMポリシーを作成して、先ほど作成したグループにポリシーをアタッチします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e628b3ff-7ed7-48f9-9194-bb46acc3d159" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">ポリシー名：
+wslogs-to-cwlogs-pol01
+
+ポリシー内容：
+{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;logs:CreateLogGroup&quot;,
+                &quot;logs:CreateLogStream&quot;,
+                &quot;logs:PutLogEvents&quot;
+            ],
+            &quot;Resource&quot;: &quot;arn:aws:logs:ap-northeast-1:AWSアカウントID:log-group:workspaces-system-eventlog:*&quot;
+        }
+    ]
+}</code></pre><p id="15e5cce1-e48e-4a67-bdf1-f296aaff1585" class="">IAMユーザーを作成し、ユーザーを先ほど作成したグループに追加します。AWSコンソールへのアクセスできる機能は不要となります。</p><p id="329baf1b-2163-462c-a61b-0765bbfaaa5e" class="">またIAMユーザー作成後にアクセスキーの発行を実施します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="057c79a5-6fd9-4892-8bd4-fca09a8a3f26" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">ユーザー：
+wslogs-to-cwlogs-user01</code></pre><h1 id="1166fd4e-a87f-4991-b27e-48cb6ad21188" class="">WorkSpacesの環境変数を編集</h1><hr id="a2b81e0b-c3b5-4cb2-b672-61543616ac9b"/><p id="e9851e05-085d-4c2c-a2d2-cb43e0d3d1c8" class="">スタート＞設定＞詳細情報＞システムの詳細設定＞環境変数をクリックします。</p><p id="751cb8a8-5728-4735-af2d-5c00af60a3eb" class="">システム環境変数に以下のように入力します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="18f0fc68-91ce-4ad7-996e-27d9b486f5e5" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">AWS_REGION : リージョン名を記入（例 : ap-northeast-1
+AWS_SECRET_ACCESS_KEY : シークレットアクセスキー
+AWS_ACCESS_KEY_ID : アクセスキー</code></pre><h1 id="ce9d8c9d-2b13-4236-8728-0133bc3bc275" class="">Powershellの実行権限変更</h1><hr id="f37b6c85-ad6f-4d1b-aa4b-c6177c28acfa"/><p id="f303a156-526d-433f-86af-4df3da864565" class="">以下のように実行権限がなっています。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8198c6f5-1ed7-4b91-8930-ce9bdc39a807" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">&gt; Get-ExecutionPolicy -List
+
+        Scope ExecutionPolicy
+        ----- ---------------
+MachinePolicy       Undefined
+   UserPolicy       Undefined
+      Process       Undefined
+  CurrentUser       Undefined
+ LocalMachine      Restricted</code></pre><p id="a9e03653-3ab1-4d69-b765-9db33488b0d8" class="">CloudWatchAgentのスクリプトを実行できないので、以下のコマンドを実行して権限を与えます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b6c60e42-ad0e-470f-8357-6c7e488f7a34" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">&gt; Set-ExecutionPolicy RemoteSigned -Scope Process
+
+実行ポリシーの変更
+実行ポリシーは、信頼されていないスクリプトからの保護に役立ちます。実行ポリシーを変更すると、about_Execution_Policies
+のヘルプ トピック (https://go.microsoft.com/fwlink/?LinkID=135170)
+で説明されているセキュリティ上の危険にさらされる可能性があります。実行ポリシーを変更しますか?
+[Y] はい(Y)  [A] すべて続行(A)  [N] いいえ(N)  [L] すべて無視(L)  [S] 中断(S)  [?] ヘルプ (既定値は &quot;N&quot;): y</code></pre><p id="50e05948-6ccf-4762-a30c-a3f15c3f8915" class="">Process部分がRemote Signedに変更されていれば実行権限変更完了です。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b1d591ef-8806-4907-a7d6-30d9fddd61ba" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">&gt; Get-ExecutionPolicy -List
+
+        Scope ExecutionPolicy
+        ----- ---------------
+MachinePolicy       Undefined
+   UserPolicy       Undefined
+      Process    RemoteSigned
+  CurrentUser       Undefined
+ LocalMachine      Restricted</code></pre><h1 id="b56efcac-d03d-4010-b038-15d2eae67f13" class="">CloudWatchAgentのConfig作成</h1><hr id="030465b3-d8f5-48aa-8928-31cc0702607d"/><p id="bd7d7b8d-b763-42ae-8b0b-c84d822d5398" class="">ウィーザードに従い以下のようにしていきます。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1858c7b5-6cdb-4d22-b1a3-8a62b8a2088d" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">PS C:\&gt; cd &#x27;C:\Program Files\Amazon\AmazonCloudWatchAgent\&#x27;
+PS C:\Program Files\Amazon\AmazonCloudWatchAgent&gt; .\amazon-cloudwatch-agent-config-wizard.exe
+================================================================
+= Welcome to the Amazon CloudWatch Agent Configuration Manager =
+=                                                              =
+= CloudWatch Agent allows you to collect metrics and logs from =
+= your host and send them to CloudWatch. Additional CloudWatch =
+= charges may apply.                                           =
+================================================================
+On which OS are you planning to use the agent?
+1. linux
+2. windows
+3. darwin
+default choice: [2]:
+2
+Trying to fetch the default region based on ec2 metadata...
+I! imds retry client will retry 1 timesAre you using EC2 or On-Premises hosts?
+1. EC2
+2. On-Premises
+default choice: [1]:　#ここではOn-Premisesを選択してください。
+2
+Please make sure the credentials and region set correctly on your hosts.
+Refer to http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+Do you want to turn on StatsD daemon?
+1. yes
+2. no
+default choice: [1]:
+2
+Do you have any existing CloudWatch Log Agent configuration file to import for migration?
+1. yes
+2. no
+default choice: [2]:
+2
+Do you want to monitor any host metrics? e.g. CPU, memory, etc.
+1. yes
+2. no
+default choice: [1]:
+2
+Do you want to monitor any customized log files?
+1. yes
+2. no
+default choice: [1]:
+2
+Do you want to monitor any Windows event log?
+1. yes
+2. no
+default choice: [1]: #ログをアップロードするのでyesを選択します。
+1
+Windows event log name:
+default choice: [System]　#SystemのイベントログをアップロードするのでSystemと入力します。アップロード対象はERRORとCRITICALのみにしてます。
+System
+Do you want to monitor VERBOSE level events for Windows event log System ?
+1. yes
+2. no
+default choice: [1]:
+2
+Do you want to monitor INFORMATION level events for Windows event log System ?
+1. yes
+2. no
+default choice: [1]:
+2
+Do you want to monitor WARNING level events for Windows event log System ?
+1. yes
+2. no
+default choice: [1]:
+2
+Do you want to monitor ERROR level events for Windows event log System ?
+1. yes
+2. no
+default choice: [1]:
+1
+Do you want to monitor CRITICAL level events for Windows event log System ?
+1. yes
+2. no
+default choice: [1]:
+1
+Log group name:
+default choice: [System] #ログのグループ名を任意で決めます。
+workspaces-system-eventlog
+Log stream name:
+default choice: [{hostname}] #ログのストリーム名を任意で決めます。ここではメタデータの内容を利用できます。（http://169.254.169.254/latest/meta-data/で表示される内容）
+{local_hostname}
+Which log group class would you like to have for this log group? #ログクラスはSTANDARDにします。
+1. STANDARD
+2. INFREQUENT_ACCESS
+default choice: [1]:
+1
+In which format do you want to store windows event to CloudWatch Logs? #ログのアップロード形式はテキストにします。
+1. XML: XML format in Windows Event Viewer
+2. Plain Text: Legacy CloudWatch Windows Agent (SSM Plugin) Format
+default choice: [1]:
+2
+Log Group Retention in days
+1. -1
+2. 1
+3. 3
+4. 5
+5. 7
+6. 14
+7. 30
+8. 60
+9. 90
+10. 120
+11. 150
+12. 180
+13. 365
+14. 400
+15. 545
+16. 731
+17. 1096
+18. 1827
+19. 2192
+20. 2557
+21. 2922
+22. 3288
+23. 3653
+default choice: [1]: #ログの保存期間は14日にします。
+6
+Do you want to specify any additional Windows event log to monitor?
+1. yes
+2. no
+default choice: [1]:
+2
+Do you want the CloudWatch agent to also retrieve X-ray traces?
+1. yes
+2. no
+default choice: [1]:
+2
+Existing config JSON identified and copied to:  D:\Users\nnagashima\AppData\Roaming\Amazon\CloudWatchAgent\etc\backup-configs
+Saved config file to config.json successfully.
+Current config as follows:
+{
+        &quot;logs&quot;: {
+                &quot;logs_collected&quot;: {
+                        &quot;windows_events&quot;: {
+                                &quot;collect_list&quot;: [
+                                        {
+                                                &quot;event_format&quot;: &quot;text&quot;,
+                                                &quot;event_levels&quot;: [
+                                                        &quot;ERROR&quot;,
+                                                        &quot;CRITICAL&quot;
+                                                ],
+                                                &quot;event_name&quot;: &quot;System&quot;,
+                                                &quot;log_group_class&quot;: &quot;STANDARD&quot;,
+                                                &quot;log_group_name&quot;: &quot;workspaces-system-eventlog&quot;,
+                                                &quot;log_stream_name&quot;: &quot;{local_hostname}&quot;,
+                                                &quot;retention_in_days&quot;: 14
+                                        }
+                                ]
+                        }
+                }
+        }
+}
+Please check the above content of the config.
+The config file is also located at config.json.
+Edit it manually if needed.
+Do you want to store the config in the SSM parameter store?
+1. yes
+2. no
+default choice: [1]:
+2
+Please press Enter to exit...
+
+Program exits now.</code></pre><p id="2522ca21-1303-4aec-8a4b-45a248c0bce7" class="">途中ででてきた以下について補足で低頻度アクセス用のInfrequent Accessが作られました。</p><p id="f9bc82aa-f027-4999-b164-44047bb2da28" class="">Stanadardと比較すると機能制限はありますが、料金が安くなるため料金の最適化が可能になりました。</p><p id="0348a10a-d20a-4cd6-ae70-117d47f0def8" class="">Infrequent Accessでできること</p><ul id="31867a3b-dbdb-499b-a875-6a9588240983" class="bulleted-list"><li style="list-style-type:disc">ログの取り込みと保存</li></ul><ul id="c88faeb8-76fe-4c6f-b24e-6bd070aada7c" class="bulleted-list"><li style="list-style-type:disc">クロスアカウントのログ転送</li></ul><ul id="be8d05b8-aba2-47ac-9943-9738fbc81b5c" class="bulleted-list"><li style="list-style-type:disc">KMSによる暗号化</li></ul><p id="f3555b93-29cd-49ed-9a7a-1142110c1ff9" class="">上記以外はできませんが、転送料金が1GB単位あたりStandardの半額になります。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="c9793d0f-1e31-4bf2-ade2-595c1f5146bf" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">Which log group class would you like to have for this log group? #ログクラスはSTANDARDにします。
+1. STANDARD
+2. INFREQUENT_ACCESS</code></pre><p id="684eb671-cb4f-4fcd-9a58-609abddc417b" class="">作成したConfigをアタッチします。なお追加でConfigをアタッチしたい場合にはappend-configを使います。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="b9078271-9000-432b-9967-d913a69c800e" class="code"><code class="language-JavaScript" style="white-space:pre-wrap;word-break:break-all">&gt; .\amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -c file:config.json
+****** processing amazon-cloudwatch-agent ******
+I! Trying to detect region from ec2
+D! [EC2] Found active network interface
+I! imds retry client will retry 1 timesSuccessfully fetched the config and saved in C:\ProgramData\Amazon\AmazonCloudWatchAgent\Configs\file_config.json.tmp
+Start configuration validation...
+2024/02/27 23:20:43 Reading json config file path: C:\ProgramData\Amazon\AmazonCloudWatchAgent\Configs\file_config.json.tmp ...
+2024/02/27 23:20:43 I! Valid Json input schema.
+I! Trying to detect region from ec2
+D! [EC2] Found active network interface
+I! imds retry client will retry 1 times2024/02/27 23:20:43 Configuration validation first phase succeeded
+Configuration validation second phase succeeded
+Configuration validation succeeded</code></pre><h1 id="073a3cce-8c27-4b7e-a3c7-69bd21b328a3" class="">CloudWatchAgentの実行</h1><hr id="ff83a81f-46ee-42b0-b721-79295fcfdc11"/><p id="7a2323df-848b-465b-a98b-c0754a5de758" class="">CloudWatchAgentを実行します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1db5d4b6-6fc7-42a8-9894-d757369315b2" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">&gt; .\amazon-cloudwatch-agent-ctl.ps1 -a status
+{
+  &quot;status&quot;: &quot;stopped&quot;,
+  &quot;starttime&quot;: &quot;&quot;,
+  &quot;configstatus&quot;: &quot;configured&quot;,
+  &quot;version&quot;: &quot;1.300033.0b462&quot;
+}
+
+&gt; .\amazon-cloudwatch-agent-ctl.ps1 -a start
+
+****** Processing amazon-cloudwatch-agent ******
+AmazonCloudWatchAgent has been started
+
+&gt; .\amazon-cloudwatch-agent-ctl.ps1 -a status
+{
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;starttime&quot;: &quot;2024-02-27T23:22:44&quot;,
+  &quot;configstatus&quot;: &quot;configured&quot;,
+  &quot;version&quot;: &quot;1.300033.0b462&quot;
+}</code></pre><p id="07011fc7-8151-44d4-bb9e-b49da79912dd" class="">実行できたらCloudWatchLogsの画面に行き作成したログがCloudWatchLogsに流れていることを確認します。</p><p id="edc85a51-68e3-45d3-9b08-9c9dcc5def67" class="">ログが流れていない場合には以下にCloudWatchAgentのログがあるのでデバックの参考にしてください。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="3646b225-2af5-4a6f-8cbc-48f9530c6222" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">C:\ProgramData\Amazon\AmazonCloudWatchAgent\Logsvamazon-cloudwatch-agent.log</code></pre><p id="9b0ab005-5a74-4870-8681-3438ac838fa2" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

@@ -1,0 +1,697 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>zabbix kubernetes monitoring</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="7c5dd9bb-312d-4c49-ab3f-d59db5056c69" class="page sans"><header><h1 class="page-title">zabbix kubernetes monitoring</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="d07c3ec4-6548-43d1-afc8-46ff5bc2287c" class="image" style="text-align:left"><a href="k8s%20Zabbix%20proxy%20deploy%2011dc49f92c334b80ac69622e89be82e3/kubernetes-icon-2048x1995-r1q3f8n7.png"><img style="width:192px" src="k8s%20Zabbix%20proxy%20deploy%2011dc49f92c334b80ac69622e89be82e3/kubernetes-icon-2048x1995-r1q3f8n7.png"/></a></figure><p id="2d4ac252-6f23-4039-a38a-05f043ea63e2" class="">目次</p><nav id="342dc044-d30e-4025-99f6-198d3563ff4c" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#cff951b0-4ad8-469e-8b03-564827999e51">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#2c323339-b21e-4343-bd6f-60d6666321e1">存在しているテンプレート</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e5c4000f-86b9-4e94-8a48-b4d88aba9c2d">Kubernetes nodes by HTTP テンプレート適用</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b8167b3f-f558-4dd7-ac2e-192255711f90">Kubernetes cluster state by HTTP テンプレート適用</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b93e6de8-f6df-4b80-adad-034e0086a87b">監視をすることはできたが。。。</a></div></nav><h1 id="cff951b0-4ad8-469e-8b03-564827999e51" class="">はじめに</h1><hr id="1289da9f-3730-8076-ae8f-f18fa2050700"/><p id="8b359f46-e935-4259-9fb4-ca900579f3a4" class="">Zabbix6.0からKubernetesモニタリングのテンプレートが公開されたので、どんなことを診ることができるのか確認します。</p><p id="0cb29488-1057-46be-9183-d4dffbad7720" class="">本監視テンプレートは外部スクリプトなし、API サーバー /metrics エンドポイントから HTTP エージェントによって、</p><p id="4b300098-4a8f-4b61-9a9e-7e8f4d3891c9" class="">メトリックを収集でKubernetesノードを監視することができます。</p><h1 id="2c323339-b21e-4343-bd6f-60d6666321e1" class="">存在しているテンプレート</h1><hr id="1289da9f-3730-8090-b50a-da10bd807456"/><ul id="bfe16be2-63a3-41e1-9a10-e2d8aca6187d" class="bulleted-list"><li style="list-style-type:disc">Kubernetes API server by HTTP</li></ul><ul id="8748c0b0-51d7-472f-b758-47213eb940ec" class="bulleted-list"><li style="list-style-type:disc">Kubernetes cluster state by HTTP</li></ul><ul id="75c46096-2315-454a-9ec5-ea27335e395b" class="bulleted-list"><li style="list-style-type:disc">Kubernetes Controller manager by HTTP</li></ul><ul id="5cb7fb51-bc14-4941-a91f-4965ad1297f5" class="bulleted-list"><li style="list-style-type:disc">Kubernetes Kubelet by HTTP</li></ul><ul id="27067b39-7a9f-47c3-9102-1de67b7c19c0" class="bulleted-list"><li style="list-style-type:disc">Kubernetes nodes by HTTP</li></ul><ul id="d651f4b1-f98b-4e05-9449-affd9482da9c" class="bulleted-list"><li style="list-style-type:disc">Kubernetes Scheduler by HTTP</li></ul><p id="6fdd26ef-dc70-4a76-9787-9636816507fc" class="">
+</p><p id="f1a29d25-cd4e-4b6d-8a24-64a18740152a" class="">なお、Kubernetes cluster state by HTTPで以下がディスカバリーされるようです。</p><ul id="2ac4ddba-5ee1-4821-9880-6f974080b25f" class="bulleted-list"><li style="list-style-type:disc">Kubernetes API server by HTTP</li></ul><ul id="801ea7d8-a027-4d68-b197-2d69b650fbba" class="bulleted-list"><li style="list-style-type:disc">Kubernetes Controller manager by HTTP</li></ul><ul id="d3516e9c-4216-471a-a1e9-c2eb4776ed0f" class="bulleted-list"><li style="list-style-type:disc">Kubernetes Kubelet by HTTP</li></ul><ul id="d92f4f08-0be4-4f37-81b7-f2d8fd6d5a3a" class="bulleted-list"><li style="list-style-type:disc">Kubernetes Scheduler by HTTP</li></ul><p id="62b25d26-e096-41d6-b9b9-099afa1d66bb" class="">
+</p><p id="52431ff8-8c9b-4ffa-b47b-2a81c30c24e6" class="">テンプレートに当てる際に$KUBE.API.TOKENが必要になるので、以下コマンドを実行して取得します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="885a409b-0e60-411e-bc31-e8fc455fa840" class="code"><code class="language-Bash"> # kubectl get secret zabbix-service-account -n zabbix -o jsonpath={.data.token} | base64 -d</code></pre><h1 id="e5c4000f-86b9-4e94-8a48-b4d88aba9c2d" class="">Kubernetes nodes by HTTP テンプレート適用</h1><hr id="1289da9f-3730-806d-bccf-d994a55eda38"/><p id="a24e5ff7-709e-4462-958f-6d47912b550d" class="">ノード監視用のテンプレート「Kubernetes nodes by HTTP」適用するために、ホスト登録します。</p><p id="2bc6ab25-ebd5-4847-903b-9b684f9d81ca" class="">※ray-k8s-nodeで筆者は登録しております。</p><p id="c5645f8c-b06d-4c3e-95b0-ed4110a923e1" class="">登録したらテンプレートを適用し、ホストマクロを設定します。</p><table id="c99af54a-0f01-49f5-92b3-ea7f9b5841bf" class="simple-table"><tbody><tr id="e5a61666-8216-4e3b-9600-bd690a3bc655"><td id="_&lt;p\" class="">マクロ</td><td id="@pxb" class="" style="width:816px">値</td></tr><tr id="fa95256c-6f3f-4511-814f-58a20b391442"><td id="_&lt;p\" class="">{$KUBE.API.ENDPOINT}</td><td id="@pxb" class="" style="width:816px">&lt;scheme&gt;://&lt;host&gt;:&lt;port&gt;/api<br/>→筆者環境ではhttps://192.168.11.11/api<br/></td></tr><tr id="3a769175-a5f9-4887-9c22-b184f80f73e5"><td id="_&lt;p\" class="">{$KUBE.API.TOKEN}</td><td id="@pxb" class="" style="width:816px">kubectl get secret zabbix-service-account -n zabbix -o jsonpath={.data.token} | base64 -dでGETしたTOKENになります。</td></tr></tbody></table><p id="b7d24919-170c-4572-9254-8296762788a3" class="">ノードディスカバリーによって、Workerノードが検出されております。</p><figure id="6649b1f3-28ea-4f06-8855-d7b89b03e64c" class="image"><a href="zabbix%20kubernetes%20monitoring%207c5dd9bb312d4c49ab3fd59db5056c69/Untitled.png"><img style="width:707.9375px" src="zabbix%20kubernetes%20monitoring%207c5dd9bb312d4c49ab3fd59db5056c69/Untitled.png"/></a></figure><p id="7dc49493-0b57-4eb2-b164-105c8acf080b" class="">Masterノードを検出できない理由としては<a href="k8s%20Zabbix%20proxy%20deploy%2011dc49f92c334b80ac69622e89be82e3.html">k8s Zabbix proxy deploy</a> でDeployしたZabbixAgentの設定が以下になっているのに対して、</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="43f53a7a-1ee9-4628-9834-c8b760a682d3" class="code"><code class="language-Bash">## Tolerations configurations
+  tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/master</code></pre><p id="cc681c9e-3fc9-4142-bd83-7afc5c9ea18d" class="">Masterノードの設定情報をみると、</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7f03bbc3-9728-4f47-a847-ec815e76c122" class="code"><code class="language-Bash"># kubectl describe node/ray-k8s-master01
+Taints:             node-role.kubernetes.io/control-plane:NoSchedule</code></pre><p id="b10c7d3b-3cbf-49b3-ab61-0cd664373c57" class="">となっているため、不一致によりMasterノードにZabbixAgentが展開されませんでしたので、</p><p id="6cb457ac-5e08-44af-9929-f7016c579867" class="">zabbix_values.yamlを修正してUpdateします。</p><p id="86e60ab8-3274-4490-92a9-4255567e68cc" class="">
+</p><p id="237db95d-9d04-420e-a72f-8eb1171825e0" class="">補足：</p><p id="fedbf2a7-6bef-4cc5-b708-4cf795432cf3" class="">node-role.kubernetes.io/masterはKubernetes1.20で非推奨になっており、削除される予定となっております。</p><p id="f13aec47-ae94-4e7b-8e29-bd8930187f40" class="">Kubernetesは3ヶ月ごとにリリースされますので、ReleaseNoteを常に追っていく必要があるので運用が大変です。。。</p><figure id="109cc434-8e23-484b-9e20-1071b5009daa"><a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-cluster-lifecycle/kubeadm/2067-rename-master-label-taint/README.md" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">enhancements/README.md at master · kubernetes/enhancements</div><div class="bookmark-description">Enhancements tracking repo for Kubernetes. Contribute to kubernetes/enhancements development by creating an account on GitHub.</div></div><div class="bookmark-href"><img src="https://github.com/fluidicon.png" class="icon bookmark-icon"/>https://github.com/kubernetes/enhancements/blob/master/keps/sig-cluster-lifecycle/kubeadm/2067-rename-master-label-taint/README.md</div></div><img src="https://opengraph.githubassets.com/6a4527b98c7a813036b2080d098ad3a88db2acfd8f8781c1cfe469031679f493/kubernetes/enhancements" class="bookmark-image"/></a></figure><p id="cfeaa510-dde9-497a-a9bd-80514b7be31c" class="">修正箇所</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="9a24de86-58e7-4d2a-bb27-2730f4ceccd4" class="code"><code class="language-Bash">## Tolerations configurations
+  tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/control-plane</code></pre><p id="642b9d42-17e0-4dd5-8cdb-5c36e6e3cd02" class="">Update</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="48814790-51db-4cd2-a601-8e2d48451d48" class="code"><code class="language-Bash"># helm upgrade zabbix . --dependency-update -f ./zabbix_values.yaml -n zabbix</code></pre><p id="0a7acb14-de8e-428f-90e7-a03ec4ab51b5" class="">補足：</p><p id="eff0ff0e-e2cd-46f8-ad06-1979c4e741e5" class="">kubernetesのMasternノードにはTaintsが設定されており、Podが展開されないようになっております。</p><p id="6db8fd39-c080-4732-9958-f1ed67a46ef8" class="">そのためMasterノードにPodを展開するためのやり方は２つあり、</p><p id="a4e99d0b-bd92-410e-a0c5-1dd2d3420fc8" class="">MasterノードのTaint情報を剥がす方法と、Pod側で対応する場合のやり方があります。</p><p id="13dd38dd-9d66-47e2-86ce-95bad6189209" class="">今回はPod側で制御する後者のやり方を取りました。</p><p id="19de14e7-f729-470a-871f-0916889c2292" class="">※MasterにPod展開することって本来ないと思っているので、本来のやり方ではないかと思っています。。。</p><p id="026b3e8d-3b0e-405c-aad3-a6bd017ffa82" class="">
+</p><p id="c90f2abc-c8fd-4217-a313-e73f34049f34" class="">ノードディスカバリーによって、Masterノードが検出されております。</p><figure id="911b074a-b252-4aee-aec4-e3406b4713b7" class="image"><a href="zabbix%20kubernetes%20monitoring%207c5dd9bb312d4c49ab3fd59db5056c69/Untitled%201.png"><img style="width:707.90625px" src="zabbix%20kubernetes%20monitoring%207c5dd9bb312d4c49ab3fd59db5056c69/Untitled%201.png"/></a></figure><h1 id="b8167b3f-f558-4dd7-ac2e-192255711f90" class="">Kubernetes cluster state by HTTP テンプレート適用</h1><hr id="1289da9f-3730-802e-ab86-f756e0f037de"/><p id="38a5e78a-8586-4ae4-ac61-db85ba964b15" class="">Kubernetesのコンポーネントを監視します。</p><p id="04b070f4-153d-48ee-90af-a6fbcc17c7a2" class="">クラスタ監視用のテンプレート「Kubernetes cluster state by HTTP」適用するために、ホスト登録します。</p><p id="c1d3711b-7d7f-4eac-b6b0-fdbff318fa95" class="">※ray-k8s-clusterで筆者は登録しております。</p><p id="4c3923b5-007e-43d9-b090-4af6244b00c5" class="">登録したらテンプレートを適用し、ホストマクロを設定します。</p><table id="0cbd7274-00ac-472c-8c2d-315ef57ce25c" class="simple-table"><tbody><tr id="ad5d2d1f-21e0-493c-b029-9c0b1b4675a1"><td id="_&lt;p\" class="">マクロ</td><td id="@pxb" class="" style="width:816px">値</td></tr><tr id="f86a4cdf-5f01-455c-b6bc-f68a61d3bba1"><td id="_&lt;p\" class="">{$KUBE.API.HOST}</td><td id="@pxb" class="" style="width:816px">APIのIP、筆者環境では192.168.11.11</td></tr><tr id="084ea595-631b-430e-bf03-a76a1b3e47ab"><td id="_&lt;p\" class="">{$KUBE.API.TOKEN}</td><td id="@pxb" class="" style="width:816px">kubectl get secret zabbix-service-account -n zabbix -o jsonpath={.data.token} | base64 -dでGETしたTOKENになります。</td></tr><tr id="e6205359-6a5f-4733-9cbd-dd0c35d0d0fd"><td id="_&lt;p\" class="">{$KUBE.API.CERT.EXPIRATION} </td><td id="@pxb" class="" style="width:816px">90<br/>デフォルトは7<br/></td></tr></tbody></table><p id="2b1ea90f-fee3-471d-9811-5353bdef177b" class="">{$KUBE.API.CERT.EXPIRATION} は、Kubernetes API server by HTTPテンプレートのMacroに該当します。</p><p id="66f3e0b3-c6f1-41c9-8141-cec86bb427c8" class="">デフォルトでは7日前に証明書期限切れの通知をしてくれますが、早めに欲しいため90日前にしました。</p><p id="7c1eb134-4c0a-4945-b6a4-0a0ec664b08f" class="">
+</p><p id="17d692bb-bbd5-475a-b97c-70548b0bc82e" class="">ディスカバリーによって、各コンポーネントがホストで自動登録されています。</p><figure id="a9203d55-071f-4c3f-a536-fba1d39ecec7" class="image"><a href="zabbix%20kubernetes%20monitoring%207c5dd9bb312d4c49ab3fd59db5056c69/Untitled%202.png"><img style="width:707.96875px" src="zabbix%20kubernetes%20monitoring%207c5dd9bb312d4c49ab3fd59db5056c69/Untitled%202.png"/></a></figure><h1 id="b93e6de8-f6df-4b80-adad-034e0086a87b" class="">監視をすることはできたが。。。</h1><hr id="1289da9f-3730-809c-8331-c6df558c8889"/><p id="8e1828a2-933e-4664-a180-4d4b1e1262f0" class="">Kubernetesの監視をZabbix6で、できることはできたが環境に合わせて必要な監視テンプレート追加などの検討も必要という印象を受けた。</p><p id="41f33fb4-afd7-440a-84e2-f9f11ecef930" class="">また可視化しないとアイテム数が膨大なので自分の見やすい画面を作る必要があると感じている。</p><p id="25e5162f-1f92-40d6-99f7-98f8001d0f02" class="">Kube-PrometheusなどはDashboardが用意されていて可視化まですぐにできるので、Prometheusの方が導入から運用スタートまで、</p><p id="c90a48b0-66ab-417c-9191-68012a70bfb9" class="">早くできるところが良いなと感じる一方で、こうやってUIで操作できるのがZabbixの特徴でもあるのでどちらも捨てがたい。</p><p id="24480bc2-a3de-47bb-8605-83d125d899f4" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

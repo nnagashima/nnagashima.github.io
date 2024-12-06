@@ -1,0 +1,1053 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Zabbix5.0でPostgresql13＋pgpool-IIを利用したCluster構築</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="27f6ddee-e06e-4af5-a6f5-ca92627fd413" class="page sans"><header><h1 class="page-title">Zabbix5.0でPostgresql13＋pgpool-IIを利用したCluster構築</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="251a1389-e65f-4696-be75-b9711dbc2073" class="image" style="text-align:left"><a href="Zabbix5%200%E3%81%A6%E3%82%99Postgresql13%EF%BC%8Bpgpool-II%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%9FCluster%E6%A7%8B%E7%AF%89%2027f6ddeee06e4af5a6f5ca92627fd413/Zabbix_logo-RGB.png"><img style="width:384px" src="Zabbix5%200%E3%81%A6%E3%82%99Postgresql13%EF%BC%8Bpgpool-II%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%9FCluster%E6%A7%8B%E7%AF%89%2027f6ddeee06e4af5a6f5ca92627fd413/Zabbix_logo-RGB.png"/></a></figure><p id="8b8d8d24-70f2-4842-8d7e-83a4f72ad28e" class="">目次</p><nav id="a1257f65-e013-4b36-83f4-366f95634dfb" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#6a3b0f53-b2a7-4aa1-a060-eae6a2c4630b">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#939dd7e2-4d87-4c8c-b2f0-00f3136ff370">事前準備</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f3d12652-5e7a-4f31-acaa-02e420d8b83a">postgresql+pgpoolの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#770fc06e-3be1-4735-8f16-569813236ec6">Pacemaker+Zabbixの設定</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#0f3fd847-aca8-4ccb-a087-477d40988aad">最後に</a></div></nav><h1 id="6a3b0f53-b2a7-4aa1-a060-eae6a2c4630b" class="">はじめに</h1><hr id="1289da9f-3730-80b3-95be-c8de98546d35"/><p id="5eb43531-052d-49b2-8d21-f79a8f17a278" class="">postgresqlを使ったZabbixの情報はあまり出てこないので、 色々と自分で試しつつ、Zabbix5.0のLTSをCluster構成にしてみました。</p><p id="ceda7b82-3953-4c72-b2c0-e6bd06d3519c" class="">pgpoolの公式サイトを参考にしながら作ってはいますが、間違っているところがあるかもしれませんので、 </p><p id="12f3bfda-7450-4480-89a2-b673b3c0841d" class="">利用する方はあくまで参考程度にしてくだい。</p><p id="4f68d9b4-45eb-4e8e-97d5-f091460ae9c0" class="">
+</p><p id="bbb0bbbb-1db8-40de-91f7-2338802c60c2" class="">また今回の投稿では細かい設定パラメータまでは触れません。</p><p id="5152fdd0-5c28-41db-afc3-b52b6362f154" class="">実際はパラメータの調整をしていますが利用の仕方によっても変わってくるので、Postgresqlのパタメータをちゃんと実施してくだい。</p><p id="5b1218ba-c517-4c0c-ba4a-1198e7675632" class="">MySQLと違ってPostgresqlはちゃんとパラメータ調整しないとうまく動作しない可能性があります。</p><h1 id="939dd7e2-4d87-4c8c-b2f0-00f3136ff370" class="">事前準備</h1><hr id="1289da9f-3730-8011-bbb8-f3bd451e394f"/><p id="cbb64ed9-a9ca-4405-b8e1-6c7ac191fbe0" class="">OSはCentOS7の最新版で実施しています。 またPostgresql用に/var/lib/pgsqlのパーティションを作っています。</p><p id="78bbb89d-6a81-4474-aa82-65c9f1ae78d3" class="">Active-Standby構成で作成するので、一部共通で設定する箇所、そうでない箇所があるので注意して下さい。</p><h1 id="f3d12652-5e7a-4f31-acaa-02e420d8b83a" class="">postgresql+pgpoolの設定</h1><hr id="1289da9f-3730-805e-bfdf-fe8ae88f432b"/><p id="16633530-5a8a-445f-99e0-f0b8990e065d" class="">&lt; 共通設定 &gt;</p><p id="3b3a52d0-87f5-4fee-823c-72e0ab551a6b" class="">hostsファイルに名前を設定します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="71193191-1d89-484d-abec-7db5f3792845" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># echo &quot;192.168.11.41 zbx5-webdb01&quot; &gt;&gt; /etc/hosts
+# echo &quot;192.168.11.42 zbx5-webdb02&quot; &gt;&gt; /etc/hosts</code></pre><p id="8b0eb520-e171-4640-ac9f-2cdacf9afeb2" class="">pgpoolとpostgresqlのリポジトリ設定、インストールします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="8c80b3bc-2e0a-4b21-aeea-c13ede5f422d" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+# yum -y install https://www.pgpool.net/yum/rpms/4.2/redhat/rhel-7-x86_64/pgpool-II-release-4.2-1.noarch.rpm
+# yum -y install postgresql13-server
+# yum -y install pgpool-II-pg13-*
+# systemctl enable postgresql-13.service
+# systemctl enable pgpool.service</code></pre><p id="9f8b57be-a7c7-409f-931a-a55ff5fd0b2e" class="">レプリケーションするのでアーカイブディレクトリを作成して起動します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="dbb63796-3db6-478e-ac36-6e212f47f39a" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># su - postgres
+$ mkdir /var/lib/pgsql/archivedir
+$ exit
+# /usr/pgsql-13/bin/postgresql-13-setup initdb
+# ls -la /var/lib/pgsql/13/data</code></pre><p id="197b9b72-e120-4531-9af7-655abe9397af" class="">Postgresqlでtimescaledbを利用します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="bf8d2eca-a0a0-489c-8817-b6ce27970396" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># tee /etc/yum.repos.d/timescale_timescaledb.repo &lt;&lt;EOL
+[timescale_timescaledb]
+name=timescale_timescaledb
+baseurl=https://packagecloud.io/timescale/timescaledb/el/$(rpm -E %{centos})/\$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+EOL
+
+# yum install -y timescaledb-2-postgresql-13</code></pre><p id="edcd3e9a-5bd1-4336-959d-42560ce0b0a5" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><p id="505c8690-4e52-47af-bdd3-07208cf64cb5" class="">timescaledbの初期設定を実施します。デフォルト設定にしています。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="7c23d1e7-f84f-4dbb-8331-7da54f07be7d" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># timescaledb-tune --pg-config=/usr/pgsql-13/bin/pg_config
+Using postgresql.conf at this path:
+/var/lib/pgsql/13/data/postgresql.conf
+
+Is this correct? [(y)es/(n)o]: y
+Writing backup to:
+/tmp/timescaledb_tune.backup202109201052
+
+shared_preload_libraries needs to be updated
+Current:
+#shared_preload_libraries = &#x27;&#x27;
+Recommended:
+shared_preload_libraries = &#x27;timescaledb&#x27;
+Is this okay? [(y)es/(n)o]: y
+success: shared_preload_libraries will be updated
+
+Tune memory/parallelism/WAL and other settings? [(y)es/(n)o]: y
+Recommendations based on 3.84 GB of available memory and 2 CPUs for PostgreSQL 13
+
+Memory settings recommendations
+Current:
+shared_buffers = 128MB
+#effective_cache_size = 4GB
+#maintenance_work_mem = 64MB
+#work_mem = 4MB
+Recommended:
+shared_buffers = 1005866kB
+effective_cache_size = 2946MB
+maintenance_work_mem = 502933kB
+work_mem = 10058kB
+Is this okay? [(y)es/(s)kip/(q)uit]: y
+success: memory settings will be updated
+
+Parallelism settings recommendations
+Current:
+missing: timescaledb.max_background_workers
+#max_worker_processes = 8
+#max_parallel_workers_per_gather = 2
+#max_parallel_workers = 8
+Recommended:
+timescaledb.max_background_workers = 8
+max_worker_processes = 13
+max_parallel_workers_per_gather = 1
+max_parallel_workers = 2
+Is this okay? [(y)es/(s)kip/(q)uit]: y
+success: parallelism settings will be updated
+
+WAL settings recommendations
+Current:
+#wal_buffers = -1
+min_wal_size = 80MB
+Recommended:
+wal_buffers = 16MB
+min_wal_size = 512MB
+Is this okay? [(y)es/(s)kip/(q)uit]: y
+success: WAL settings will be updated
+
+Miscellaneous settings recommendations
+Current:
+#default_statistics_target = 100
+#random_page_cost = 4.0
+#checkpoint_completion_target = 0.5
+max_connections = 100
+#max_locks_per_transaction = 64
+#autovacuum_max_workers = 3
+#autovacuum_naptime = 1min
+#effective_io_concurrency = 1
+Recommended:
+default_statistics_target = 500
+random_page_cost = 1.1
+checkpoint_completion_target = 0.9
+max_connections = 50
+max_locks_per_transaction = 64
+autovacuum_max_workers = 10
+autovacuum_naptime = 10
+effective_io_concurrency = 200
+Is this okay? [(y)es/(s)kip/(q)uit]: y
+success: miscellaneous settings will be updated
+Saving changes to: /var/lib/pgsql/13/data/postgresql.conf</code></pre><p id="3b749503-b85f-473f-9580-21f02b4a8808" class="">Postgresqlで以下設定をします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="e89ff574-3d54-4d45-b973-a9e3bc86c3cd" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cp -ip /var/lib/pgsql/13/data/postgresql.conf /home/centos/postgresql.conf.org
+# vi /var/lib/pgsql/13/data/postgresql.conf
+listen_addresses = &#x27;*&#x27;
+archive_mode = on
+archive_command = &#x27;cp &quot;%p&quot; &quot;/var/lib/pgsql/archivedir/%f&quot;&#x27;
+max_wal_senders = 10
+max_replication_slots = 10
+wal_level = replica
+hot_standby = on
+wal_log_hints = on
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+log_duration = on
+log_directory = &#x27;/var/log/postgres_log&#x27;
+log_filename = &#x27;postgresql-%Y%m%d.log&#x27;
+
+# mkdir /var/log/postgres_log
+# chown postgres:postgres /var/log/postgres_log
+# systemctl start postgresql-13
+# systemctl enable postgresql-13
+# su - postgres
+$ psql -U postgres -p 5432
+postgres=# SET password_encryption = &#x27;scram-sha-256&#x27;;
+postgres=# CREATE ROLE pgpool WITH LOGIN;
+postgres=# CREATE ROLE repl WITH REPLICATION LOGIN;
+postgres=# \password pgpool
+postgres=# \password repl
+postgres=# \password postgres
+postgres=# GRANT pg_monitor TO pgpool;
+postgres=# exit
+$ exit
+
+# cp -p /var/lib/pgsql/13/data/pg_hba.conf /home/centos/pg_hba.conf.org
+# vi /var/lib/pgsql/13/data/pg_hba.conf
+host    all             all             samenet                 scram-sha-256
+host    replication     all             samenet                 scram-sha-256</code></pre><p id="eae64d53-1ef5-49eb-824c-f5e73cc91e63" class="">&lt; 共通設定 &gt;</p><p id="549d0387-a8e5-4acf-8df4-33fb3384ee50" class="">パスワードなしでSSHで接続できるようにします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2044afcd-8e21-4d77-a33a-142571e21b6d" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># mkdir .ssh
+# passwd postgres
+# cd .ssh
+# ssh-keygen -t rsa -f id_rsa_pgpool
+# ssh-copy-id -i id_rsa_pgpool.pub postgres@zbx5-webdb01
+# ssh-copy-id -i id_rsa_pgpool.pub postgres@zbx5-webdb02
+# su - postgres
+$ cd ~/.ssh
+$ ssh-keygen -t rsa -f id_rsa_pgpool
+$ ssh-copy-id -i id_rsa_pgpool.pub postgres@zbx5-webdb01
+$ ssh-copy-id -i id_rsa_pgpool.pub postgres@zbx5-webdb02
+$ exit
+
+# su - postgres
+$ vi /var/lib/pgsql/.pgpass
+zbx5-webdb01:5432:replication:repl:repl
+zbx5-webdb02:5432:replication:repl:repl
+zbx5-webdb01:5432:postgres:postgres:postgres
+zbx5-webdb02:5432:postgres:postgres:postgres
+$ chmod 600 /var/lib/pgsql/.pgpass</code></pre><p id="e63ed368-e816-4438-b4a2-25ef6011fb01" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><p id="f49a248b-a7af-4a88-8eb8-059e55b396d1" class="">pgpool_node_idファイルを作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1ebf5469-6a71-4ccb-87e1-78d900aa2197" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># vi /etc/pgpool-II/pgpool_node_id
+0</code></pre><p id="e4bb685d-b551-4ef0-8484-8ec07ec54135" class="">&lt; zbx5-webdb02だけの設定 &gt;</p><p id="5c2931b0-6a45-48c3-b23e-b5275093121c" class="">pgpool_node_idファイルを作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="09c9d323-2d4b-481f-b522-36932e456de0" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># vi /etc/pgpool-II/pgpool_node_id
+1</code></pre><p id="2236bac8-738f-45d3-80d0-961f3ec5c2af" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><p id="9093ddfd-9989-4f39-8cd7-be9d8c4234c3" class="">pgpoolで以下設定をします。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="a489852e-4a10-4b9f-b4f7-39326c2679bc" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cp -p /etc/pgpool-II/pgpool.conf.sample-stream /etc/pgpool-II/pgpool.conf
+# vi /etc/pgpool-II/pgpool.conf
+listen_addresses = &#x27;*&#x27;
+port = 9999
+sr_check_user = &#x27;pgpool&#x27;
+sr_check_password = &#x27;&#x27;
+health_check_period = 5
+health_check_timeout = 30
+health_check_user = &#x27;pgpool&#x27;
+health_check_password = &#x27;&#x27;
+health_check_max_retries = 3
+backend_hostname0 = &#x27;zbx5-webdb01&#x27;
+backend_port0 = 5432
+backend_weight0 = 1
+backend_data_directory0 = &#x27;/var/lib/pgsql/13/data&#x27;
+backend_flag0 = &#x27;ALLOW_TO_FAILOVER&#x27;
+backend_application_name0 = &#x27;zbx5-webdb01&#x27;
+backend_hostname1 = &#x27;zbx5-webdb02&#x27;
+backend_port1 = 5432
+backend_weight1 = 1
+backend_data_directory1 = &#x27;/var/lib/pgsql/13/data&#x27;
+backend_flag1 = &#x27;ALLOW_TO_FAILOVER&#x27;
+backend_application_name1 = &#x27;zbx5-webdb02&#x27;
+
+failover_command = &#x27;/etc/pgpool-II/failover.sh %d %h %p %D %m %H %M %P %r %R %N %S&#x27;
+follow_primary_command = &#x27;/etc/pgpool-II/follow_primary.sh %d %h %p %D %m %H %M %P %r %R&#x27;
+recovery_user = &#x27;postgres&#x27;
+recovery_password = &#x27;&#x27;
+recovery_1st_stage_command = &#x27;recovery_1st_stage&#x27;
+enable_pool_hba = on
+use_watchdog = on
+delegate_IP = &#x27;192.168.11.43&#x27;
+if_up_cmd = &#x27;/usr/bin/sudo /sbin/ip addr add $_IP_$/24 dev eth0 label eth0:0&#x27;
+if_down_cmd = &#x27;/usr/bin/sudo /sbin/ip addr del $_IP_$/24 dev eth0&#x27;
+arping_cmd = &#x27;/usr/bin/sudo /usr/sbin/arping -U $_IP_$ -w 1 -I eth0&#x27;
+if_cmd_path = &#x27;/sbin&#x27;
+arping_path = &#x27;/usr/sbin&#x27;
+hostname0 = &#x27;zbx5-webdb01&#x27;
+wd_port0 = 9090
+pgpool_port0 = 9999
+hostname1 = &#x27;zbx5-webdb02&#x27;
+wd_port1 = 9090
+pgpool_port1 = 9999
+wd_lifecheck_method = &#x27;heartbeat&#x27;
+wd_interval = 10
+heartbeat_hostname0 = &#x27;zbx5-webdb01&#x27;
+heartbeat_port0 = 9694
+heartbeat_device0 = &#x27;&#x27;
+heartbeat_hostname1 = &#x27;zbx5-webdb02&#x27;
+heartbeat_port1 = 9694
+heartbeat_device1 = &#x27;&#x27;
+wd_heartbeat_keepalive = 2
+wd_heartbeat_deadtime = 30
+wd_escalation_command = &#x27;/etc/pgpool-II/escalation.sh&#x27;
+log_destination = &#x27;stderr&#x27;
+logging_collector = on
+log_directory = &#x27;/var/log/pgpool_log&#x27;
+log_filename = &#x27;pgpool-%Y%m%d.log&#x27;
+log_truncate_on_rotation = on
+log_rotation_age = 1d
+log_rotation_size = 0
+enable_consensus_with_half_votes = on
+
+# scp -p /etc/pgpool-II/pgpool.conf root@zbx5-webdb02:/etc/pgpool-II/pgpool.conf
+
+# cp -p /etc/pgpool-II/recovery_1st_stage.sample /var/lib/pgsql/13/data/recovery_1st_stage
+# cp -p /etc/pgpool-II/pgpool_remote_start.sample /var/lib/pgsql/13/data/pgpool_remote_start
+# chown postgres:postgres /var/lib/pgsql/13/data/{recovery_1st_stage,pgpool_remote_start}
+# su - postgres
+$ psql template1 -c &quot;CREATE EXTENSION pgpool_recovery&quot;</code></pre><p id="c1ad744a-9c3b-498f-b95f-7f951d846d97" class="">&lt; 共通設定 &gt;</p><p id="755520b5-51a3-4ba9-8bd2-031a4f2c0ac9" class="">ログフォルダ、フェイルオーバー、pgpoolの仮装IPを停止させるスクリプト、クライアント認証の設定します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d813396e-1799-44d1-b4c7-11a7d679c714" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># chown postgres:postgres /var/log/postgres_log
+# mkdir /var/log/pgpool_log/
+# chown postgres:postgres /var/log/pgpool_log/
+# cp -p /etc/pgpool-II/failover.sh{.sample,}
+# cp -p /etc/pgpool-II/follow_primary.sh{.sample,}
+# chown postgres:postgres /etc/pgpool-II/{failover.sh,follow_primary.sh}
+# cp -p /etc/pgpool-II/escalation.sh{.sample,}
+# chown postgres:postgres /etc/pgpool-II/escalation.sh
+
+# echo &#x27;pgpool:&#x27;`pg_md5 pgpool` &gt;&gt; /etc/pgpool-II/pcp.conf
+# vi /etc/pgpool-II/pool_hba.conf
+host    all         all         192.168.11.41/32              scram-sha-256
+host    all         all         192.168.11.42/32              scram-sha-256
+host    all         all         192.168.11.43/32              scram-sha-256
+host    all         pgpool           0.0.0.0/0          scram-sha-256
+host    all         postgres         0.0.0.0/0          scram-sha-256
+
+# su - postgres
+$ echo &#x27;localhost:9898:pgpool:pgpool&#x27; &gt; ~/.pcppass
+$ chmod 600 ~/.pcppass
+
+# su - postgres
+$ echo &#x27;postgres&#x27; &gt; ~/.pgpoolkey
+$ chmod 600 ~/.pgpoolkey
+$ pg_enc -m -k ~/.pgpoolkey -u pgpool -p
+$ pg_enc -m -k ~/.pgpoolkey -u postgres -p
+$ cat /etc/pgpool-II/pool_passwd
+pgpool:AESrkH81/afiH7E6qaImGSQqw==
+postgres:AESbPro4vs9cT622am0+RjU3Q==
+
+# vi /etc/pgpool-II/escalation.sh
+PGPOOLS=(zbx5-webdb01 zbx5-webdb02)
+VIP=192.168.11.43
+DEVICE=eth0
+
+# vi /etc/sysconfig/pgpool
+OPTS=&quot; -D -n&quot;
+
+# systemctl start pgpool.service</code></pre><p id="57098fba-4bb7-4fd9-a6a7-6cf6af9f45ae" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><p id="950c97ce-2d28-4c8d-b9e2-85f7c206a2a9" class="">zbx5-webdb02のDBを構築します。以下のような状態になったら構築完了です。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="4e9afdf6-7e87-49a4-a776-2feb3a297528" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># pcp_recovery_node -h 192.168.11.43 -p 9898 -U pgpool -n 1
+Password:
+pcp_recovery_node -- Command Successful
+
+# psql -h 192.168.11.43 -p 9999 -U pgpool postgres -c &quot;show pool_nodes&quot;
+ユーザ pgpool のパスワード:
+ node_id |   hostname   | port | status | lb_weight |  role   | select_cnt | load_balance_node | replication_delay | replicatio
+n_state | replication_sync_state | last_status_change
+---------+--------------+------+--------+-----------+---------+------------+-------------------+-------------------+-----------
+--------+------------------------+---------------------
+ 0       | zbx5-webdb01 | 5432 | up     | 0.500000  | primary | 5163       | false             | 0                 |
+        |                        | 2022-01-10 01:28:32
+ 1       | zbx5-webdb02 | 5432 | up     | 0.500000  | standby | 160        | true              | 0                 | streaming
+        | async                  | 2022-01-10 01:32:36
+(2 行)
+</code></pre><h1 id="770fc06e-3be1-4735-8f16-569813236ec6" class="">Pacemaker+Zabbixの設定</h1><hr id="1289da9f-3730-8037-b6f5-f9d14fbd635e"/><p id="2d200e72-51d7-4354-ac6b-19c8fbeaba9a" class="">Pacemakerのインストールと設定</p><p id="ad6bb4e8-51d5-406a-acad-3a91971e07fb" class="">&lt; 共通設定 &gt;</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d033577c-fc02-4ca9-a445-0931fb6c0bde" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># yum -y install pacemaker pcs
+# passwd hacluster
+# systemctl start pcsd
+# systemctl enable pcsd</code></pre><p id="4a2f5c7b-15bd-4cde-822b-28c004ac6c4f" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="81081f45-31a0-4588-bc0e-2c61bf240e50" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># pcs cluster auth zbx5-webdb01 zbx5-webdb02
+# pcs cluster setup --name zabbix-cluster zbx5-webdb01 zbx5-webdb02
+# pcs cluster start --all
+# pcs cluster enable --all
+# pcs cluster status
+# pcs property set stonith-enabled=false
+# pcs property set no-quorum-policy=ignore
+# pcs resource defaults resource-stickiness=INFINITY
+# pcs resource defaults migration-threshold=2
+# pcs resource defaults</code></pre><p id="bf8399f9-1505-4e43-9e92-43faed96bbe0" class="">Zabbixのインストールと設定</p><p id="6beffb81-5b9f-4b9f-bb22-b76723e199ce" class="">&lt; 共通設定 &gt;</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d16de473-f6bf-41e4-9e4f-ba3bec7e1171" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># yum -y install https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
+# yum -y install zabbix-server-pgsql zabbix-agent zabbix-agent2
+# yum -y install centos-release-scl
+# vi /etc/yum.repos.d/zabbix.repo
+[zabbix-frontend]
+enabled=1
+
+# yum -y install zabbix-web-pgsql-scl zabbix-apache-conf-scl</code></pre><p id="b1623b9b-1d33-4911-9ec6-dd7e902b39eb" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="4dbedf36-b408-4ce5-af5c-88aacf7e3bce" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># psql -h 192.168.11.43 -p 9999 -U pgpool postgres -c &quot;show pool_nodes&quot;
+# sudo -u postgres createuser --pwprompt zabbix
+# sudo -u postgres createdb -O zabbix zabbix
+# zcat /usr/share/doc/zabbix-server-pgsql*/create.sql.gz | sudo -u zabbix psql zabbix</code></pre><p id="df3cffb4-091e-4efe-b0d4-9178e15b09d7" class="">&lt; 共通設定 &gt;</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="9a8827b6-3ec1-4a2b-a5c2-e747eb7ea127" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># cp -p /etc/zabbix/zabbix_server.conf /etc/zabbix/zabbix_server.conf.bak
+# diff -u /etc/zabbix/zabbix_server.conf.bak /etc/zabbix/zabbix_server.conf
+DBHost=192.168.11.43
+DBName=zabbix
+DBPassword=zabbix
+DBPort=9999
+ProxyConfigFrequency=60
+# scp -p /etc/zabbix/zabbix_server.conf root@zbx5-webdb02:/etc/zabbix/zabbix_server.conf
+
+# vi /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf
+php_value[date.timezone] = Asia/Tokyo
+
+# su - postgres
+$ pg_enc -m -k ~/.pgpoolkey -u zabbix -p
+$ cat /etc/pgpool-II/pool_passwd
+pgpool:AESrkH81/afiH7E6qaImGSQqw==
+postgres:AESbPro4vs9cT622am0+RjU3Q==
+zabbix:AESKpmPAQPMz9iPjyQzYY5j+w==</code></pre><p id="0fa4c109-b0bf-44e0-8d25-6051f177b0e4" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><p id="79100621-a6d0-43ae-8560-fe727a64d18c" class="">一旦Zabbixを起動して、ブラウザから初期設定を実施します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="78a0fe3f-4d00-4366-a92a-c0c9762a63d9" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># systemctl restart zabbix-server zabbix-agent httpd rh-php72-php-fpm</code></pre><p id="7ade50b9-e504-4cb8-8ae2-7094742eea1a" class="">初期設定で完了したら停止し、初期設定ファイルをzbx5-webdb02へ転送します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="025d8aba-f59f-471f-a0b9-4de25010bbf9" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># systemctl stop zabbix-server zabbix-agent httpd rh-php72-php-fpm
+# scp /etc/zabbix/web/zabbix.conf.php zbx5-webdb02:/etc/zabbix/web/zabbix.conf.php</code></pre><p id="140a2a32-d57e-440b-b88c-79b407266964" class="">&lt; zbx5-webdb02だけの設定 &gt;</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="be8f8ec9-175e-4211-ae7d-6baa57c10667" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># chown apache:apache /etc/zabbix/web/zabbix.conf.php</code></pre><p id="60294fbc-27bf-412a-8fc2-7e3139c22631" class="">&lt; 共通設定 &gt;</p><p id="32373093-dea1-436c-9eb9-8dbd55f1d61a" class="">pcsのリソースをモニタリングするのに、statusページを用意します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="91aed826-8e42-43b8-a963-9b9d33f9ac55" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># vi /etc/httpd/conf.d/status.conf
+ExtendedStatus On
+
+&lt;Location /server-status&gt;
+    SetHandler server-status
+    Require local
+&lt;/Location&gt;</code></pre><p id="37948ec2-37e7-4fe7-bec8-bec3888f919d" class="">&lt; zbx5-webdb01だけの設定 &gt;</p><p id="eed1184d-97ae-4aa5-9906-c82e2e8132e8" class="">pcsのリソースを作成します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="bcaae284-37da-496f-9717-efe5aaa915c1" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># pcs resource create zabbix-server systemd:zabbix-server op monitor interval=&quot;10s&quot; timeout=&quot;15s&quot; --group zabbix-group
+# pcs resource create apache ocf:heartbeat:apache configfile=/etc/httpd/conf/httpd.conf statusurl=&quot;http://127.0.0.1/server-status&quot; op monitor interval=10s --group zabbix-group
+# pcs resource create apache-vip ocf:heartbeat:IPaddr2 ip=192.168.11.44 cidr_netmask=24 op monitor interval=10s --group zabbix-group
+# pcs resource create rh-php72-php-fpm systemd:rh-php72-php-fpm op monitor interval=&quot;10s&quot; timeout=&quot;15s&quot; --group zabbix-group
+
+# pcs constraint colocation add zabbix-server with apache-vip INFINITY
+# pcs constraint colocation add zabbix-server with apache INFINITY
+# pcs constraint colocation add zabbix-server with rh-php72-php-fpm INFINITY
+
+# pcs resource create pgpool-vip ocf:heartbeat:IPaddr2 ip=192.168.11.43 cidr_netmask=24
+# pcs resource clone pgpool-vip
+
+# pcs resource create pgpool-vip-ping ocf:pacemaker:ping dampen=5s multiplier=1000 host_list=192.168.11.43
+# pcs resource clone pgpool-vip-ping</code></pre><p id="95a4f970-d1e0-4e9d-a55d-0fe68bedacaf" class="">設定を確認します。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="6966f9e1-48f2-4fc3-98d7-ab030b1b8ec5" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># pcs status
+Cluster name: zabbix-cluster
+Stack: corosync
+Current DC: zbx5-webdb01 (version 1.1.23-1.el7_9.1-9acf116022) - partition with quorum
+Last updated: Mon Jan 10 02:02:53 2022
+Last change: Mon Jan 10 01:29:30 2022 by hacluster via crmd on zbx5-webdb01
+
+2 nodes configured
+8 resource instances configured
+
+Online: [ zbx5-webdb01 zbx5-webdb02 ]
+
+Full list of resources:
+
+ Resource Group: zabbix-group
+     zabbix-server      (systemd:zabbix-server):        Started zbx5-webdb01
+     apache     (ocf::heartbeat:apache):        Started zbx5-webdb01
+     rh-php72-php-fpm   (systemd:rh-php72-php-fpm):     Started zbx5-webdb01
+     apache-vip (ocf::heartbeat:IPaddr2):       Started zbx5-webdb01
+ Clone Set: pgpool-vip-clone [pgpool-vip]
+     Started: [ zbx5-webdb01 zbx5-webdb02 ]
+ Clone Set: pgpool-vip-ping-clone [pgpool-vip-ping]
+     Started: [ zbx5-webdb01 zbx5-webdb02 ]
+
+Daemon Status:
+  corosync: active/enabled
+  pacemaker: active/enabled
+  pcsd: active/enabled</code></pre><p id="c36ac28b-2b95-481a-bff8-d71a40d8f470" class="">ここまで実施してapacheのVIPにしたアドレスでZabbix画面が表示できれば完了です。</p><h1 id="0f3fd847-aca8-4ccb-a087-477d40988aad" class="">最後に</h1><hr id="1289da9f-3730-802c-8a1c-f38dec936921"/><p id="e0f2000e-0158-4525-a70f-ff9c369143f2" class="">ここまでやるのに何回かぶっ壊したりしています笑 一番苦戦したのはpgpoolの部分ですね。</p><p id="25c4aaaf-5a0e-47ba-9c77-abc70dc89c86" class="">4.2から色々パラメータが変わったので理解するのに苦労しました。 </p><p id="2d09890d-d3e8-4afe-8c2a-e90fd8efe1c9" class="">また構築終わった後にPostgresのパラメータと睨めっこしてZabbixがちゃんと動くように真剣にパラメータ調整しました。 </p><p id="7c595075-bf6b-4446-ac6e-9dd3db686410" class="">多分ここまで設定を弄ったのは初めてかもしれません。</p><p id="ec0788d1-d6fc-44f4-b0c8-3298bc9450fd" class="">今回は自信がないのでconfの詳細は割愛させていただきます。 </p><p id="487a526c-92fa-42fb-aa7f-2b950c4f6f28" class="">自己学習でやっているので内容に間違いがあるような気がするので冒頭でも書いていますが参考程度にして下さい。</p><p id="c3868abe-1256-4c44-87f5-2f1116c0a420" class="">
+</p><p id="88cfef0f-18eb-4b75-ab76-dbd38e3427c9" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

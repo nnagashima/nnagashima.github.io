@@ -1,0 +1,711 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>RHELのDeveloperAccountを使ったAWSでのRHELの検証利用方法</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="ffa1b784-dabc-4a43-ab99-5dc0bee07e79" class="page sans"><header><h1 class="page-title"><strong>RHELのDeveloperAccountを使ったAWSでのRHELの検証利用方法</strong></h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>タグ</th><td></td></tr></tbody></table></header><div class="page-body"><figure id="59658d1a-d24d-4b58-b1c8-b2f519ee7a13" class="image" style="text-align:left"><a href="RHEL%E3%81%AEDeveloperAccount%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9FAWS%E3%81%A6%E3%82%99%E3%81%AERHEL%E3%81%AE%E6%A4%9C%E8%A8%BC%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%20ffa1b784dabc4a43ab995dc0bee07e79/redhat-original-wordmark-icon-2040x2048-i18rjawp.png"><img style="width:240px" src="RHEL%E3%81%AEDeveloperAccount%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9FAWS%E3%81%A6%E3%82%99%E3%81%AERHEL%E3%81%AE%E6%A4%9C%E8%A8%BC%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%20ffa1b784dabc4a43ab995dc0bee07e79/redhat-original-wordmark-icon-2040x2048-i18rjawp.png"/></a></figure><h1 id="540419fd-b116-4139-9e8b-92811ed82ec7" class="">目次</h1><hr id="b142493d-2566-448d-89a8-922de1c862b0"/><nav id="16532b6f-d5ec-4591-b495-25246d8c7710" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#540419fd-b116-4139-9e8b-92811ed82ec7">目次</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#df687837-7323-4f68-9a4f-d945e2422b88">はじめに</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#aef9bb64-1cfb-4eea-a030-9ff3c2bd79d3">Developerアカウントの作成</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#d9eddfdb-f2ef-441f-9e2a-cb18a96cb168">Developerアカウントの作成の作成後</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#c72b091c-6e67-4dd5-8440-786cac6971f9">Red Hat Customer Portalにログイン</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#efa6551a-7948-4f00-a149-868e0d6e1877">RHELをサブスクリプションに登録して利用する</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#9ab62b93-649e-4e6d-b691-aaf0e8e3d027">AWSにも同じように適用できないか</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#cb084cce-0885-49f3-9e9a-041e817a6c62">AWSへの適用方法</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#14e1a805-1a67-47aa-934c-c387af1f2916">AWSにDeveloperアカウント適用後にEC2を起動</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#5e119ff5-9063-427e-9e02-7ddd80473974">RHEL9のEOLについて</a></div></nav><h1 id="df687837-7323-4f68-9a4f-d945e2422b88" class="">はじめに</h1><hr id="ca049920-ce6b-450c-9a64-00d42da13d3c"/><p id="7b5cf943-49d7-4057-b8d2-6e62a65d2d74" class="">RHELのDeveloperAcctountについて記載します。</p><p id="46d9723b-a4d5-43a9-85bc-fe6d244895dc" class="">本来RHELのライセンスは費用がかかるものになりますが検証目的であれば、</p><p id="d33bc274-50b6-4932-b438-049ea20a03d9" class="">16台まで無償でどのRHELのバージョンでも利用することが可能です。（商用目的で利用した場合違反となります）</p><p id="f0d15d05-019c-420c-bbc2-637eb21f505a" class="">尚、ライセンスの有効期限は1年ごとになりますが再度更新してサブスクリプションを割り当てることで、</p><p id="2024f7ed-fe9e-4348-b12c-5a18c82f9611" class="">利用継続することが可能になります。詳細はRHELのBLOGを見てください。</p><p id="e39fba88-8861-4ec3-a367-0743229e9274" class=""><a href="https://rheb.hatenablog.com/entry/developer-program">https://rheb.hatenablog.com/entry/developer-program</a></p><h1 id="aef9bb64-1cfb-4eea-a030-9ff3c2bd79d3" class="">Developerアカウントの作成</h1><hr id="ee783789-7a38-4558-a522-a97149be6c41"/><p id="af15f34b-57c1-470b-9915-d9601094aad7" class="">以下URLにアクセスするとActive your subscriptionのボタンがあるのでクリックし、</p><p id="1d1ab0f6-3cc8-44da-aa7e-202c004e478d" class="">Registor for a Red Hat Accountをクリックし、必要事項を入力してアカウントを作成します。</p><p id="38c32aa6-15aa-442e-b351-e74b2cf19f76" class=""><a href="https://developers.redhat.com/products/rhel/download">https://developers.redhat.com/products/rhel/download</a></p><h1 id="d9eddfdb-f2ef-441f-9e2a-cb18a96cb168" class="">Developerアカウントの作成の作成後</h1><hr id="539994d1-35e4-43ba-8319-66d6d0b47293"/><p id="b22d46ac-2dbf-464d-b998-761a255d65a6" class="">先ほど表示した画面でログインを行うと以下のような形でIOSをダウンロードすることができます。</p><h1 id="c72b091c-6e67-4dd5-8440-786cac6971f9" class="">Red Hat Customer Portalにログイン</h1><hr id="220fbea5-b5fb-42dd-af65-a37e93bf3ad0"/><p id="f293d1a7-bdae-43e3-a5a0-b69a666b0020" class="">Red Hat Customer Portalにログインして左上にSubscriptionと表示されているので、クリックします。</p><p id="d8489fe0-2609-4b03-988a-39618c868ce6" class=""><a href="https://access.redhat.com/">https://access.redhat.com/</a></p><p id="13fdcbbd-21ec-4a70-bedb-ef4f26f66760" class="">ログインするとRed Hat Developer Subscription for Individualsがあるのでクリックすると</p><p id="f517895b-9624-400a-bf6a-713867b60165" class="">エンタイトルメントの使用率が16となっていることを確認できればOKです。</p><h1 id="efa6551a-7948-4f00-a149-868e0d6e1877" class="">RHELをサブスクリプションに登録して利用する</h1><p id="93916ac9-9e34-4952-bb28-cfa3b13489ab" class="">RHELをインストールしたらサブスクリプション登録が必要になります。</p><p id="aa3daa71-c589-4299-b426-417c3cbf77e8" class="">ISOイメージは先ほどの上記画面からダウンロードしてください。</p><p id="83f0d484-52ce-4281-aa6e-62be0ba0acec" class="">以下root権限で作業します。※RHEL8の例でのコマンドです。</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="d6fc5233-0f46-4574-82ea-9596a586830b" class="code"><code class="language-Bash">利用可能なリポジトリがないことを確認します。
+# dnf repolit
+
+ユーザー名とパスワードはRed Hat Customer Portalのアカウントを利用します。--nameはオプションです。（省略した場合はホスト名での登録となる）
+登録が成功するとこのシステムは、次の ID で登録されましたの表示がされます。
+# subscription-manager register --username [username] --password [password] --name [SYSTEM_NAME]
+
+システムのロールとサービスレベルを設定します。
+自動の場合には以下コマンドです。
+# subscription-manager attach --auto
+
+プールIDを指定したい場合には以下コマンドです。
+プールIDの確認はsubscription-manager list --consumedで確認できます。
+# subscription-manager attach --auto
+
+最後にサブスクリプションのステータスを確認します。
+# subscription-manager list
+
+再度リポジトリを確認するとリポジトリが使えるようになります。
+# dnf repolit
+
+アップデートテストでアップデートできれば成功です。
+# dnf check-update</code></pre><p id="2f66e205-9cfc-4d98-a7e6-d12425799aee" class="">最後にRed Hat Customer Portalで登録状況を確認して対象ホスト名が緑色の●で登録されていれば登録完了です。</p><p id="ca3a6b6f-2492-4fd5-9823-8e00acb8d5a1" class="">お疲れ様でした。。。</p><p id="22b8ca3d-a3fc-4549-8da3-f8a845203579" class="">としたいのですが最後に疑問に思って調べたことを書かせてください。</p><h1 id="9ab62b93-649e-4e6d-b691-aaf0e8e3d027" class="">AWSにも同じように適用できないか</h1><p id="5d9cb1f7-508c-4329-b5b1-b423eabfa9f7" class="">AWSでもMarketplaceでRHELのOSは提供されていますが、インスタンス料金にOS分も含まれて課金されます。</p><p id="ebc68f35-941e-4ab3-b369-d706994ec9a4" class="">個人のAWS料金はなるべく抑えたいのでどうにかしてできないか確認をしました。</p><p id="77246fb9-55f6-4405-ab3b-d4928fa3c6d4" class="">まず前提としてAWSのMarketplaceで利用したRHELのEC2で障害など問合せしたい場合には、</p><p id="8d6383d2-03fb-4ee5-878d-51eb4898740b" class="">AWSサポートに連絡する形になりますがAWSのサポート契約（デベロッパー、ビジネス、エンタープライズどれか）を結んでいる必要があります。</p><p id="7edd5719-c54a-41f2-b190-314043c3ceb0" class="">またAWSサポートでRed Hat へのエスカレーションも行う（AWSが必要と判断した場合のみ）ため、利用ユーザーから直接Red Hatへ問い合わせることはできません。</p><p id="b951f287-8030-495f-b7d6-fdede0ba1843" class="">※その代わり別途Red Hatとの契約は不要になります。</p><p id="e43bf4c6-168e-4d62-8523-d951f5385af8" class="">※Red Hat経由でOSライセンスは購入していたけど後からAWSのMarketplaceで提供されているRHELのOSにしたいはできないようです。</p><h1 id="cb084cce-0885-49f3-9e9a-041e817a6c62" class="">AWSへの適用方法</h1><p id="91049fdc-ee70-4351-9aa7-e282798bc170" class="">Red Hat Customer Portalへログインします。</p><p id="308f8d34-6700-4955-8f78-899c126f86e4" class="">Cloud AccessからRed Hat Cloud Accessの画面へ移動し、AWS AccountsのタブをクリックしAdd accountsをクリックします。</p><p id="f569bd26-5a4f-42ff-aace-2e401ae386d0" class="">Red Hat Hybrid Cloud Consoleの画面が表示されますので、Amazon Web Servicesをクリックします。</p><p id="65ce01eb-c8d6-479e-acf7-f51077cd7c00" class="">※この画面で確認した際にはAWS以外にもGoogle Cloud、Microsoft Azureも繋げるようでした。</p><p id="4b0204c2-7854-421f-a154-e5bf153fa165" class="">
+</p><p id="7f0dd8e7-c2f1-4b2a-ac7e-d07035f2ed59" class="">Name Sourceの画面が表示されたらAWSアカウントの任意の名前を記載し、Nextをクリックします。</p><p id="53262d29-e10e-40f9-8d48-fe0b219fcad5" class="">認証する方法にはアカウント認証方法とマニュアルでの認証方法がありますが、</p><p id="ac73c496-2d1a-442a-bff1-67c21c84c322" class="">Account認証のほうではAPIのアクセスキーとシークレットキーの登録になるので本利用は避けて、</p><p id="6f484af8-5850-4a6b-a11a-032fb3ff29ea" class="">マニュアルでの認証方法をとり、Manual configurationをクリックします。</p><p id="7985bc63-9086-41d7-a451-57d6c4479115" class="">Select applicationの画面ではRHEL管理を選択し、IAM Policyが表示されるので対象のAWSアカウントで作成します。</p><p id="070b2e63-d92c-4b95-9317-589e2752dbec" class="">次にIAM roleでIAMロール作成する手順が表示されるので作成します。</p><p id="380a1037-5503-420c-ba56-a13ec8d68220" class="">最後にIAMロールのARN情報を入力して最終確認ページで問題なければAddをクリックします。</p><p id="4ad1e1e9-d021-4932-862e-8ad14125fa2f" class="">適用されているかの確認についてはRed Hat Cloud AccessのRed Hat Hybrid Cloud ConsoleでAvailableになることを確認します。</p><h1 id="14e1a805-1a67-47aa-934c-c387af1f2916" class="">AWSにDeveloperアカウント適用後にEC2を起動</h1><p id="a1384ac9-c488-49f4-ad32-48b9d47c04b9" class="">AWSコンソールのEC2サービスからプライベートイメージ選択して、検索テキストボックスに「309956199498」と入力し、</p><p id="39584eb6-7aeb-4325-8fcf-049b66db80e5" class="">GoldImageが一覧に表示されていることを確認してください。</p><p id="2ca2936f-b151-442b-8cdf-2ce1ae111cb4" class="">※Red Hat Gold Image の場合には、AMI 名のサブスクリプションモデルを表す部分は Access の指定になります。</p><p id="3565823f-d702-4e86-abb2-70581d786a97" class="">※RHELのライセンスをBYOLする際に利用することをGold Imageと呼びます。</p><h1 id="5e119ff5-9063-427e-9e02-7ddd80473974" class="">RHEL9のEOLについて</h1><p id="2ce0fe1e-80ba-4c0d-b758-cf42b78f0027" class="">以下ページに記載があったので追記しておきます。</p><p id="c28e1835-b3c7-447a-9062-95de4de3542e" class="">RHEL7/8もついでに載せておきます。</p><p id="3480311e-152c-4c70-82f3-44c752bb99cf" class=""><a href="https://access.redhat.com/support/policy/updates/errata">https://access.redhat.com/support/policy/updates/errata</a></p><figure id="ea64757d-b94a-4b6c-af01-54252a54b6ba" class="image" style="text-align:left"><a href="RHEL%E3%81%AEDeveloperAccount%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9FAWS%E3%81%A6%E3%82%99%E3%81%AERHEL%E3%81%AE%E6%A4%9C%E8%A8%BC%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%20ffa1b784dabc4a43ab995dc0bee07e79/Untitled.png"><img style="width:1104px" src="RHEL%E3%81%AEDeveloperAccount%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9FAWS%E3%81%A6%E3%82%99%E3%81%AERHEL%E3%81%AE%E6%A4%9C%E8%A8%BC%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95%20ffa1b784dabc4a43ab995dc0bee07e79/Untitled.png"/></a></figure><p id="1976a9d7-2f4f-4ba3-a3a9-d03b2d8623c2" class="">
+</p><p id="83e9d8ea-5cde-4b6c-8303-a110499592f8" class="">
+</p><p id="663fd4e2-9837-4cb3-bcc1-683680d35e8e" class="">
+</p><p id="4d366919-f99a-4031-8885-921a7364e672" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
