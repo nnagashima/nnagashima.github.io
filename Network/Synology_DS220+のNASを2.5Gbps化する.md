@@ -1,6 +1,6 @@
 [⚫️ TOPへ戻る](https://actmotech.xyz/)
 
-[⚫️ ETC Knowledgeへ戻る](/ETC/top)
+[⚫️ Network Knowledgeへ戻る](/Network/top)
 
 # Synology DS220+のNASを2.5Gbps化する
 
@@ -31,7 +31,7 @@ Synology DS220+のNASを2.5Gbps化するにあたり、USB-LAN2500Rを購入し�
 
 SynologyのUIにログインしてコントロールパネルから情報センターより確認します。
 
-![](/ETC/Synology_DS220+のNASを2.5Gbps化する/image01.png)
+![](/Network/Synology_DS220+のNASを2.5Gbps化する/image01.png)
 
 # Synologyに搭載されているCPU確認
 
@@ -79,4 +79,4 @@ Synologyにダウンロードしたドライバーをパッケージセンター
 
 [⚫️ TOPへ戻る](https://actmotech.xyz/)
 
-[⚫️ ETC Knowledgeへ戻る](/ETC/top)
+[⚫️ Network Knowledgeへ戻る](/Network/top)
