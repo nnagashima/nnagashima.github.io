@@ -1,4 +1,5 @@
-<link rel="stylesheet" href="styles.css">
+[TOPへ戻る](https://actmotech.xyz/)
+[ETC Knowledgeへ戻る](/ETC/top.md)
 
 # NURO光回線の速度改善
 
@@ -88,3 +89,6 @@ RT-AX3000のセットアップ完了したら、NURO光のONUの設定変更し�
 なお、今回別ルーターを設置したことにより管理が複雑にはなるけれども 色々なことができるようになったので、
 
 これはこれでよかったなと思います。
+
+[TOPへ戻る](https://actmotech.xyz/)
+[ETC Knowledgeへ戻る](/ETC/top.md)

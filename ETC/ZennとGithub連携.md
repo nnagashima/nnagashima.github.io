@@ -1,5 +1,10 @@
-# 目次
-- [目次](#目次)
+[TOPへ戻る](https://actmotech.xyz/)
+[ETC Knowledgeへ戻る](/ETC/top.md)
+
+# ZennとGithub連携
+
+目次
+- [ZennとGithub連携](#zennとgithub連携)
 - [はじめに](#はじめに)
 - [環境](#環境)
 - [やったこと](#やったこと)
@@ -53,3 +58,6 @@ npx zenn new:article
 上記コマンドを実行するとarticlesディレクトリ内にmdファイルが作成されるので、 
 
 作成されたmdファイルをベースに作成し、プレビューで確認しGithubへPushすることでZennで公開ができます。
+
+[TOPへ戻る](https://actmotech.xyz/)
+[ETC Knowledgeへ戻る](/ETC/top.md)
