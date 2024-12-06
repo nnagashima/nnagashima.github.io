@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="styles.css">
+
 [TOPへ戻る](https://actmotech.xyz/)
 
 # ETC 目次

@@ -1,3 +1,17 @@
+/* 例: ページのテキストを左寄せにする */
 body {
     text-align: left;
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* さらにスタイルを追加できます */
+h1, h2, h3 {
+    color: #333;
+}
+
+p {
+    line-height: 1.6;
+    color: #555;
 }

@@ -1,5 +1,3 @@
-<div style="text-align: left;">
-
 ![](/top-image/image.png)
 
 # Actmotech
@@ -27,5 +25,3 @@
 ### [OS Knosledge](OS/top)
 
 ### [ETC](ETC/top)
-
-</div>
