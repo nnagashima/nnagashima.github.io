@@ -1,4 +1,4 @@
-[TOPへ戻る](README.md)
+[TOPへ戻る](/README.md)
 
 # ETC 目次
 
@@ -12,4 +12,4 @@
 
 [インフラエンジニアの仕事とシステムモニタリングについて](/ETC/インフラエンジニアの仕事とシステムモニタリングについて.md)
 
-[Synology_DS220+のNASを2.5Gbps化する](/ETC/Synology_DS220+のNASを2.5Gbps化する.md)
+[Synology DS220+のNASを2.5Gbps化する](/ETC/Synology_DS220+のNASを2.5Gbps化する.md)
