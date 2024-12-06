@@ -1,6 +1,6 @@
-[⚫️TOPへ戻る](https://actmotech.xyz/)
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
 
-[⚫️ETC Knowledgeへ戻る](/ETC/top)
+[⚫️ ETC Knowledgeへ戻る](/ETC/top)
 
 # ZennとGithub連携
 
@@ -60,6 +60,6 @@ npx zenn new:article
 
 作成されたmdファイルをベースに作成し、プレビューで確認しGithubへPushすることでZennで公開ができます。
 
-[⚫️TOPへ戻る](https://actmotech.xyz/)
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
 
-[⚫️ETC Knowledgeへ戻る](/ETC/top)
+[⚫️ ETC Knowledgeへ戻る](/ETC/top)

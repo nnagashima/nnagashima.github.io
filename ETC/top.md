@@ -1,4 +1,4 @@
-[⚫️TOPへ戻る](https://actmotech.xyz/)
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
 
 # ETC 目次
 
