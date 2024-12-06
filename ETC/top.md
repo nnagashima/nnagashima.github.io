@@ -1,4 +1,4 @@
-[TOPへ戻る](/README)
+[TOPへ戻る](https://actmotech.xyz/)
 
 # ETC 目次
 
