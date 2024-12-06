@@ -1,5 +1,3 @@
-<div style="text-align: left;">
-
 [TOPへ戻る](https://actmotech.xyz/)
 
 # ETC 目次
