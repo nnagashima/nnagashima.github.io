@@ -12,16 +12,7 @@
 
 # Knowledgeカテゴリ
 
-### [🌨️ AWS Knowledge](AWS/top)
-
-### [🌨️ Azure Knowledgee](Azure/top)
-
-### [👀 Monitoring Knowledge](Monitoring/top)
-
-### [🐳 Container Knowledge](Container/top)
-
-### [🐟 Proxmox Knowledge](Proxmox/top)
-
-### [🐧 OS Knosledge](OS/top)
-
-### [ETC](ETC/top)
+| ### [🌨️ AWS Knowledge](AWS/top) | ### [🌨️ Azure Knowledgee](Azure/top) |
+| ### [👀 Monitoring Knowledge](Monitoring/top) | ### [🐳 Container Knowledge](Container/top) |
+| ### [🐟 Proxmox Knowledge](Proxmox/top) | ### [🐧 OS Knosledge](OS/top) |
+| ### [ETC](ETC/top) | |
