@@ -1,11 +1,5 @@
 ---
 ---
-@media (max-width: 768px) {
-  table {
-      width: 100%; /* 画面幅が狭い場合、テーブルを全幅に */
-  }
-}
-
 @import "{{ site.theme }}";
 .page-header{
     background-image:linear-gradient(to right, #625793 0%, #d55d64 35%, #e49129 65%, #c0671c 100%); 
@@ -18,7 +12,7 @@
 }
 
 table{
-    width: 50%;
+    width: 80%;
     border-collapse: collapse;
 }
 
@@ -41,6 +35,6 @@ table th{
 
 body {
   transform: scale(0.8); /* ページ全体を80%に縮小 */
-  transform-origin: top left; /* 縮小の起点を左上に設定 */
+  transform-origin: top center; /* 縮小の起点を左上に設定 */
   zoom: 0.8; /* 一部ブラウザの互換性を確保 */
 }
