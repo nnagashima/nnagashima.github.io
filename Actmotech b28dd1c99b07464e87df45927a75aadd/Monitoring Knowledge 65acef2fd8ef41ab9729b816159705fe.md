@@ -1,3 +1,0 @@
-# Monitoring Knowledge
-
-[Monitoring Knowledge](Monitoring%20Knowledge%2065acef2fd8ef41ab9729b816159705fe/Monitoring%20Knowledge%20bb47d9f1ab894ad6a38276496a39903d.csv)
