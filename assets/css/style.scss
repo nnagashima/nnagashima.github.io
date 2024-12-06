@@ -12,8 +12,10 @@
     color: inherit;
 }
 
-body {
-  text-align: left;
+.container {
+  display: flex;
+  justify-content: flex-start; /* 子要素を左揃え */
+  align-items: center;        /* 縦方向中央揃え */
 }
 
 table{
