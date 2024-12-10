@@ -57,7 +57,7 @@ AWS ConsoleのVPCからカスタマーゲートウェイを選択して、カス
 
 ARN 証明書はIKE 認証のために事前に共有されたキーではなくデジタル証明書を使用する際に利用します。
 
-https://aws.amazon.com/jp/premiumsupport/knowledge-center/vpn-certificate-based-site-to-site/
+![AWS Site-to-Site VPN を使用して証明書ベースの VPN を作成する方法を教えてください。](https://aws.amazon.com/jp/premiumsupport/knowledge-center/vpn-certificate-based-site-to-site/)
 
 今回はIKE認証で実施するので何も選択しません。 デバイスも今回は未入力とし、カスタマーゲートウェイを作成します。
 
@@ -91,7 +91,7 @@ AWS ConsoleのVPCからサイト間のVPN接続を選択して、VPN接続を作
 
 今回接続する対象はFortigateなので以下のような形で設定情報をダウンロードしています。
 
-![](AWS/Site-to-Site-VPNとFortigateでIPSecVPN/20220413014823.jpg)
+![](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN/20220413014823.jpg)
 
 設定ファイルをダウンロードするとトンネルIPや事前共有鍵の記載があるので確認しておきましょう。
 
@@ -190,9 +190,3 @@ AWS ConsoleのVPCからサイト間のVPN接続を選択して、作成したVPN
 ![](AWS/Site-to-Site-VPNとFortigateでIPSecVPN/20220413025644.jpg)
 
 以上でFortigateとAWS VPCとのVPN接続設定が完了です。
-
-# 最後に
-
----
-
-自宅にFortigateがある人はあまりいないように思いますが、これを自宅でやろうとしている人が誤家庭ですね。
