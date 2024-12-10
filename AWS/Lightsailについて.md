@@ -11,10 +11,10 @@
 - [目次](#目次)
 - [はじめに](#はじめに)
 - [Lightsailとは](#lightsailとは)
-- [Lightsailのインスタンスについて(2022/08/01)](#lightsailのインスタンスについて20220801)
-- [Lightsailのコンテナについて(2022/08/01)](#lightsailのコンテナについて20220801)
-- [Lightsailのデータベースについて(2022/08/01)](#lightsailのデータベースについて20220801)
-- [Lightsailのロードバランサーについて(2022/08/01)](#lightsailのロードバランサーについて20220801)
+- [Lightsailのインスタンスについて](#lightsailのインスタンスについて)
+- [Lightsailのコンテナについて](#lightsailのコンテナについて)
+- [Lightsailのデータベースについて](#lightsailのデータベースについて)
+- [Lightsailのロードバランサーについて](#lightsailのロードバランサーについて)
 - [LightsailのDNSについて](#lightsailのdnsについて)
 - [Lightsailのストレージについて](#lightsailのストレージについて)
 - [Lightsail CDNとは](#lightsail-cdnとは)
@@ -26,6 +26,7 @@
 ---
 
 LightsailとAWSの各サービスと比較してみました。
+(2022/08/01現在)
 
 # Lightsailとは
 
@@ -40,7 +41,7 @@ LightsailとAWSの各サービスと比較してみました。
 - https://aws.amazon.com/jp/lightsail/faq/
 - https://aws.amazon.com/jp/lightsail/pricing/
 
-# Lightsailのインスタンスについて(2022/08/01)
+# Lightsailのインスタンスについて
 
 ---
 
@@ -50,6 +51,8 @@ LightsailとAWSの各サービスと比較してみました。
 - スナップショット機能を提供しており、取得したスナップショットからEC2へアップグレード可能
 - 静的GIPアドレスをLightsailインスタンスに紐づけることが可能（Redigon内で5つまで無料）
 - CPUメトリクスの監視とアラーム設定が可能であり、それ以外は監視不可
+- https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-considerations-for-use/
+- https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-differences-from-ec2/
 
 LightsailとEC2の比較
 
@@ -58,10 +61,8 @@ LightsailとEC2の比較
 | 複数IP | 複数IPアドレスをアタッチすることが不可能 | 複数IPアドレスをアタッチすることが可能 |
 | コンソール出力 | 実践編 | 確認は可能 |
 | 終了保護 | 終了保護機能なし | 終了保護機能あり |
-- https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-considerations-for-use/
-- https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-differences-from-ec2/
 
-# Lightsailのコンテナについて(2022/08/01)
+# Lightsailのコンテナについて
 
 ---
 
@@ -71,7 +72,7 @@ LightsailとEC2の比較
 - コンテナのスケールアウト
 - CPUとメモリの監視とアラーム設定が可能
 
-# Lightsailのデータベースについて(2022/08/01)
+# Lightsailのデータベースについて
 
 ---
 
@@ -99,7 +100,7 @@ LightsailとRDSの比較
 | ログ | LightsailのUI上で閲覧可能 | CloudWatchLogsで閲覧とアラーム設定含めて可能 |
 | バックアップ | スナップショット、5分単位で7日分保管 | スナップショット、5分単位でトランザクションログをS3へ保管、最大で35日分を保管 |
 
-# Lightsailのロードバランサーについて(2022/08/01)
+# Lightsailのロードバランサーについて
 
 ---
 

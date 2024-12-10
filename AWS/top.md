@@ -2,9 +2,9 @@
 
 # AWS 目次
 - [AWS 目次](#aws-目次)
-    - [🪢 Lightsailについて](#-lightsailについて)
+    - [Lightsailについて](#lightsailについて)
 
 
-### [🪢 Lightsailについて](/AWS/Lightsailについて)
+### [Lightsailについて](/AWS/Lightsailについて)
 
 [⚫️ TOPへ戻る](https://actmotech.xyz/)
