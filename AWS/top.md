@@ -2,10 +2,10 @@
 
 ---
 
-| タイトル | タグ |
+| AWS Knowledge | タグ |
 | --- | --- | 
-| ### [Lightsailについて](/AWS/Lightsailについて) | Lightsail |
-| ### [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN) | IPsec,VPC |
+| [Lightsailについて](/AWS/Lightsailについて) | Lightsail |
+| [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN) | IPsec,VPC,Fortigate |
 
 
 ---
