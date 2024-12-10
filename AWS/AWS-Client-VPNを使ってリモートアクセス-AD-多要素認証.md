@@ -6,7 +6,7 @@
 
 # AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)
 
-![](nnagashima.github.io/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/image01.jpg)
+![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/image01.jpg)
 
 # 目次
 - [AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)](#aws-client-vpnを使ってリモートアクセスad多要素認証を使う)
@@ -43,7 +43,7 @@ AWS Client VPNを利用して、AWSリソースへのアクセス方法につい
 
 プライベート証明書の数ごとに料金が発生するのでコスト節約の観点オレオレ認証局を立てて実施します。 
 
-- https://aws.amazon.com/jp/certificate-manager/pricing/?nc=sn&loc=3
+[AWS Certificate Manager の料金](https://aws.amazon.com/jp/certificate-manager/pricing/?nc=sn&loc=3)
 
 # 認証局の作成とクライアントの証明書とキーを生成
 
@@ -51,9 +51,9 @@ AWS Client VPNを利用して、AWSリソースへのアクセス方法につい
 
 ADによるSimple ADを利用した接続方法もありますが、今回は相互認証を利用した接続を実施したいと思います。 
 
-- https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/client-authentication.html
+[Client authentication in AWS Client VPN](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/client-authentication.html)
 
-OSはAmazonLinux2にて実施しています。 またEC2に対してAWSCertificateManagerFullAccessのロールを割り当てるようにしてください。 
+OSはAmazonLinux2にて実施しています。 またEC2に対してAWSCertificateManagerFullAccessのロールを割り当てるようにしてください。
 
 ※後程AWSコマンドでACM にインポートするため
 
@@ -279,7 +279,7 @@ Inline file created:
 
 Configを再ダウンロードする必要がない為、既存のConfigで接続することができます。
 
-※サーバ証明書の期限が切れる前で実施している為、期限切れ後の場合はある程度時間が経過しないと接続ができないかもしれません。
+※サーバ証明書の期限が切れる前で実施している為、期限切れ後に証明書を入れ替えた場合はある程度時間が経過しないと接続ができないかもしれません。
 
 # サーバー証明書の更新方法（CA更新を含む）
 
@@ -305,6 +305,8 @@ ClientVPNアプリから接続を実施しましたが即時接続できませ�
 
 # Client VPN Endpoint の作成
 
+本題に戻って、Client VPN Endpointを作成します。
+
 ---
 
 AWS Consoleにて、VPCサービスからClient VPN Endpointを作成します。
@@ -329,9 +331,9 @@ ACM の詳細については、AWS Certificate Manager ユーザーガイドを�
 
 クライアントログを保存したい場合にはCloudWatchLogsに保存ができます。 
 
-![Untitled.png](AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled.png)
+![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/Untitled.png)
 
-![Untitled](AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%201.png)
+![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/Untitled1.png)
 
 クライアント接続ハンドラは接続元IPによるアクセス制御を行いたい場合など有効にします。
 
@@ -343,7 +345,7 @@ ACM の詳細については、AWS Certificate Manager ユーザーガイドを�
 新しい接続を許可または拒否する決定をクライアント VPN サービスに返す AWS Lambda 関数を作成します。
 ```
 
-![Untitled](AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%202.png)
+![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/Untitled2.png)
 
 プロトコルはUDPとし、スプリットトンネルを有効にします。 
 
@@ -353,7 +355,7 @@ ACM の詳細については、AWS Certificate Manager ユーザーガイドを�
 
 VPCエンドポイントを作成します。また今回ユーザーベース認証にしているのでMSADのDNSを指定します。
 
-![Untitled](AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/Untitled%203.png)
+![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/Untitled3.png)
 
 # 作成したVPNエンドポイントにサブネットを関連付け
 
@@ -361,7 +363,7 @@ VPCエンドポイントを作成します。また今回ユーザーベース�
 
 今のままでは接続できないので、サブネットをVPCエンドポイントに紐付けします。
 
-https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-target.html#cvpn-working-target-associate
+[AWS Client VPN ターゲットネットワーク](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-target.html#cvpn-working-target-associate)
 
 作成したVPCエンドポイントを選択し、関連付けタブより関連付けをクリックして、 関連付けしたいVPCとサブネットを選択して、
 
@@ -369,7 +371,7 @@ https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-target
 
 注意が必要なのは関連付けされているサブネット数が増えると費用も増えます。
 
-https://aws.amazon.com/jp/vpn/pricing/
+[AWS VPN の料金](https://aws.amazon.com/jp/vpn/pricing/)
 
 # 作成したVPNエンドポイントに承認ルールを追加
 
@@ -381,7 +383,12 @@ VPNクライアントからアクセスさせるIPアドレスの範囲をアク
 
 アクセスを付与する対象を全てのユーザーにアクセスを許可するにします。 
 
-AD認証を使う場合には特定のアクセスグループのユーザーへのアクセスを許可するになります。
+AD認証をする場合にはADがいるネットワークの指定をするのを忘れないようにしてください。
+
+AD認証にて特定のアクセスグループのユーザーへのアクセスに絞ることもできます。
+
+[認証ルールを に追加する AWS Client VPN エンドポイント](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-rule-authorize-add.html)
+
 
 # 作成したVPNエンドポイントに接続元制限
 
@@ -399,7 +406,7 @@ AD認証を使う場合には特定のアクセスグループのユーザーへ
 
 クライアントソフトウェアはAWS公式のClientVPNを利用しています。
 
-- https://aws.amazon.com/jp/vpn/client-vpn-download/
+[Client VPN Download](https://aws.amazon.com/jp/vpn/client-vpn-download/)
 
 インストールできたら、AWS Console から作成したVPNエンドポイントを選択して、クライアント設定のダウンロードをします。 
 
@@ -407,7 +414,7 @@ AD認証を使う場合には特定のアクセスグループのユーザーへ
 
 ダウンロードしたら.ovpnの拡張子ファイルをテキスト開き以下を修正します。 
 
-- https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html
+[AWS Client VPN エンドポイント設定ファイルのエクスポート](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html)
 
 クライアント証明書とキーファイルの情報を末尾に記載します。
 
@@ -442,7 +449,7 @@ MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCqbZ3LPi+Wr0pB
 
 そのため接続する時には以下のような画面になります。
 
-![スクリーンショット 2023-07-03 21.44.51.png](AWS%20Client%20VPN%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%83%AA%E3%83%A2%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9(AD+%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC%E3%82%92%E4%BD%BF%E3%81%86)%206229e2c93f714f4d9876cfadc2767991/%25E3%2582%25B9%25E3%2582%25AF%25E3%2583%25AA%25E3%2583%25BC%25E3%2583%25B3%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%2583%25E3%2583%2588_2023-07-03_21.44.51.png)
+![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/image02.png)
 
 接続できた後には、念の為AWS内にあるEC2などへPINGなど実施して疎通確認を行なってください。
 
@@ -477,10 +484,15 @@ default_days= $ENV::EASYRSA_CERT_EXPIRE# how long to certify for
 
 あとここまでやって最後調べていて気づいたのですが、AWSのハンズオン内容があるんですね。。。 
 
-- https://catalog.us-east-1.prod.workshops.aws/workshops/be2b90c2-06a1-4ae6-84b3-c705049d2b6f/ja-JP
+[AWS Client VPN Basic ハンズオン](https://catalog.us-east-1.prod.workshops.aws/workshops/be2b90c2-06a1-4ae6-84b3-c705049d2b6f/ja-JP)
 
 参考としてACM証明書を利用したやり方も見つけたのでクラスメソッド様のBLOG内容を引用させていただきます。
 
-- https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/
-
 [ACM で発行したパブリック証明書で Client VPN を構築してみた | DevelopersIO](https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/)
+
+---
+
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
+
+[⚫️ AWS Knowledgeへ戻る](/AWS/top)
+
