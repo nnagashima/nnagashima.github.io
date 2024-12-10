@@ -38,7 +38,8 @@ LightsailとAWSの各サービスと比較してみました。
 - LightsailサービスとAWS主要サービスをVPC Peeringを用いて連携することができる
 - スモールスタートをAWS主要サービスからではなくLightsailから始めるのはあり
 - SLA保証はなし
-- 
+
+
 https://aws.amazon.com/jp/lightsail/faq/
 
 https://aws.amazon.com/jp/lightsail/pricing/
@@ -53,10 +54,8 @@ https://aws.amazon.com/jp/lightsail/pricing/
 - スナップショット機能を提供しており、取得したスナップショットからEC2へアップグレード可能
 - 静的GIPアドレスをLightsailインスタンスに紐づけることが可能（Redigon内で5つまで無料）
 - CPUメトリクスの監視とアラーム設定が可能であり、それ以外は監視不可
-
-https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-considerations-for-use/
-
-https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-differences-from-ec2/
+- [Lightsail FAQ](https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-considerations-for-use/)
+- [LightsailとEC2の違い](https://aws.amazon.com/jp/premiumsupport/knowledge-center/lightsail-differences-from-ec2/)
 
 LightsailとEC2の比較
 
