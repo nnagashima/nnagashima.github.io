@@ -30,7 +30,7 @@
 
 Fortigateは60D を利用しており、ファームウェアはv6.0.11 build0387 (GA)です。
 
- 実施するにあたっての前提としてオンプレ側の外部アドレスは固定IPであること、 AWS側のVPCはサブネットやIGWの設定が完了しているものとします。
+実施するにあたっての前提としてオンプレ側の外部アドレスは固定IPであること、 AWS側のVPCはサブネットやIGWの設定が完了しているものとします。
 
 # 実施手順概要
 
@@ -46,7 +46,7 @@ Fortigateは60D を利用しており、ファームウェアはv6.0.11 build038
 
 料金は以下のような感じです。 
 
-https://aws.amazon.com/jp/vpn/pricing/
+[AWS サイト間 VPN および Accelerated サイト間 VPN への接続料金](https://aws.amazon.com/jp/vpn/pricing/)
 
 
 # 仮想プライベートゲートウェイの作成
