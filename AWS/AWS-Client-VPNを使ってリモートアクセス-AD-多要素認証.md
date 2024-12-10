@@ -488,7 +488,7 @@ default_days= $ENV::EASYRSA_CERT_EXPIRE# how long to certify for
 
 参考としてACM証明書を利用したやり方も見つけたのでクラスメソッド様のBLOG内容を引用させていただきます。
 
-[ACM で発行したパブリック証明書で Client VPN を構築してみた | DevelopersIO](https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/)
+[ACM で発行したパブリック証明書で Client VPN を構築してみた](https://dev.classmethod.jp/articles/clientvpn-with-acm-public-certificates/)
 
 ---
 
