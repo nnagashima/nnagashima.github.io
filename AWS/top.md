@@ -2,6 +2,6 @@
 
 ### [Lightsailについて](/AWS/Lightsailについて)
 
-### [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN.md)
+### [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN)
 
 [⚫️ TOPへ戻る](https://actmotech.xyz/)
