@@ -1,8 +1,24 @@
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
+
+[⚫️ AWS Knowledgeへ戻る](/AWS/top)
+
+---
+
 # Site to Site VPNとFortigateでIPSecVPN
 
 ![](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN/20200821131638.jpg)
 
 # 目次
+- [Site to Site VPNとFortigateでIPSecVPN](#site-to-site-vpnとfortigateでipsecvpn)
+- [目次](#目次)
+- [はじめに](#はじめに)
+- [実施手順概要](#実施手順概要)
+- [仮想プライベートゲートウェイの作成](#仮想プライベートゲートウェイの作成)
+- [カスタマーゲートウェイの作成](#カスタマーゲートウェイの作成)
+- [サイト間のVPN接続の設定](#サイト間のvpn接続の設定)
+- [Fortigateの設定](#fortigateの設定)
+- [VPCのルートテーブルの設定](#vpcのルートテーブルの設定)
+- [IPSecVPNステータスをチェック](#ipsecvpnステータスをチェック)
 
 ---
 
@@ -190,3 +206,9 @@ AWS ConsoleのVPCからサイト間のVPN接続を選択して、作成したVPN
 ![](AWS/Site-to-Site-VPNとFortigateでIPSecVPN/20220413025644.jpg)
 
 以上でFortigateとAWS VPCとのVPN接続設定が完了です。
+
+---
+
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
+
+[⚫️ AWS Knowledgeへ戻る](/AWS/top)
