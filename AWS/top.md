@@ -1,7 +1,13 @@
 [⚫️ TOPへ戻る](https://actmotech.xyz/)
 
-### [Lightsailについて](/AWS/Lightsailについて)
+---
 
-### [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN)
+| タイトル | タグ |
+| --- | --- | 
+| ### [Lightsailについて](/AWS/Lightsailについて) | Lightsail |
+| ### [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN) | IPsec,VPC |
+
+
+---
 
 [⚫️ TOPへ戻る](https://actmotech.xyz/)
