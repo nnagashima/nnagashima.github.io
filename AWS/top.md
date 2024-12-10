@@ -8,7 +8,7 @@
 | [Site to Site VPNとFortigateでIPSecVPN](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN) | IPsec,VPC,Fortigate |
 | [Site to Site VPNとUnifi Dream Machine ProでIPSecVPN](/AWS/Site-to-Site-VPNとUnifiDreamMachineProでIPSecVPN)| IPsec,VPC,Unifi |
 | [AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証)| ClientVPN |
-| [SessionManegerを利用したOSログイン](AWS/SystemsManager-SessionManegerを利用したOSログイン)| SystemsManager |
+| [SessionManegerを利用したOSログイン](/AWS/SystemsManager-SessionManegerを利用したOSログイン)| SystemsManager |
 
 ---
 
