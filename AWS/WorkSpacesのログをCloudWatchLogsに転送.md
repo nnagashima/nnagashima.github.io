@@ -10,6 +10,17 @@
 
 # 目次
 
+- [WorkSpacesのログをCloudWatchLogsに転送](#workspacesのログをcloudwatchlogsに転送)
+- [目次](#目次)
+- [はじめに](#はじめに)
+- [VPCエンドポイントの作成](#vpcエンドポイントの作成)
+- [CloudWatchAgentのインストール](#cloudwatchagentのインストール)
+- [IAMグループ、ユーザー、ポリシーを作成](#iamグループユーザーポリシーを作成)
+- [WorkSpacesの環境変数を編集](#workspacesの環境変数を編集)
+- [Powershellの実行権限変更](#powershellの実行権限変更)
+- [CloudWatchAgentのConfig作成](#cloudwatchagentのconfig作成)
+- [CloudWatchAgentの実行](#cloudwatchagentの実行)
+
 ---
 
 # はじめに
@@ -420,8 +431,3 @@ C:\ProgramData\Amazon\AmazonCloudWatchAgent\Logsvamazon-cloudwatch-agent.log
 
 [⚫️ AWS Knowledgeへ戻る](/AWS/top)
 
----
-
-[⚫️ TOPへ戻る](https://actmotech.xyz/)
-
-[⚫️ AWS Knowledgeへ戻る](/AWS/top)
