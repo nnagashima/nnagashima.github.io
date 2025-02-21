@@ -6,8 +6,6 @@
 
 # オンプレADと連携してAWS DirectoryService AD ConnectorとWorkSpacesを作成
 
-![](/AWS/オンプレADと連携してADConnectorとWorkSpaces作成/icon.png)
-
 # 目次
 - [オンプレADと連携してAWS DirectoryService AD ConnectorとWorkSpacesを作成](#オンプレadと連携してaws-directoryservice-ad-connectorとworkspacesを作成)
 - [目次](#目次)
