@@ -6,8 +6,6 @@
 
 # Lightsailについて
 
-![](/AWS/Lightsailについて/image01.png)
-
 # 目次
 - [Lightsailについて](#lightsailについて)
 - [目次](#目次)

@@ -6,8 +6,6 @@
 
 # CloudWatchとCloudWatchAgentについて
 
-![](/AWS/CloudWatchとCloudWatchAgentについて/image01.png)
-
 # 目次
 
 - [CloudWatchとCloudWatchAgentについて](#cloudwatchとcloudwatchagentについて)

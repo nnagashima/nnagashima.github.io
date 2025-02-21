@@ -6,8 +6,6 @@
 
 # WindowsのイベントログをS3に転送
 
-![](/AWS/WindowsのイベントログをS3に転送/Arch_Amazon-Simple-Storage-Service_64.svg)
-
 # 目次
 - [WindowsのイベントログをS3に転送](#windowsのイベントログをs3に転送)
 - [目次](#目次)

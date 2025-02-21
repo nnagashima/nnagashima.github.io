@@ -6,8 +6,6 @@
 
 # Systems ManagerのSession Manegerを利用したOSログイン
 
-![](/AWS/SystemsManager-SessionManegerを利用したOSログイン/AWS-Systems-Manager.png)
-
 # 目次
 - [Systems ManagerのSession Manegerを利用したOSログイン](#systems-managerのsession-manegerを利用したosログイン)
 - [目次](#目次)

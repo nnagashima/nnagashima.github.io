@@ -6,8 +6,6 @@
 
 # Site to Site VPNとFortigateでIPSecVPN
 
-![](/AWS/Site-to-Site-VPNとFortigateでIPSecVPN/20200821131638.jpg)
-
 # 目次
 - [Site to Site VPNとFortigateでIPSecVPN](#site-to-site-vpnとfortigateでipsecvpn)
 - [目次](#目次)

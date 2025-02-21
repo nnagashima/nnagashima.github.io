@@ -6,8 +6,6 @@
 
 # BYOL WorkSpacesのイメージ作成
 
-![](/AWS/BYOLWorkSpacesのイメージ作成/icon.png)
-
 # 目次
 - [BYOL WorkSpacesのイメージ作成](#byol-workspacesのイメージ作成)
 - [目次](#目次)

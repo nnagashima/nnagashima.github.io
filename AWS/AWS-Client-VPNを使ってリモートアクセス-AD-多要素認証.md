@@ -6,8 +6,6 @@
 
 # AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)
 
-![](/AWS/AWS-Client-VPNを使ってリモートアクセス-AD-多要素認証を使う/image01.jpg)
-
 # 目次
 - [AWS Client VPNを使ってリモートアクセス(AD+多要素認証を使う)](#aws-client-vpnを使ってリモートアクセスad多要素認証を使う)
 - [目次](#目次)

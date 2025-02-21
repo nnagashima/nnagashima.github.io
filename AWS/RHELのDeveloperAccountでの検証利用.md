@@ -6,8 +6,6 @@
 
 # RHELのDeveloperAccountを使ったAWSでのRHELの検証利用方法
 
-![](/AWS/RHELのDeveloperAccountでの検証利用/redhat-original-wordmark-icon-2040x2048-i18rjawp.png)
-
 # 目次
 
 - [RHELのDeveloperAccountを使ったAWSでのRHELの検証利用方法](#rhelのdeveloperaccountを使ったawsでのrhelの検証利用方法)

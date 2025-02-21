@@ -6,8 +6,6 @@
 
 # Site to Site VPNとUnifi Dream Machine ProでIPSecVPN
 
-![](/AWS/Site-to-Site-VPNとUnifiDreamMachineProでIPSecVPN/20200821131638.png)
-
 # 目次
 - [Site to Site VPNとUnifi Dream Machine ProでIPSecVPN](#site-to-site-vpnとunifi-dream-machine-proでipsecvpn)
 - [目次](#目次)
