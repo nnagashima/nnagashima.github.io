@@ -1,6 +1,10 @@
-# WorkSpacesのログをCloudWatchLogsに転送
+[⚫️ TOPへ戻る](https://actmotech.xyz/)
 
-![](/AWS/WorkSpacesのログをCloudWatchLogsに転送/image01.png)
+[⚫️ AWS Knowledgeへ戻る](/AWS/top)
+
+---
+
+# WorkSpacesのログをCloudWatchLogsに転送
 
 # 目次
 
