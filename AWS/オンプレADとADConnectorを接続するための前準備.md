@@ -54,23 +54,23 @@ Active Directory ドメインサービスをクリック
 
 次へをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled6.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled6.png)
 
 次へをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled7.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled7.png)
 
 インストールをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled8.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled8.png)
 
 インストール中の画面
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled9.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled9.png)
 
 完了したら閉じるをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled10.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled10.png)
 
 # ドメインコントローラーに昇格
 
@@ -78,27 +78,27 @@ Active Directory ドメインサービスをクリック
 
 旗印をクリックして、このサーバをドメインコントローラーに昇格するをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled11.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled11.png)
 
 新しいフォレストを追加するを選択し、ルートドメインにドメイン名を入力して次へをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled12.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled12.png)
 
 パスワードを入力
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled13.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled13.png)
 
 次へをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled14.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled14.png)
 
 少し待つとNetBIOSドメイン名が表示されるので、任意のものしたければ変更し次へをクリッ
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled15.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled15.png)
 
 ファイルパスを変更する場合にはパスを入力し、次へをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled16.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled16.png)
 
 次へをクリック
 
@@ -106,7 +106,7 @@ Active Directory ドメインサービスをクリック
 
 インストールをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled18.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled18.png)
 
 インストール中の画面
 
@@ -128,7 +128,7 @@ OUの中にOUを設けて階層構造にすることもでき、ドメイン管�
 
 OUを作成します。ドメイン直下でないと作成できない模様
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled20.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled20.png)
 
 作成例：
 
@@ -140,11 +140,11 @@ OUを作成します。ドメイン直下でないと作成できない模様
 
 作成したOU配下で、AWSのAD Connectorと作成するためのユーザーを作成します。
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled22.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled22.png)
 
 パスワード入力、パスワードは無期限に設定
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled23.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled23.png)
 
 確認がでるので問題なければ完了をクリック
 
@@ -152,7 +152,7 @@ OUを作成します。ドメイン直下でないと作成できない模様
 
 作成したOU配下で、AWSのAD Connectorと作成したユーザーad connectorが所属するためのConnectorsグループを作成
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled25.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled25.png)
 
 作成したadconnectorsに作成したグループのConnectors配下に所属
 
@@ -185,7 +185,7 @@ AD Connector が AWS Managed Microsoft AD に接続されている場合、ド�
 
 委任するカスタムタスクを作成するを選択し、次へをクリック
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled29.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled29.png)
 
 フォルダー内の次のオブジェクトのみを選択し、
 
@@ -193,7 +193,7 @@ AD Connector が AWS Managed Microsoft AD に接続されている場合、ド�
 
 選択されたオブジェクトをこのフォルダーに作成すると選択されたオブジェクトをこのフォルダーから削除するを有効化
 
-![](AWS/オンプレADとADConnectorを接続するための前準備/Untitled30.png)
+![](/AWS/オンプレADとADConnectorを接続するための前準備/Untitled30.png)
 
 全般とプロパティ固有を有効化
 
