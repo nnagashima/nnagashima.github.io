@@ -4,7 +4,7 @@
 
 # Azure Knowledge
 
-* [AWStoAzure-SitetoSiteVPN](\Azure\AWStoAzure-SitetoSiteVPN.md)
+* [AWStoAzure-SitetoSiteVPN](\Azure\AWStoAzure-SitetoSiteVPN)
 
 ---
 
