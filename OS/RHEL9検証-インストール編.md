@@ -2,6 +2,12 @@
 
 
 # 目次
+- [RHEL9検証-インストール編](#rhel9検証-インストール編)
+- [目次](#目次)
+- [利用環境](#利用環境)
+- [IOS準備](#ios準備)
+- [仮想マシン作成](#仮想マシン作成)
+- [仮想マシン起動とOSインストール](#仮想マシン起動とosインストール)
 
 
 # 利用環境
@@ -24,7 +30,7 @@ ProxmoxのStorageにて、ISO ImagesよりDownlodad from URLに
 
 https://access.cdn.redhat.com/content/origin/files/sha256/d9/d9dcae2b6e760d0f9dcf4a517bddc227d5fa3f213a8323592f4a07a05aa542a2/rhel-baseos-9.1-x86_64-dvd.iso?user=5ad4fd41c4be00b007836f2b425c5796&_auth_=1675667562_4d59c156ea8ea71e00cb4fce98300825
 
-![](\OS\RHEL9検証-インストール編\Untitled.png)
+![](/OS\RHEL9検証-インストール編\Untitled.png)
 
 # 仮想マシン作成
 
@@ -32,7 +38,7 @@ https://access.cdn.redhat.com/content/origin/files/sha256/d9/d9dcae2b6e760d0f9dc
 
 Proxmox上でサーバ作成を実施。スペックは以下の通り。
 
-![](OS\RHEL9検証-インストール編\Untitled1.png)
+![](/OS\RHEL9検証-インストール編\Untitled1.png)
 
 # 仮想マシン起動とOSインストール
 
@@ -40,19 +46,19 @@ Proxmox上でサーバ作成を実施。スペックは以下の通り。
 
 Install Red Hat Enterprise Linux 9.1を選択
 
-![](\OS\RHEL9検証-インストール編\Untitled2.png)
+![](/OS\RHEL9検証-インストール編\Untitled2.png)
 
 日本語を選択
 
-![](\OS\RHEL9検証-インストール編\Untitled3.png)
+![](/OS\RHEL9検証-インストール編\Untitled3.png)
 
 インストール概要の画面がでるので各項目ごとに設定します。
 
-![](\OS\RHEL9検証-インストール編\Untitled4.png)
+![](/OS\RHEL9検証-インストール編\Untitled4.png)
 
 1. RedHatに接続の画面ではRHのアカウント情報を入力し登録します。
 
-![](\OS\RHEL9検証-インストール編\Untitled5.pngg)
+![](/OS\RHEL9検証-インストール編\Untitled5.pngg)
 
 1. インストール先でパーティションを作成します。
 
@@ -60,7 +66,7 @@ Install Red Hat Enterprise Linux 9.1を選択
 
 LVMシンプロビジョニングで、構成は自動作成としています。作成したら完了をクリックします。
 
-![](\OS\RHEL9検証-インストール編\Untitled6.png)
+![](/OS\RHEL9検証-インストール編\Untitled6.png)
 
 ファイルシステムはデフォルトでxfsとなっていますが、他にもext4などがあります。
 
@@ -76,7 +82,7 @@ LVMシンプロビジョニングで、構成は自動作成としています�
 
 rootで作業しないでねってことみたいですね。
 
-![](\OS\RHEL9検証-インストール編\Untitled7.png)
+![](/OS\RHEL9検証-インストール編\Untitled7.png)
 
 なのでユーザーの作成をします。
 
@@ -86,20 +92,20 @@ rootで作業しないでねってことみたいですね。
 
 高度をクリックするとホームディレクトリやユーザーIDやグループIDを設定できます。
 
-![](\OS\RHEL9検証-インストール編\Untitled8.png)
+![](/OS\RHEL9検証-インストール編\Untitled8.png)
 
 1. ソフトウェアの選択
 
 自分でPKGは追加するのと必要ないものを導入はしたくないので最小限のインストールで進めます。
 
-![](\OS\RHEL9検証-インストール編\Untitled9.png)
+![](/OS\RHEL9検証-インストール編\Untitled9.png)
 
 1. ここまで設定できたらインストールの開始をクリックします。
 
 ※KDUMPやネットワークとホスト名もGUI上で設定できるので事前に設定したい場合には設定してください。
 
-![](\OS\RHEL9検証-インストール編\Untitled10.png)
+![](/OS\RHEL9検証-インストール編\Untitled10.png)
 
 インストールが完了したら再起動を実施し、コンソールからログインできることを確認してください。
 
-![](\OS\RHEL9検証-インストール編\Untitled11.png)
+![](/OS\RHEL9検証-インストール編\Untitled11.png)
