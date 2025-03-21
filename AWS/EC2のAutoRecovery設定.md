@@ -9,6 +9,12 @@
 
 # 目次
 
+- [EC2のAutoRecovery設定](#ec2のautorecovery設定)
+- [目次](#目次)
+- [AutoRecoveryとは](#autorecoveryとは)
+- [AutoRecoveryのアラーム作成](#autorecoveryのアラーム作成)
+- [AutoRecoveryの注意点](#autorecoveryの注意点)
+
 ---
 
 # AutoRecoveryとは
