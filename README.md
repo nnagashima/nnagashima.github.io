@@ -24,20 +24,20 @@
 
 ---
 
-### [🌨️ AWS Knowledge](AWS/top) 
+### [🌨️ AWS Knowledge](/AWS/top) 
 
-### [🌨️ Azure Knowledgee](Azure/top)
+### [🌨️ Azure Knowledgee](/Azure/top)
 
-### [👀 Monitoring Knowledge](Monitoring/top)
+### [👀 Monitoring Knowledge](/Monitoring/top)
 
-### [🐳 Container Knowledge](Container/top)
+### [🐳 Container Knowledge](/Container/top)
 
-### [🐟 Proxmox Knowledge](Proxmox/top)
+### [🐟 Proxmox Knowledge](/Proxmox/top)
 
-### [🐧 OS Knosledge](OS/top)
+### [🐧 OS Knosledge](/OS/top)
 
-### [🧵 Network Knowledge](Network/top)
+### [🧵 Network Knowledge](/Network/top)
 
-###  [ETC](ETC/top)
+###  [ETC](/ETC/top)
 
 ---
