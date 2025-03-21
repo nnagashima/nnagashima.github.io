@@ -34,7 +34,7 @@ table th{
 }
 
 body {
-  transform: scale(0.8); /* ページ全体を80%に縮小 */
+  transform: scale(1.0); /* ページ全体を80%に縮小 */
   transform-origin: top center; /* 縮小の起点を左上に設定 */
-  zoom: 0.8; /* 一部ブラウザの互換性を確保 */
+  zoom: 1.0; /* 一部ブラウザの互換性を確保 */
 }
